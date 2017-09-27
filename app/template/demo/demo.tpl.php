@@ -30,11 +30,10 @@
         <h2 id="overview-introduce">介绍</h2>
         <p>支持跨库连表，条件复合筛选，PK缓存查询等</p>
         <p>同步异步请求分离，类的自动化加载管理</p>
-        <p>支持Form表单验证</p>
-        <p>支持事件触发机制</p>
+        <p>支持Form表单验证，支持事件触发机制</p>
         <p>具有sql防注入，html防xss等特性</p>
-        <p>高性能，框架响应时间在1ms以内，tps轻松上3000</p>
-        <p>GitHub 地址：<a href="https://github.com/billge1205/biny">https://github.com/billge1205/biny</a></p>
+        <p>高性能，框架响应时间在1ms以内，单机tps轻松上3000</p>
+        <p>GitHub 地址：<a href="https://github.com/Tencent/Biny">https://github.com/Tencent/Biny</a></p>
 
         <h2 id="overview-files">目录结构</h2>
         <div class="col-lg-3"><img src="http://r.photo.store.qq.com/psb?/V130E8h51JH2da/.9gsh.Yw9u4O9rrwwiJTWNYEVPxTBA0eCwr0fNvGjcE!/o/dGIAAAAAAAAA&bo=yQAVAskAFQIDACU!"></div>
