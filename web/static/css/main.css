@@ -1,0 +1,8 @@
+.center {text-align: center}
+.left {text-align: left}
+.right {text-align: right}
+.colorR {color: red;margin-right: 5px;}
+.txDivTips {
+    position:absolute; border:1px solid #f0f0f0; border-radius: 3px; background:#f0f0f0; box-shadow:2px 2px 3px #aaaaaa;
+    padding:1px; color: #333; font-size: 12px; margin: 15px; z-index: 9999;
+}
