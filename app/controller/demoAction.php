@@ -5,15 +5,15 @@
  */
 class demoAction extends baseAction
 {
-    // 权限配置
-    protected function privilege()
-    {
-        return array(
-            'login_required' => array(
-                'actions' => '*', //绑定action
-            ),
-        );
-    }
+//    // 权限配置
+//    protected function privilege()
+//    {
+//        return array(
+//            'login_required' => array(
+//                'actions' => '*', //绑定action
+//            ),
+//        );
+//    }
 
     /**
      * demo首页
