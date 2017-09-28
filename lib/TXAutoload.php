@@ -43,7 +43,7 @@ class TXAutoload
         if (!self::$loaders || !$lastTime || time()-$lastTime > self::$config['autoSkipLoad']){
             self::$loaders = array();
             self::getLoads(__DIR__);
-            self::getLoads(TXApp::$vendor_root);
+            self::getLoads(TXApp::$extends_root);
             self::getLoads(TXApp::$app_root. DS . "controller");
             self::getLoads(TXApp::$app_root. DS . "shell");
             self::getLoads(TXApp::$app_root. DS . "service");

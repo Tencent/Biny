@@ -37,7 +37,7 @@ class TXApp
     public static $view_root;
     public static $log_root;
     public static $plugins_root;
-    public static $vendor_root;
+    public static $extends_root;
 
     /**
      * @var TXController
@@ -55,7 +55,7 @@ class TXApp
         self::$base = new self();
         self::$base_root = dirname(__DIR__);
         self::$plugins_root = self::$base_root.DS."plugins";
-        self::$vendor_root = self::$base_root.DS."vendor";
+        self::$extends_root = self::$base_root.DS."extends";
         self::$log_root = self::$base_root.DS."logs";
         if (RUN_SHELL){
             self::$log_root .= '/shell';
