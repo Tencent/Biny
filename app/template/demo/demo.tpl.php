@@ -354,6 +354,97 @@
 
         <h2 id="config-system">系统配置</h2>
         <p><code>/config/config.php</code> 系统基本配置（包括默认路由，自定义路由配置等）</p>
+        <pre class="code"><sys>return array</sys>(
+    <note>//路由配置</note>
+    <str>'router'</str> => <sys>array</sys>(
+        <str>'base_action'</str> => <str>'demo'</str>, <note>//默认路由入口</note>
+        <str>'base_shell'</str> => <str>'index'</str>, <note>//默认shell入口</note>
+
+        <note>//静态化配置</note>
+        <str>'routeRule'</str> => <sys>array</sys>(
+            <note>// test/123 => test/view</note>
+            <str>'test/&lt;id:[\w_%]+>'</str> => <str>'test/view'</str>,
+            <note>// abc/test/123 => test/abc</note>
+            <str>'&lt;method:\w+>/test/&lt;id:\d+>.html'</str> => <str>'test/&lt;method>'</str>,
+        ),
+    ),
+
+    <note>//自动加载配置</note>
+    <str>'autoload'</str> => <sys>array</sys>(
+        <str>'autoPath'</str> => <str>'config/autoload.php'</str>,
+        <note>//重新构建间隔时间s</note>
+        <str>'autoSkipLoad'</str> => 5,
+        <str>'autoThrow'</str> => <sys>true</sys>, <note>//不在系统库中的类即抛出异常</note>
+    ),
+
+    <note>//请求配置</note>
+    <str>'request'</str> => <sys>array</sys>(
+        <str>'trueToken'</str> => <str>'biny-csrf'</str>,
+        <str>'csrfToken'</str> => <str>'csrf-token'</str>,
+        <str>'csrfPost'</str> => <str>'_csrf'</str>,
+        <str>'csrfHeader'</str> => <str>'X-CSRF-TOKEN'</str>,
+
+        <note>// 约定userIP字段 X_REAL_IP</note>
+        <str>'userIP'</str> => <str>''</str>,
+        <note>// 强制返回页面协议</note>
+        <str>'showTpl'</str> => <str>'X_SHOW_TEMPLATE'</str>,
+        <note>//csrf白名单</note>
+        <str>'csrfWhiteIps'</str> => <sys>array</sys>(
+            <str>'127.0.0.1/24'</str>
+        ),
+    ),
+
+    <note>//响应配置</note>
+    <str>'response'</str> => <sys>array</sys>(
+        <str>'jsonContentType'</str> => <str>'application/json'</str>,
+        <note>//兼容老版本 新版本都用one就可以了</note>
+        <str>'paramsType'</str> => <str>'one'</str>,  <note>// one or keys</note>
+        <note>// 以下配置在paramsType == one 时有效</note>
+        <str>'paramsKey'</str> => <str>'PRM'</str>,
+        <str>'objectEncode'</str> => <sys>true</sys>, <note>//object对象是否转义</note>
+    ),
+
+    <note>//日志相关配置</note>
+    <str>'logger'</str> => <sys>array</sys>(
+        <note>// 是否记录日志文件</note>
+        <str>'files'</str> => <sys>true</sys>,
+        <note>// 自定义日志记录方法
+//        'sendLog' => array('TXCommon', 'sendLog'),
+        // 自定义日志错误方法
+//        'sendError' => array('TXCommon', 'sendError'),
+        //错误级别</note>
+        <str>'errorLevel'</str> => <const>NOTICE</const>,
+        <note>//慢查询阀值</note>
+        <str>'slowQuery'</str> => 1000,
+    ),
+
+    <note>//缓存相关配置</note>
+    <str>'cache'</str> => <sys>array</sys>(
+        <str>'pkCache'</str> => <str>'tb:%s'</str>,
+        <str>'session'</str> => <sys>array</sys>(
+            <str>'save_handler'</str>=><str>'files'</str>,  <note>//redis memcache</note>
+            <str>'maxlifetime'</str> => 86400    <note>//过期时间s</note>
+        ),
+        <note>// 开启redis自动序列化存储</note>
+        <str>'serialize'</str> => <sys>true</sys>,
+    ),
+
+    <note>//异常配置</note>
+    <str>'exception'</str> => <sys>array</sys>(
+        <note>//返回页面</note>
+        <str>'exceptionTpl'</str> => <str>'error/exception'</str>,
+        <str>'errorTpl'</str> => <str>'error/msg'</str>,
+
+        <str>'messages'</str> => <sys>array</sys>(
+            500 => <str>'网站有一个异常，请稍候再试'</str>,
+            404 => <str>'您访问的页面不存在'</str>,
+            403 => <str>'权限不足，无法访问'</str>
+        )
+    ),
+
+
+
+)</pre>
         <p><code>/config/autoload.php</code> 系统自动加载类的配置，会根据用户代码自动生成，无需配置，但必须具有<code>写权限</code></p>
         <p><code>/config/exception.php</code> 系统异常配置类</p>
         <p><code>/config/http.php</code> HTTP请求基本错误码</p>

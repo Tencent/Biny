@@ -29,7 +29,7 @@ A: 测试机：Intel Xeon Processor E5506 (4M Cache, 2.13 GHz, 4.80 GT/s Intel�
 
 Q: 我想使用Biny，请问有相关说明文档吗？
 
-A: 文档都在[http://www.billge.cc](http://www.billge.cc)中，有问题也欢迎RTX交流
+A: 文档都在[http://www.billge.cc](http://www.billge.cc)中
 
 Q: Biny框架适配PHP7吗？
 
