@@ -144,7 +144,6 @@ class TXApp
         TXAutoload::init();
         set_error_handler(['TXApp', 'handleError']);
         register_shutdown_function(['TXApp', 'handleFatalError']);
-        TXDefine::init();
         TXEvent::init();
         self::$controller = TXFactory::create('TXController');
     }

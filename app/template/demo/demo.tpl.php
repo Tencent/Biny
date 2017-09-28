@@ -135,7 +135,7 @@
 <sys>defined</sys>(<str>'isMaintenance'</str>) <sys>or</sys> <sys>define</sys>(<str>'isMaintenance'</str>, <sys>false</sys>);</pre>
 
         <p>其中<code>SYS_ENV</code>的环境值也有bool型，方便判断使用</p>
-        <pre class="code"><note>// 在\lib\config\TXDefine.php 中配置</note>
+        <pre class="code"><note>// 在\lib\TXApp.php 中配置</note>
 <note>// 测试环境</note>
 <sys>defined</sys>(<str>'ENV_DEV'</str>) <sys>or define</sys>(<str>'ENV_DEV'</str>, <const>SYS_ENV</const> === 'dev');
 <note>// 预发布环境</note>
@@ -367,7 +367,7 @@
         <note>//静态化配置</note>
         <str>'routeRule'</str> => <sys>array</sys>(
             <note>// test/123 => test/view</note>
-            <str>'test/&lt;id:[\w_%]+>'</str> => <str>'test/view'</str>,
+            <str>'test/&lt;id:[\w_]+>'</str> => <str>'test/view'</str>,
             <note>// abc/test/123 => test/abc</note>
             <str>'&lt;method:\w+>/test/&lt;id:\d+>.html'</str> => <str>'test/&lt;method>'</str>,
         ),
@@ -416,9 +416,9 @@
 //        'sendLog' => array('TXCommon', 'sendLog'),
         // 自定义日志错误方法
 //        'sendError' => array('TXCommon', 'sendError'),
-        //错误级别</note>
+        // 错误级别 NOTICE以上都会记录</note>
         <str>'errorLevel'</str> => <const>NOTICE</const>,
-        <note>//慢查询阀值</note>
+        <note>// 慢查询阀值(ms)</note>
         <str>'slowQuery'</str> => 1000,
     ),
 
