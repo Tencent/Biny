@@ -1,20 +1,28 @@
-## 介绍
+## 概况
+Biny是一款高性能的超轻量级PHP框架
 
-支持跨库连表，条件复合筛选，PK缓存查询等
+遵循 MVC 模式，用于快速开发现代 Web 应用程序
+
+Biny代码简洁优雅，对应用层，数据层，模板渲染层的封装简单易懂，能够快速上手使用
+
+高性能，框架响应时间在1ms以内，单机qps轻松上3000
+
+## 功能介绍
+支持跨库连表，条件复合筛选，查询PK缓存等
 
 同步异步请求分离，类的自动化加载管理
 
 支持Form表单验证，支持事件触发机制
 
-具有sql防注入，html防xss等特性
+支持浏览器端调试，快速定位程序问题和性能瓶颈
 
-高性能，框架响应时间在1ms以内，单机tps轻松上3000
-
-GitHub 地址：[https://github.com/Tencent/Biny](https://github.com/Tencent/Biny)
+具有sql防注入，html自动防xss等特性
 
 ## 使用文档
 
-#[http://www.billge.cc](http://www.billge.cc)
+框架Wiki地址：[http://www.billge.cc](http://www.billge.cc)
+
+GitHub 地址：[https://github.com/Tencent/Biny](https://github.com/Tencent/Biny)
 
 ## FAQ
 

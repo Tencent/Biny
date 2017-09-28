@@ -25,14 +25,18 @@
 <div <?if (TXApp::$base->request->isMobile()){?>class="col-md-12"<?} else {?> class="col-md-9" <?}?> role="main">
     <div class="bs-docs-section">
         <h1 id="overview" class="page-header">概览</h1>
-        <p>Biny是一个轻量级易用性强的web Server框架</p>
+        <p>Biny是一款高性能的超轻量级PHP框架</p>
+        <p>遵循 MVC 模式，用于快速开发现代 Web 应用程序</p>
+        <p>Biny代码简洁优雅，对应用层，数据层，模板渲染层的封装简单易懂，能够快速上手使用</p>
+        <p>高性能，框架响应时间在1ms以内，单机qps轻松上3000</p>
 
         <h2 id="overview-introduce">介绍</h2>
-        <p>支持跨库连表，条件复合筛选，PK缓存查询等</p>
+        <p>支持跨库连表，条件复合筛选，查询PK缓存等</p>
         <p>同步异步请求分离，类的自动化加载管理</p>
         <p>支持Form表单验证，支持事件触发机制</p>
-        <p>具有sql防注入，html防xss等特性</p>
-        <p>高性能，框架响应时间在1ms以内，单机tps轻松上3000</p>
+        <p>支持浏览器端调试，快速定位程序问题和性能瓶颈</p>
+        <p>具有sql防注入，html自动防xss等特性</p>
+        <p>框架 Wiki：<a href="http://www.billge.cc">http://www.billge.cc</a></p>
         <p>GitHub 地址：<a href="https://github.com/Tencent/Biny">https://github.com/Tencent/Biny</a></p>
 
         <h2 id="overview-files">目录结构</h2>
