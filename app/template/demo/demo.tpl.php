@@ -53,7 +53,7 @@
             <p><code>/app/template/</code> 页面渲染层</p>
             <p><code>/config/</code> 框架配置层</p>
             <p><code>/lib/</code> 系统Lib层</p>
-            <p><code>/lib/vendor/</code> 自定义系统Lib层</p>
+            <p><code>/lib/vendor/</code> 自定义Lib层</p>
             <p><code>/logs/</code> 工作日志目录</p>
             <p><code>/plugins/</code> 插件目录</p>
             <p><code>/web/</code> 总执行入口</p>
