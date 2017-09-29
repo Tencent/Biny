@@ -32,7 +32,7 @@ class TXDatabase {
 
 
     /**
-     * @var PDO
+     * @var mysqli
      */
     private $handler;
 
