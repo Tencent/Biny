@@ -74,7 +74,7 @@ class TXMemcache
     }
 
     /**
-     * 调用redis
+     * 调用memcahce
      * @param $method
      * @param $arguments
      * @return mixed
