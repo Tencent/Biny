@@ -1,14 +1,14 @@
 #!/bin/bash
 if [ -z "$1" ]; then
     source ./biny.version
-    cmd=`curl 'https://billge1205.github.io/biny/biny.version'`
+    cmd=`curl 'https://raw.githubusercontent.com/Tencent/Biny/master/biny.version'`
     if [ -z "$cmd" ]; then echo "cannot connect to github"; exit 1; fi
     new=`echo "$cmd" | sed '/^version=/!d;s/.*=//'`
     if [ $new == $version ]
     then
         echo "nothing to do, version is up to date."; exit 1;
     else
-        wget https://codeload.github.com/billge1205/biny/zip/master
+        wget https://codeload.github.com/tencent/biny/zip/master
         unzip -o master -d ./update
         php ./update/biny-master/update/update.php
         rm -f master master.*
