@@ -16,9 +16,6 @@ class demoAction extends baseAction
 //        );
 //    }
 
-    /**
-     * demo首页
-     */
     public function action_index()
     {
         $view = $this->display('demo/demo');

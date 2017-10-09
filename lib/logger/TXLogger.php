@@ -23,7 +23,7 @@ class TXLogger
     public static function instance()
     {
         if (null === self::$_instance) {
-            self::$config = TXConfig::getConfig('logger');
+            self::$config = TXApp::$base->config->get('logger');
             self::$_instance = new self();
         }
 
@@ -198,7 +198,7 @@ class TXLogger
      * @throws TXException
      */
     public static function addError($message, $key='', $level=ERROR){
-        self::$config = TXConfig::getConfig('logger');
+        self::$config = TXApp::$base->config->get('logger');
         $errorLevel = self::$config['errorLevel'];
         if ($errorLevel < $level){
             return;
@@ -228,7 +228,7 @@ class TXLogger
      * @param int $level
      */
     public static function addLog($message, $key='', $level=INFO){
-        self::$config = TXConfig::getConfig('logger');
+        self::$config = TXApp::$base->config->get('logger');
         // 自定义日志方法
         if (isset(self::$config['sendLog']) && is_callable(self::$config['sendLog'])){
             call_user_func_array(self::$config['sendLog'], [$message, $key, isset(self::$LEVELS[$level]) ? self::$LEVELS[$level] : 'INFO']);

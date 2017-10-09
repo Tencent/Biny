@@ -18,14 +18,14 @@ class TXSocket
     public static function instance($name='socket')
     {
         if (!isset(self::$_instance[$name])){
-            $config = TXConfig::getAppConfig($name, 'dns');
+            $config = TXApp::$base->app_config->get($name, 'dns');
             self::$_instance[$name] = new self($config);
         }
         return self::$_instance[$name];
     }
 
     /**
-     * @var PDO
+     * @var resource
      */
     private $handler;
     private $connect;

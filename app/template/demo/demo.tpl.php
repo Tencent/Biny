@@ -453,7 +453,7 @@
         <p><code>/config/exception.php</code> 系统异常配置类</p>
         <p><code>/config/http.php</code> HTTP请求基本错误码</p>
         <p><code>/config/database.php</code> DAO映射配置</p>
-        <p>用户可通过<code>TXConfig::getConfig</code>方法获取</p>
+        <p>用户可通过<code>TXApp::$base->config->get</code>方法获取</p>
         <p>简单例子：</p>
         <pre class="code"><note>/config/config.php</note>
 <sys>return array</sys>(
@@ -461,7 +461,7 @@
 }
 
 <note>// 程序中获取方式 第二个参数为文件名（默认为config可不传）第三个参数为是否使用别名（默认为true）</note>
-TXConfig::<func>getConfig</func>(<str>'session_name'</str>, <str>'config'</str>, <sys>true</sys>);</pre>
+TXApp::<prm>$base</prm>-><prm>config</prm>-><func>get</func>(<str>'session_name'</str>, <str>'config'</str>, <sys>true</sys>);</pre>
 
         <h2 id="config-app">程序配置</h2>
         <p>程序配置目录在<code>/app/config/</code>中</p>
@@ -476,7 +476,7 @@ TXConfig::<func>getConfig</func>(<str>'session_name'</str>, <str>'config'</str>,
 }
 
 <note>// 程序中获取方式 第二个参数为文件名（默认为config可不传）第三个参数为是否使用别名（默认为true）</note>
-TXConfig::<func>getAppConfig</func>(<str>'memcache'</str>, <str>'dns'</str>);</pre>
+TXApp::<prm>$base</prm>-><prm>app_config</prm>-><func>get</func>(<str>'memcache'</str>, <str>'dns'</str>);</pre>
 
         <h2 id="config-env">环境配置</h2>
         <p>系统对不同环境的配置是可以做区分的</p>
@@ -484,12 +484,12 @@ TXConfig::<func>getAppConfig</func>(<str>'memcache'</str>, <str>'dns'</str>);</p
         <pre class="code"><note>// dev pre pub 当前环境</note>
 <sys>defined</sys>(<str>'SYS_ENV'</str>) <sys>or</sys> <sys>define</sys>(<str>'SYS_ENV'</str>, <str>'dev'</str>);</pre>
 
-        <p>当程序调用<code>TXConfig::getConfig</code>时，系统会自动查找对应的配置文件</p>
+        <p>当程序调用<code>TXApp::$base->config->get</code>时，系统会自动查找对应的配置文件</p>
         <pre class="code"><note>// 当前环境dev 会自动查找 /config/config_dev.php文件</note>
-TXConfig::<func>getConfig</func>(<str>'test'</str>, <str>'config'</str>);
+TXApp::<prm>$base</prm>-><prm>config</prm>-><func>get</func>(<str>'test'</str>, <str>'config'</str>);
 
 <note>// 当前环境pub 会自动查找 /config/dns_pub.php文件</note>
-TXConfig::<func>getConfig</func>(<str>'test2'</str>, <str>'dns'</str>);</pre>
+TXApp::<prm>$base</prm>-><prm>config</prm>-><func>get</func>(<str>'test2'</str>, <str>'dns'</str>);</pre>
 
         <p>公用配置文件可以放在不添加环境名的文件中，如<code>/config/config.php</code></p>
         <p>在系统中同时存在<code>config.php</code>和<code>config_dev.php</code>时，带有环境配置的文件内容会覆盖通用配置</p>
@@ -505,10 +505,10 @@ TXConfig::<func>getConfig</func>(<str>'test2'</str>, <str>'dns'</str>);</pre>
 }
 
 <note>// 返回 'dns_dev' </note>
-TXConfig::<func>getAppConfig</func>(<str>'test'</str>, <str>'dns'</str>);
+TXApp::<prm>$base</prm>-><prm>app_config</prm>-><func>get</func>(<str>'test'</str>, <str>'dns'</str>);
 
 <note>// 返回 'dns' </note>
-TXConfig::<func>getAppConfig</func>(<str>'demo'</str>, <str>'dns'</str>);</pre>
+TXApp::<prm>$base</prm>-><prm>app_config</prm>-><func>get</func>(<str>'demo'</str>, <str>'dns'</str>);</pre>
         <p>系统配置和程序配置中的使用方法相同</p>
 
         <h2 id="config-alias">别名使用</h2>
@@ -520,11 +520,11 @@ TXConfig::<func>getAppConfig</func>(<str>'demo'</str>, <str>'dns'</str>);</pre>
 }
 
 <note>// 返回 '/biny/my-path/' </note>
-TXConfig::<func>getConfig</func>(<str>'path'</str>);</pre>
+TXApp::<prm>$base</prm>-><prm>config</prm>-><func>get</func>(<str>'path'</str>);</pre>
 
         <p>用户也可以自定义别名，例如</p>
         <pre class="code"><note>// getConfig 之前执行</note>
-TXConfig::<func>setAlias</func>(<str>'time'</str>, <sys>time</sys>());
+TXApp::<prm>$base</prm>-><prm>config</prm>-><func>setAlias</func>(<str>'time'</str>, <sys>time</sys>());
 
 <note>// config.php</note>
 <sys>return array</sys>(
@@ -532,12 +532,12 @@ TXConfig::<func>setAlias</func>(<str>'time'</str>, <sys>time</sys>());
 }
 
 <note>// 返回 '/biny/my-path/?time=1461141347'</note>
-TXConfig::<func>getConfig</func>(<str>'path'</str>);
+TXApp::<prm>$base</prm>-><prm>config</prm>-><func>get</func>(<str>'path'</str>);
 
 <note>// 返回 '@web@/my-path/?time=@time@'</note>
-TXConfig::<func>getConfig</func>(<str>'path'</str>, <str>'config'</str>, <sys>false</sys>);</pre>
+TXApp::<prm>$base</prm>-><prm>config</prm>-><func>get</func>(<str>'path'</str>, <str>'config'</str>, <sys>false</sys>);</pre>
 
-        <p>当然如果需要避免别名转义，也可以在<code>TXConfig::getConfig</code>第三个参数传<code>false</code>，就不会执行别名转义了。</p>
+        <p>当然如果需要避免别名转义，也可以在<code>TXApp::$base->config->get</code>第三个参数传<code>false</code>，就不会执行别名转义了。</p>
     </div>
 
     <div class="bs-docs-section">

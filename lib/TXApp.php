@@ -16,6 +16,8 @@ include __DIR__.'/exception/TXException.php';
 
 /**
  * Framework App核心
+ * @property TXConfig $config
+ * @property TXConfig $app_config
  * @property TXRequest $request
  * @property TXSession $session
  * @property TXRouter $router
@@ -175,6 +177,9 @@ class TXApp
         switch ($name){
             case 'person':
                 return Person::get();
+            case 'config':
+            case 'app_config':
+                return TXConfig::instance($name);
             case 'request':
                 return TXRequest::getInstance();
             case 'redis':

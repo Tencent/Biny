@@ -30,7 +30,7 @@ class TXRedis
     public static function instance($name='redis')
     {
         if (!isset(self::$_instance[$name])){
-            $config = TXConfig::getAppConfig($name, 'dns');
+            $config = TXApp::$base->app_config->get($name, 'dns');
             self::$_instance[$name] = new self($config);
         }
         return self::$_instance[$name];
@@ -42,7 +42,7 @@ class TXRedis
      */
     private function __construct($config)
     {
-        $this->config = TXConfig::getConfig('cache');
+        $this->config = TXApp::$base->config->get('cache');
         $this->connect = $config;
     }
 

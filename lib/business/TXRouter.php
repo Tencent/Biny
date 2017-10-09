@@ -15,7 +15,7 @@ class TXRouter {
 
     function __construct()
     {
-        $this->routerInfo = TXConfig::getConfig('router');
+        $this->routerInfo = TXApp::$base->config->get('router');
         self::$ARGS = $_GET;
     }
 
@@ -47,7 +47,8 @@ class TXRouter {
             echo 'Source File Not Found';
             exit;
         }
-        TXConfig::setAlias('web', $this->rootPath);
+        TXApp::$base->config->setAlias('web', $this->rootPath);
+        TXApp::$base->app_config->setAlias('web', $this->rootPath);
         $pathRoot = strpos($_SERVER['REQUEST_URI'], '?') ? strstr($_SERVER['REQUEST_URI'], '?', true) : $_SERVER['REQUEST_URI'];
         if ($this->rootPath){
             $len = strpos($pathRoot, $this->rootPath) + strlen($this->rootPath);

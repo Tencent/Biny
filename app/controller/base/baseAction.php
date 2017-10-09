@@ -14,7 +14,7 @@ class baseAction extends TXAction
     public function display($view, $array=array(), $objects=array())
     {
         $objects = array_merge(array(
-            'webRoot' => TXConfig::getAppConfig('webRoot'),
+            'webRoot' => TXApp::$base->app_config->get('webRoot'),
         ), $objects);
         return parent::display($view, $array, $objects);
     }

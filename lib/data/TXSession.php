@@ -28,7 +28,7 @@ class TXSession
 
     private function __construct()
     {
-        $this->config = TXConfig::getConfig('cache')['session'];
+        $this->config = TXApp::$base->config->get('cache')['session'];
     }
 
     /**
@@ -41,7 +41,7 @@ class TXSession
     }
 
     private function start(){
-        if ($cf = TXConfig::getAppConfig($this->config['save_handler'], 'dns')){
+        if ($cf = TXApp::$base->app_config->get($this->config['save_handler'], 'dns')){
             ini_set("session.save_handler", $this->config['save_handler']);
             ini_set("session.save_path", 'tcp://' . $cf['host'] . ':' . $cf['port']);
         }

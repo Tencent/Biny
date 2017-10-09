@@ -35,11 +35,11 @@ class TXSingleDAO extends TXDAO
     public function setDbTable($table)
     {
         if (null === $this->database){
-            if (is_string($this->dbConfig) && $db = TXConfig::getAppConfig($this->dbConfig, 'dns')['database']){
+            if (is_string($this->dbConfig) && $db = TXApp::$base->app_config->get($this->dbConfig, 'dns')['database']){
                 $this->database = $db;
             } else if (is_array($this->dbConfig)){
-                $master = TXConfig::getAppConfig($this->dbConfig[0], 'dns')['database'];
-                $slave = TXConfig::getAppConfig($this->dbConfig[1], 'dns')['database'];
+                $master = TXApp::$base->app_config->get($this->dbConfig[0], 'dns')['database'];
+                $slave = TXApp::$base->app_config->get($this->dbConfig[1], 'dns')['database'];
                 if ($master === $slave){
                     $this->database = $master;
                 } else {

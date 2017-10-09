@@ -10,12 +10,13 @@ class baseDAO extends TXSingleDAO
 {
     protected $_pk;
     protected $_pkCache = false;
+    private $cacheKey;
 
     public function __construct()
     {
         parent::__construct();
         if ($this->_pkCache){
-            $config = TXConfig::getConfig('cache');
+            $config = TXApp::$base->config->get('cache');
             $this->cacheKey = sprintf($config['pkCache'], substr(get_called_class(), 0, -3));
         }
     }

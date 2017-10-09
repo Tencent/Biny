@@ -11,7 +11,7 @@
 <?}?>
 
 <div class="messageImage">
-    <img src="<?=TXConfig::getConfig('webRoot')?>/static/images/source/error.gif" />
+    <img src="<?=TXApp::$base->config->get('webRoot')?>/static/images/source/error.gif" />
 </div>
 <div class="messageInfo"><?=$PRM['msg']?></div>
 <div class="messageUrl">

@@ -31,7 +31,7 @@ class TXResponse {
         $this->view = $view;
         $this->params = $params;
         $this->objects = $objects;
-        $this->config = TXConfig::getConfig('response');
+        $this->config = TXApp::$base->config->get('response');
     }
 
     /**

@@ -19,7 +19,7 @@ class TXAutoload
      */
     public static function init()
     {
-        self::$config = TXConfig::getConfig('autoload');
+        self::$config = TXApp::$base->config->get('autoload');
         self::$autoPath = TXApp::$base_root.DS.self::$config['autoPath'];
         if (is_readable(self::$autoPath)){
             self::$loaders = require(self::$autoPath);

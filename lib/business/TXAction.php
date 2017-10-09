@@ -53,7 +53,7 @@ class TXAction
             return $this->display('Main/maintenance');
         }
         if ($this->csrfValidate && !TXApp::$base->request->validateCsrfToken()){
-            header(TXConfig::getConfig(401, 'http'));
+            header(TXApp::$base->config->get(401, 'http'));
             echo $this->error("Unauthorized");
             exit;
         }
@@ -201,7 +201,7 @@ class TXAction
      */
     public function json($data, $encode=true)
     {
-        $config = TXConfig::getConfig('response');
+        $config = TXApp::$base->config->get('response');
         if ($config['jsonContentType']){
             TXApp::$base->request->setContentType($config['jsonContentType']);
         }
@@ -229,7 +229,7 @@ class TXAction
     {
         TXEvent::trigger(onError, [$msg]);
         if (!$json && (TXApp::$base->request->isShowTpl() || !TXApp::$base->request->isAjax())){
-            $config = TXConfig::getConfig('exception');
+            $config = TXApp::$base->config->get('exception');
             return $this->display($config['errorTpl'], ['msg'=> $msg]);
         } else {
             $data = ["flag" => false, "error" => $msg];

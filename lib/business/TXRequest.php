@@ -50,7 +50,7 @@ class TXRequest {
 
     private function __construct($module, $method=null)
     {
-        $this->config = TXConfig::getConfig('request');
+        $this->config = TXApp::$base->config->get('request');
         $this->id = crc32(microtime(true));
         $this->module = $module;
         $this->method = $method ?: 'index';

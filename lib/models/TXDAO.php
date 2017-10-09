@@ -44,16 +44,16 @@ class TXDAO
             return true;
         }
         if ($tMaster !== $dMaster){
-            $tConfig = TXConfig::getAppConfig($tMaster, 'dns');
-            $dConfig = TXConfig::getAppConfig($dMaster, 'dns');
+            $tConfig = TXApp::$base->app_config->get($tMaster, 'dns');
+            $dConfig = TXApp::$base->app_config->get($dMaster, 'dns');
             unset($tConfig['database']);
             unset($dConfig['database']);
             if (array_diff($tConfig, $dConfig)){
                 return false;
             }
         } else if ($tSlave !== $dSlave){
-            $tConfig = TXConfig::getAppConfig($tSlave, 'dns');
-            $dConfig = TXConfig::getAppConfig($dSlave, 'dns');
+            $tConfig = TXApp::$base->app_config->get($tSlave, 'dns');
+            $dConfig = TXApp::$base->app_config->get($dSlave, 'dns');
             unset($tConfig['database']);
             unset($dConfig['database']);
             if (array_diff($tConfig, $dConfig)){

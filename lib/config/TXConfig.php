@@ -9,20 +9,42 @@
  */
 class TXConfig
 {
-    private static $cfgCaches = [];
+    private static $instance = [];
+    private $name;
+    private $cfgCaches = [];
+    private $appcfgCaches = [];
+    private $alias = [];
 
-    private static $appcfgCaches = [];
+    /**
+     * 单例
+     * @return TXConfig
+     */
+    public static function instance($name)
+    {
+        if (!isset(self::$instance[$name])){
+            self::$instance[$name] = new self($name);
+        }
+        return self::$instance[$name];
+    }
 
-    private static $alias = [];
+    /**
+     * 构造
+     * TXConfig constructor.
+     * @param $name
+     */
+    private function __construct($name)
+    {
+        $this->name = $name;
+    }
 
     /**
      * Load config file
      * @param string $module
      * @throws TXException
      */
-    private static function loadConfig($module)
+    private function loadConfig($module)
     {
-        if (!isset(self::$cfgCaches[$module])) {
+        if (!isset($this->cfgCaches[$module])) {
             $path = TXApp::$base_root . DS . 'config' . DS . $module . '.php';
 
             $n_module = $module. (ENV_DEV ? '_dev' : (ENV_PRE ? '_pre' : (ENV_PUB ? '_pub' : '')));
@@ -30,13 +52,13 @@ class TXConfig
             if (is_readable($path) || is_readable($n_path)) {
                 $config = is_readable($path) ? require($path) : [];
                 $config = is_readable($n_path) ? array_merge($config, require($n_path)) : $config;
-                self::$cfgCaches[$module] = $config;
+                $this->cfgCaches[$module] = $config;
             } else {
                 throw new TXException(1002, [$path]);
             }
         }
 
-        return self::$cfgCaches[$module];
+        return $this->cfgCaches[$module];
     }
 
     /**
@@ -44,9 +66,9 @@ class TXConfig
      * @return mixed
      * @throws TXException
      */
-    private static function loadAppConfig($module)
+    private function loadAppConfig($module)
     {
-        if (!isset(self::$appcfgCaches[$module])) {
+        if (!isset($this->appcfgCaches[$module])) {
             $path = TXApp::$app_root . DS . 'config' . DS . $module . '.php';
 
             $n_module = $module. (ENV_DEV ? '_dev' : (ENV_PRE ? '_pre' : (ENV_PUB ? '_pub' : '')));
@@ -54,13 +76,13 @@ class TXConfig
             if (is_readable($path) || is_readable($n_path)) {
                 $config = is_readable($path) ? require($path) : [];
                 $config = is_readable($n_path) ? array_merge($config, require($n_path)) : $config;
-                self::$appcfgCaches[$module] = $config;
+                $this->appcfgCaches[$module] = $config;
             } else {
                 throw new TXException(1002, [$path]);
             }
         }
 
-        return self::$appcfgCaches[$module];
+        return $this->appcfgCaches[$module];
     }
 
     /**
@@ -70,30 +92,11 @@ class TXConfig
      * @param bool $alias
      * @return mixed|null
      */
-    public static function getConfig($key, $module='config', $alias=true)
+    public function get($key, $module='config', $alias=true)
     {
-        self::loadConfig($module);
-
-        if (isset(self::$cfgCaches[$module][$key])) {
-            return $alias ? self::getAlias(self::$cfgCaches[$module][$key]) : self::$cfgCaches[$module][$key];
-        } else {
-            return null;
-        }
-    }
-
-    /**
-     * get app config
-     * @param $key
-     * @param string $module
-     * @param bool $alias
-     * @return mixed|null
-     */
-    public static function getAppConfig($key, $module='config', $alias=true)
-    {
-        self::loadAppConfig($module);
-
-        if (isset(self::$appcfgCaches[$module][$key])) {
-            return $alias ? self::getAlias(self::$appcfgCaches[$module][$key]) : self::$appcfgCaches[$module][$key];
+        $config = $this->name === "config" ? $this->loadConfig($module) : $this->loadAppConfig($module);
+        if (isset($config[$key])) {
+            return $alias ? $this->getAlias($config[$key]) : $config[$key];
         } else {
             return null;
         }
@@ -104,9 +107,9 @@ class TXConfig
      * @param $key
      * @param $value
      */
-    public static function setAlias($key, $value)
+    public function setAlias($key, $value)
     {
-        self::$alias["@{$key}@"] = $value;
+        $this->alias["@{$key}@"] = $value;
     }
 
     /**
@@ -114,10 +117,10 @@ class TXConfig
      * @param $value
      * @return mixed
      */
-    private static function getAlias($value)
+    private function getAlias($value)
     {
-        if (self::$alias && is_string($value)){
-            $value = str_replace(array_keys(self::$alias), array_values(self::$alias), $value);
+        if ($this->alias && is_string($value)){
+            $value = str_replace(array_keys($this->alias), array_values($this->alias), $value);
             return $value;
         } else {
             return $value;

@@ -30,7 +30,7 @@ class TXFactory {
             //可以不写DAO文件自动建立对象
             if (substr($class, -3) == 'DAO') {
                 $key = substr($class, 0, -3);
-                $dbConfig = TXConfig::getConfig('dbConfig', 'database');
+                $dbConfig = TXApp::$base->config->get('dbConfig', 'database');
                 if (isset($dbConfig[$key])){
                     $dao = new TXSingleDAO($dbConfig[$key], $class);
                     self::$objects[$alias] = $dao;

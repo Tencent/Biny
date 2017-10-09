@@ -19,7 +19,7 @@ class TXException extends ErrorException
      */
     public function __construct($code, $params=[], $html="500")
     {
-        $this->config = TXConfig::getConfig('exception');
+        $this->config = TXApp::$base->config->get('exception');
         $message = self::fmt_code($code, $params);
         TXEvent::trigger(onException, [$code, [$message, $this->getTraceAsString()]]);
         if (class_exists('TXDatabase')){
@@ -30,7 +30,7 @@ class TXException extends ErrorException
                 echo "<b>Fatal error</b>:  $message in <b>{$this->getFile()}</b>:<b>{$this->getLine()}</b>\nStack trace:\n{$this->getTraceAsString()}";
                 exit;
             }
-            if ($httpCode = TXConfig::getConfig($html, 'http')){
+            if ($httpCode = TXApp::$base->config->get($html, 'http')){
                 header($httpCode);
             }
             if (SYS_DEBUG){
@@ -62,7 +62,7 @@ class TXException extends ErrorException
     public static function fmt_code($code, $params=[])
     {
         try {
-            $msgtpl = TXConfig::getConfig($code, 'exception');
+            $msgtpl = TXApp::$base->config->get($code, 'exception');
         } catch (TXException $ex) { //防止异常的死循环
             $msgtpl = $ex->getMessage();
         }

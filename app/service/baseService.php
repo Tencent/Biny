@@ -1,7 +1,7 @@
 <?php
 /**
  * 基础类 service
- * @author geyuchen
+ * @author billge
  */
 class baseService extends TXService
 {

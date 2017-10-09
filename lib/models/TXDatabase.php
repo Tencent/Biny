@@ -18,7 +18,7 @@ class TXDatabase {
     public static function instance($name)
     {
         if (!isset(self::$instance[$name])) {
-            $dbconfig = TXConfig::getAppConfig($name, 'dns');
+            $dbconfig = TXApp::$base->app_config->get($name, 'dns');
 
             self::$instance[$name] = new self($dbconfig);
         }
@@ -123,7 +123,7 @@ class TXDatabase {
         $start = microtime(true);
         $rs = mysqli_query($this->handler, $sql);
         $time = (microtime(true)-$start)*1000;
-        $config = TXConfig::getConfig('logger');
+        $config = TXApp::$base->config->get('logger');
         if ($time > ($config['slowQuery'] ?: 1000)){
             TXLogger::addError(sprintf('Slow Query: %s [%sms]', $sql, $time), 'SQL', WARNING);
             TXLogger::warn(sprintf('Slow Query: %s [%sms]', $sql, $time));
