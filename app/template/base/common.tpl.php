@@ -12,9 +12,9 @@
     <meta name="description" content="<?=$this->encode($this->descript) ?: "一款轻量级的PHP框架，兼容各种模式的web架构。"?>">
 
     <title><?=$this->encode($this->title) ?: "Biny"?></title>
-    <link rel="icon" href="<?=$CDN_ROOT?>static/images/icon/favicon.ico" type="image/x-icon" />
+    <link rel="icon" href="<?=$webRoot?>/static/images/icon/favicon.ico" type="image/x-icon" />
 
-    <link href="<?=$CDN_ROOT?>static/css/bootstrap.css" rel="stylesheet">
-    <link href="<?=$CDN_ROOT?>static/css/main.css" rel="stylesheet" type="text/css"/>
+    <link href="<?=$webRoot?>/static/css/bootstrap.css" rel="stylesheet">
+    <link href="<?=$webRoot?>/static/css/main.css" rel="stylesheet" type="text/css"/>
 
 </head>

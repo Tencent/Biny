@@ -1,6 +1,6 @@
 <? include TXApp::$view_root . "/base/common.tpl.php" ?>
 <? include TXApp::$view_root . "/base/header.tpl.php" ?>
-<link href="<?=$CDN_ROOT?>static/css/demo.css" rel="stylesheet" type="text/css"/>
+<link href="<?=$webRoot?>/static/css/demo.css" rel="stylesheet" type="text/css"/>
 
 <a id="skippy" class="sr-only sr-only-focusable" href="#content"><div class="container"><span class="skiplink-text">Skip to main content</span></div></a>
 
@@ -1638,4 +1638,4 @@ TXApp::<prm>$base</prm>-><prm>session</prm>-><func>clear</func>();</pre>
 </div>
 
 <? include TXApp::$view_root . "/base/footer.tpl.php" ?>
-<script type="text/javascript" src="<?=$CDN_ROOT?>static/js/demo.js"></script>
+<script type="text/javascript" src="<?=$webRoot?>/static/js/demo.js"></script>

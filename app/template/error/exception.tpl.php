@@ -2,7 +2,7 @@
     div {text-align: center}
 </style>
 <div style="margin-top: 100px">
-    <img src="<?=TXConfig::getConfig('CDN_ROOT')?>static/images/source/error.gif" />
+    <img src="<?=TXConfig::getConfig('webRoot')?>/static/images/source/error.gif" />
 </div>
 <div><?=$PRM['msg']?></div>
 <div>
