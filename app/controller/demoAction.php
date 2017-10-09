@@ -2,6 +2,7 @@
 /**
  * 演示Action
  * @property userDAO $userDAO
+ * @property testService $testService
  */
 class demoAction extends baseAction
 {

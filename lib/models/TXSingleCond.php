@@ -34,7 +34,7 @@ class TXSingleCond extends TXCond
      */
     public function limit($len, $start=0)
     {
-        $this->limit = is_array($len) ? $len : array(intval($start), intval($len));
+        $this->limit = is_array($len) ? $len : [intval($start), intval($len)];
         return $this;
     }
 
@@ -48,7 +48,7 @@ class TXSingleCond extends TXCond
         foreach ($orderby as $key => $val){
             if (is_array($val)){
                 if (!isset($this->orderby[$key])){
-                    $this->orderby[$key] = array();
+                    $this->orderby[$key] = [];
                 }
                 if (is_string($this->orderby[$key])){
                     $this->orderby[$key] = $val;
@@ -75,7 +75,7 @@ class TXSingleCond extends TXCond
         foreach ($groupby as $key => $val){
             if (is_array($val)){
                 if (!isset($this->groupby[$key])){
-                    $this->groupby[$key] = array();
+                    $this->groupby[$key] = [];
                 }
                 foreach ($val as $k => $v){
                     $this->groupby[$key][$k] = $v;
@@ -112,7 +112,7 @@ class TXSingleCond extends TXCond
         foreach ($additions as $key => $val){
             if (is_array($val)){
                 if (!isset($this->additions[$key])){
-                    $this->additions[$key] = array();
+                    $this->additions[$key] = [];
                 }
                 foreach ($val as $k => $v){
                     $this->additions[$key][$k] = $v;

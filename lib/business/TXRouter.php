@@ -64,7 +64,7 @@ class TXRouter {
         }
         $module = isset($pathInfo[0]) ? $pathInfo[0] : null;
         $method = isset($pathInfo[1]) ? $pathInfo[1] : null;
-        return array($module, $method);
+        return [$module, $method];
     }
 
     /**

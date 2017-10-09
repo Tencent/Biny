@@ -28,7 +28,7 @@ class TXAutoload
             self::loading();
         }
 
-        if (false === spl_autoload_register(array('TXAutoload', 'load'))) {
+        if (false === spl_autoload_register(['TXAutoload', 'load'])) {
             throw new TXException(1004);
         }
     }
@@ -41,7 +41,7 @@ class TXAutoload
         $lastTime = is_readable(self::$autoPath) ? filemtime(self::$autoPath) : false;
         // 5秒缓存不更新
         if (!self::$loaders || !$lastTime || time()-$lastTime > self::$config['autoSkipLoad']){
-            self::$loaders = array();
+            self::$loaders = [];
             self::getLoads(__DIR__);
             self::getLoads(TXApp::$extends_root);
             self::getLoads(TXApp::$app_root. DS . "controller");
@@ -55,7 +55,7 @@ class TXAutoload
             if (is_writeable(self::$autoPath)) {
                 file_put_contents(self::$autoPath, "<?php\nreturn " . var_export(self::$loaders, true) . ';', LOCK_EX);
             } else {
-                throw new TXException(1005, array(self::$autoPath));
+                throw new TXException(1005, [self::$autoPath]);
             }
         }
     }
@@ -94,12 +94,12 @@ class TXAutoload
             if (is_readable($path)) {
                 include $path;
             } else {
-                throw new TXException(1003, array($class));
+                throw new TXException(1003, [$class]);
             }
         } else if (substr($class, -6) == 'Action') {
-            throw new TXException(1003, array($class), 404);
+            throw new TXException(1003, [$class], 404);
         } else if (self::$config['autoThrow']){
-            throw new TXException(1003, array($class));
+            throw new TXException(1003, [$class]);
         }
     }
 }

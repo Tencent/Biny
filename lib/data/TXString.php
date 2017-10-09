@@ -71,7 +71,7 @@ class TXString
      */
     public static function recursionEncode(&$array, $encode=true)
     {
-        $newArray = array();
+        $newArray = [];
         foreach ($array as $key => $arr){
             if (is_array($arr)){
                 $arr = self::recursionEncode($arr, $encode);

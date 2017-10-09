@@ -21,7 +21,7 @@ class TXJSONResponse {
         if (SYS_CONSOLE && TXLogger::$ConsoleOut){
             TXLogger::format();
             $data['__logs'] = TXLogger::$ConsoleOut;
-            TXLogger::$ConsoleOut = array();
+            TXLogger::$ConsoleOut = [];
         }
         $this->data = $data;
     }

@@ -68,13 +68,13 @@ class TXSocket
 
         }
         if ($config['timeout']){
-            socket_set_option($this->handler, SOL_SOCKET, SO_RCVTIMEO, array("sec"=>$config['timeout']/1000, "usec"=>$config['timeout']%1000));
+            socket_set_option($this->handler, SOL_SOCKET, SO_RCVTIMEO, ["sec"=>$config['timeout']/1000, "usec"=>$config['timeout']%1000]);
         }
         if (@socket_connect($this->handler, $config['host'], $config['port']) === false) {
             if ($autoThrow){
-                throw new TXException(4002, array($config['host'], $config['port']));
+                throw new TXException(4002, [$config['host'], $config['port']]);
             } else {
-                TXLogger::addError(TXException::fmt_code(4002, array($config['host'], $config['port'])), 'SOCKET', WARNING);
+                TXLogger::addError(TXException::fmt_code(4002, [$config['host'], $config['port']]), 'SOCKET', WARNING);
                 return false;
             }
         }

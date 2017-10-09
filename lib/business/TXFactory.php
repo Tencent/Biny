@@ -13,7 +13,7 @@ class TXFactory {
      *
      * @var array
      */
-    private static $objects = array();
+    private static $objects = [];
 
     /**
      * dynamic create object

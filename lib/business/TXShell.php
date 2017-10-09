@@ -73,7 +73,7 @@ class TXShell
      */
     public function error($msg="error")
     {
-        TXEvent::trigger(onError, array($msg));
+        TXEvent::trigger(onError, [$msg]);
         TXLogger::addError($msg);
         return $msg;
     }

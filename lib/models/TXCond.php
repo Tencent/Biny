@@ -23,11 +23,11 @@ class TXCond
 {
     protected $DAO;
     protected $where;
-    protected $limit=array();
-    protected $orderby=array();
-    protected $additions=array();
-    protected $groupby=array();
-    protected $having=array();
+    protected $limit=[];
+    protected $orderby=[];
+    protected $additions=[];
+    protected $groupby=[];
+    protected $having=[];
 
     protected $methods = ['distinct', 'find', 'count', 'update', 'addCount'];
     protected $calcs = ['max', 'min', 'sum', 'avg', 'count'];
@@ -74,7 +74,7 @@ class TXCond
             $args[] = $this;
             return call_user_func_array([$this->DAO, $method], $args);
         } else {
-            throw new TXException(3009, array($method, __CLASS__));
+            throw new TXException(3009, [$method, __CLASS__]);
         }
     }
 
@@ -106,7 +106,7 @@ class TXCond
      * @param int $mode
      * @return array
      */
-    public function select($sql, $querys=array(), $mode=TXDatabase::FETCH_TYPE_ALL)
+    public function select($sql, $querys=[], $mode=TXDatabase::FETCH_TYPE_ALL)
     {
         return $this->DAO->select($sql, $querys, $mode, $this);
     }
@@ -117,7 +117,7 @@ class TXCond
      * @param $querys
      * @return array
      */
-    public function command($sql, $querys=array())
+    public function command($sql, $querys=[])
     {
         return $this->DAO->command($sql, $querys, $this);
     }
@@ -127,7 +127,7 @@ class TXCond
      */
     public function __toLogger()
     {
-        return array(
+        return [
             'DAO' => $this->DAO->getDAO(),
             'where' => $this->where,
             'limit' => $this->limit,
@@ -135,6 +135,6 @@ class TXCond
             'additions' => $this->additions,
             'groupby' => $this->groupby,
             'having' => $this->having,
-        );
+        ];
     }
 }

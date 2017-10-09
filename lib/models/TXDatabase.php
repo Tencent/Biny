@@ -39,14 +39,14 @@ class TXDatabase {
     public function __construct($config)
     {
         if (!$config || !isset($config['host']) || !isset($config['user']) || !isset($config['password']) || !isset($config['port'])){
-            throw new TXException(3001, array('unKnown'));
+            throw new TXException(3001, ['unKnown']);
         }
         if (isset($config['keep-alive']) && $config['keep-alive']){
             $config['host'] = 'p:'.$config['host'];
         }
         $this->handler = mysqli_connect($config['host'], $config['user'], $config['password'], '', $config['port']);
         if (!$this->handler) {
-            throw new TXException(3001, array($config['host']));
+            throw new TXException(3001, [$config['host']]);
         }
         $this->handler->autocommit(self::$autocommit);
         $this->handler->options(MYSQLI_OPT_INT_AND_FLOAT_NATIVE, 1);
@@ -130,7 +130,7 @@ class TXDatabase {
         }
         if ($rs) {
             if ($mode == self::FETCH_TYPE_ALL) {
-                $result = array();
+                $result = [];
                 while($row = mysqli_fetch_assoc($rs)) {
                     if ($key){
                         $result[$row[$key]] = $row;

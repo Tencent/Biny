@@ -61,7 +61,7 @@ class TXMemcache
             $fd = $this->handler->connect($config['host'], $config['port']);
         }
         if (!$fd){
-            throw new TXException(4004, array($config['host'], $config['port']));
+            throw new TXException(4004, [$config['host'], $config['port']]);
         }
     }
 
@@ -84,6 +84,6 @@ class TXMemcache
         if (!$this->handler){
             $this->connect();
         }
-        return call_user_func_array(array($this->handler, $method), $arguments);
+        return call_user_func_array([$this->handler, $method], $arguments);
     }
 }

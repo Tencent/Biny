@@ -10,7 +10,7 @@
 class TXLogger
 {
     private static $_instance = null;
-    private static $config = array();
+    private static $config = [];
 
     private static $LEVELS = [
         INFO => 'INFO',
@@ -30,7 +30,7 @@ class TXLogger
         return self::$_instance;
     }
 
-    public static $ConsoleOut = array();
+    public static $ConsoleOut = [];
 
     /**
      * 计算内存消耗
@@ -39,7 +39,7 @@ class TXLogger
      */
     private static function convert($size)
     {
-        $unit=array('b','kb','mb','gb','tb','pb');
+        $unit=['b','kb','mb','gb','tb','pb'];
         return @round($size/pow(1024,($i=floor(log($size,1024)))),2).' '.$unit[$i];
     }
 
@@ -61,7 +61,7 @@ class TXLogger
      */
     protected function logger($message, $key, $level="info")
     {
-        self::$ConsoleOut[] = array('value' => $message, 'key' => $key, 'type' => $level);
+        self::$ConsoleOut[] = ['value' => $message, 'key' => $key, 'type' => $level];
     }
 
     public static function log($message, $key="phpLogs")
@@ -171,13 +171,13 @@ class TXLogger
                         $value = json_encode($value);
                         $message = sprintf('console.%s("%s => ", %s);', $type, $key, $value ?: "false");
                     } else {
-                        $message = sprintf('console.%s("%s => ", "%s");', $type, $key, addslashes(str_replace(array("\r\n", "\r", "\n"), "", $value)));
+                        $message = sprintf('console.%s("%s => ", "%s");', $type, $key, addslashes(str_replace(["\r\n", "\r", "\n"], "", $value)));
                     }
                     echo $message."\n";
                 }
                 echo "</script>";
             }
-            self::$ConsoleOut = array();
+            self::$ConsoleOut = [];
         }
     }
 

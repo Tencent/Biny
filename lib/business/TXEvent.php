@@ -22,7 +22,7 @@ class TXEvent
      * 事件观察者
      * @var array
      */
-    private static $monitors = array();
+    private static $monitors = [];
 
     /**
      * 获取form字段
@@ -51,7 +51,7 @@ class TXEvent
             throw new TXException(5003, isset($method[1]) ? $method[1] : 'null');
         }
         $fh = ++self::$fh;
-        self::$monitors[$event][$fh] = array('m'=>$method, 't'=>$times);
+        self::$monitors[$event][$fh] = ['m'=>$method, 't'=>$times];
         return $fh;
     }
 
@@ -106,7 +106,7 @@ class TXEvent
      * @param array $params
      * @return bool
      */
-    public static function trigger($event, $params=array())
+    public static function trigger($event, $params=[])
     {
         if (!isset(self::$monitors[$event])){
             return false;

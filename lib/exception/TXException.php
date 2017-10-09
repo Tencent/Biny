@@ -17,11 +17,11 @@ class TXException extends ErrorException
      * @param array $params
      * @param string $html
      */
-    public function __construct($code, $params=array(), $html="500")
+    public function __construct($code, $params=[], $html="500")
     {
         $this->config = TXConfig::getConfig('exception');
         $message = self::fmt_code($code, $params);
-        TXEvent::trigger(onException, array($code, array($message, $this->getTraceAsString())));
+        TXEvent::trigger(onException, [$code, [$message, $this->getTraceAsString()]]);
         if (class_exists('TXDatabase')){
             TXDatabase::rollback();
         }
@@ -39,9 +39,9 @@ class TXException extends ErrorException
 
             } else {
                 if (TXApp::$base->request->isShowTpl() || !TXApp::$base->request->isAjax()){
-                    echo new TXResponse($this->config["exceptionTpl"], array('msg'=>$this->config['messages'][$html] ?: "系统数据异常：$html"), $params);
+                    echo new TXResponse($this->config["exceptionTpl"], ['msg'=>$this->config['messages'][$html] ?: "系统数据异常：$html"], $params);
                 } else {
-                    $data = array("flag" => false, "error" => $this->config['messages'][$html] ?: "系统数据异常：$html");
+                    $data = ["flag" => false, "error" => $this->config['messages'][$html] ?: "系统数据异常：$html"];
                     echo new TXJSONResponse($data);
                 }
             }
@@ -59,7 +59,7 @@ class TXException extends ErrorException
      * @param array $params
      * @return string
      */
-    public static function fmt_code($code, $params=array())
+    public static function fmt_code($code, $params=[])
     {
         try {
             $msgtpl = TXConfig::getConfig($code, 'exception');

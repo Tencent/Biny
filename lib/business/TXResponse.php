@@ -26,7 +26,7 @@ class TXResponse {
      * @param array $params
      * @param array $objects 直接引用对象
      */
-    public function __construct($view, $params = array(), $objects=array())
+    public function __construct($view, $params=[], $objects=[])
     {
         $this->view = $view;
         $this->params = $params;

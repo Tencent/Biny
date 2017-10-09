@@ -42,7 +42,7 @@ class TXDoubleDAO extends TXDAO
     {
         $this->dbConfig = $db;
         if (count($relates) !== count($DAOs)-1){
-            throw new TXException(3002, array(json_encode($DAOs)));
+            throw new TXException(3002, [json_encode($DAOs)]);
         }
         $this->DAOs = $DAOs;
         $this->doubles = array_keys($DAOs);
@@ -150,7 +150,7 @@ class TXDoubleDAO extends TXDAO
             return '';
         }
         $doubles = $this->doubles;
-        $where = array();
+        $where = [];
         foreach ($conds as $k => $cond){
             if (is_string($k) && in_array($k, $doubles)){
                 $table = $k;
@@ -238,7 +238,7 @@ class TXDoubleDAO extends TXDAO
      * @return string
      * @throws TXException
      */
-    protected function buildFields($fields, $group=array()){
+    protected function buildFields($fields, $group=[]){
         if (is_array($fields)){
             $temps = [];
             foreach ($fields as $k => $field){
@@ -281,7 +281,7 @@ class TXDoubleDAO extends TXDAO
                 }
                 foreach ($values as $ck => $vals){
                     if (!in_array(strtolower($ck), $this->calcs)){
-                        throw new TXException(3011, array($ck));
+                        throw new TXException(3011, [$ck]);
                     }
                     foreach ($vals as $k => $value){
                         $value = $this->real_escape_string($value);
@@ -313,7 +313,7 @@ class TXDoubleDAO extends TXDAO
      * @return string
      */
     protected function buildOrderBy($orderBys){
-        $orders = array();
+        $orders = [];
         foreach ($orderBys as $k => $orderBy){
             if (is_string($k) && in_array($k, $this->doubles)){
                 $table = $k;
@@ -325,13 +325,13 @@ class TXDoubleDAO extends TXDAO
                 if (is_array($orderBy)){
                     $asc = isset($orderBy[0]) ? $orderBy[0] : 'ASC';
                     $code = isset($orderBy[1]) ? $orderBy[1] : 'gbk';
-                    if (!in_array(strtoupper($asc), array('ASC', 'DESC'))){
+                    if (!in_array(strtoupper($asc), ['ASC', 'DESC'])){
                         TXLogger::error("order must be ASC/DESC, {$asc} given", 'sql Error');
                         continue;
                     }
                     $orders[] = "CONVERT(`{$k}` USING {$code}) $asc";
                 } else {
-                    if (!in_array(strtoupper($orderBy), array('ASC', 'DESC'))){
+                    if (!in_array(strtoupper($orderBy), ['ASC', 'DESC'])){
                         TXLogger::error("order must be ASC/DESC, {$orderBy} given", 'sql Error');
                         continue;
                     }
@@ -347,13 +347,13 @@ class TXDoubleDAO extends TXDAO
                     $field = $table.".`".$key.'`';
                     $asc = isset($val[0]) ? $val[0] : 'ASC';
                     $code = isset($val[1]) ? $val[1] : 'gbk';
-                    if (!in_array(strtoupper($asc), array('ASC', 'DESC'))){
+                    if (!in_array(strtoupper($asc), ['ASC', 'DESC'])){
                         TXLogger::error("order must be ASC/DESC, {$asc} given", 'sql Error');
                         continue;
                     }
                     $orders[] = "CONVERT({$field} USING {$code}) $asc";
                 } else {
-                    if (!in_array(strtoupper($val), array('ASC', 'DESC'))){
+                    if (!in_array(strtoupper($val), ['ASC', 'DESC'])){
                         TXLogger::error("order must be ASC/DESC, {$val} given", 'sql Error');
                         continue;
                     }
@@ -374,7 +374,7 @@ class TXDoubleDAO extends TXDAO
      * @param array $having
      * @return string
      */
-    protected function buildGroupBy($groupBy, $having=array())
+    protected function buildGroupBy($groupBy, $having=[])
     {
         if (!$groupBy){
             return '';
@@ -447,7 +447,7 @@ class TXDoubleDAO extends TXDAO
     protected function buildSets($set)
     {
         $doubles = $this->doubles;
-        $sets = array();
+        $sets = [];
         foreach ($set as $k => $val){
             if (is_string($k) && in_array($k, $doubles)){
                 $table = $k;
@@ -502,7 +502,7 @@ class TXDoubleDAO extends TXDAO
     protected function buildCount($set)
     {
         $doubles = $this->doubles;
-        $sets = array();
+        $sets = [];
         foreach ($set as $k => $val){
             if (is_string($k) && in_array($k, $doubles)){
                 $table = $k;
@@ -527,7 +527,7 @@ class TXDoubleDAO extends TXDAO
      * @param $conds
      * @return $this
      */
-    public function on($conds=array())
+    public function on($conds=[])
     {
         $tmp = &$this->relates[count($this->relates)-1][1];
         foreach ($conds as $k => $relate){
@@ -556,7 +556,7 @@ class TXDoubleDAO extends TXDAO
      * @param $cond
      * @return TXDoubleFilter
      */
-    public function filter($cond=array())
+    public function filter($cond=[])
     {
         return $cond ? new TXDoubleFilter($this, $cond, "__and__") : $this;
     }
@@ -566,7 +566,7 @@ class TXDoubleDAO extends TXDAO
      * @param $cond
      * @return TXDoubleFilter
      */
-    public function merge($cond=array())
+    public function merge($cond=[])
     {
         return $cond ? new TXDoubleFilter($this, $cond, "__or__") : $this;
     }

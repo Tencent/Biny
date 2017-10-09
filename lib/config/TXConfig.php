@@ -32,7 +32,7 @@ class TXConfig
                 $config = is_readable($n_path) ? array_merge($config, require($n_path)) : $config;
                 self::$cfgCaches[$module] = $config;
             } else {
-                throw new TXException(1002, array($path));
+                throw new TXException(1002, [$path]);
             }
         }
 
@@ -56,7 +56,7 @@ class TXConfig
                 $config = is_readable($n_path) ? array_merge($config, require($n_path)) : $config;
                 self::$appcfgCaches[$module] = $config;
             } else {
-                throw new TXException(1002, array($path));
+                throw new TXException(1002, [$path]);
             }
         }
 

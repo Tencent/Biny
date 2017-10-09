@@ -64,11 +64,11 @@ class TXApp
         if (is_readable($apppath)) {
             self::$app_root = $apppath;
         } else {
-            throw new TXException(1001, array($apppath));
+            throw new TXException(1001, [$apppath]);
         }
         self::$view_root = self::$app_root.DS."template";
         if (!is_writable(self::$log_root) && !mkdir(self::$log_root)){
-            throw new TXException(1007, array(self::$log_root));
+            throw new TXException(1007, [self::$log_root]);
         }
 
         self::init();

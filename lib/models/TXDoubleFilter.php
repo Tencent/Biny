@@ -28,7 +28,7 @@ class TXDoubleFilter extends TXFilter
      * @param $cond
      * @return TXDoubleFilter
      */
-    public function filter($cond=array())
+    public function filter($cond=[])
     {
         return $cond ? new self($this->DAO, $cond, "__and__", $this->conds[0]) : $this;
     }
@@ -57,7 +57,7 @@ class TXDoubleFilter extends TXFilter
             $cond->setWhere($this->buildWhere($this->conds));
             return call_user_func_array([$cond, $method], $args);
         } else {
-            throw new TXException(3009, array($method, __CLASS__));
+            throw new TXException(3009, [$method, __CLASS__]);
         }
     }
 }

@@ -138,7 +138,7 @@ class TXDAO
      * @param int $mode
      * @return array
      */
-    public function select($sql, $querys=array(), $mode=TXDatabase::FETCH_TYPE_ALL)
+    public function select($sql, $querys=[], $mode=TXDatabase::FETCH_TYPE_ALL)
     {
         $params = func_get_args();
         $cond = isset($params[3]) ? $params[3] : null;
@@ -155,7 +155,7 @@ class TXDAO
      * @param $querys
      * @return bool|int|mysqli_result|string
      */
-    public function command($sql, $querys=array())
+    public function command($sql, $querys=[])
     {
         $params = func_get_args();
         $cond = isset($params[2]) ? $params[2] : null;
@@ -174,7 +174,7 @@ class TXDAO
      */
     private function buildQuery($querys, $cond)
     {
-        $keys = $values = array();
+        $keys = $values = [];
         foreach ($querys as $k => $arg){
             $keys[] = ":$k";
             if (is_array($arg)){
@@ -220,7 +220,7 @@ class TXDAO
             $values[] = $this->buildFields('', $cond->get('additions'));
         }
 
-        return array($keys, $values);
+        return [$keys, $values];
     }
 
     /**
@@ -252,7 +252,7 @@ class TXDAO
     {
         $params = func_get_args();
         $where = isset($params[1]) && $params[1]->get('where') ? " WHERE ".$params[1]->get('where') : "";
-        $fields = $this->buildFields($fields, isset($params[1]) ? $params[1]->get('additions') : array());
+        $fields = $this->buildFields($fields, isset($params[1]) ? $params[1]->get('additions') : []);
         $sql = sprintf("SELECT %s FROM %s%s", $fields, $this->getTable(), $where);
         TXEvent::trigger(onSql, [$sql]);
         $result = $this->sql($sql, null, TXDatabase::FETCH_TYPE_ONE);
@@ -391,7 +391,7 @@ class TXDAO
             $ret = $this->sql($sql, null, TXDatabase::FETCH_TYPE_ONE);
             return $ret[$method] ?: 0;
         } else {
-            throw new TXException(3009, array($method, get_called_class()));
+            throw new TXException(3009, [$method, get_called_class()]);
         }
     }
 }

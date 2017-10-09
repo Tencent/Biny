@@ -17,7 +17,7 @@ class TXArray extends ArrayObject
     private $storage = [];
     private $encodes = [];
 
-    public function __construct($storage=array())
+    public function __construct($storage=[])
     {
         $this->storage = $storage;
     }
@@ -145,7 +145,7 @@ class TXArray extends ArrayObject
      */
     public function values($inner=true)
     {
-        $values = array();
+        $values = [];
         foreach ($this->storage as $key => $value){
             $key = $this->encode($key);
             if (!isset($this->encodes[$key])){

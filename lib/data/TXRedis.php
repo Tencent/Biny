@@ -73,7 +73,7 @@ class TXRedis
             $this->handler->auth($config["password"]);
         }
         if (!$fd){
-            throw new TXException(4005, array($config['host'], $config['port']));
+            throw new TXException(4005, [$config['host'], $config['port']]);
         }
     }
 
@@ -134,6 +134,6 @@ class TXRedis
         if (!$this->handler){
             $this->connect();
         }
-        return call_user_func_array(array($this->handler, $method), $arguments);
+        return call_user_func_array([$this->handler, $method], $arguments);
     }
 }

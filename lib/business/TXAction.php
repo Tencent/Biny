@@ -114,7 +114,7 @@ class TXAction
      * @param array $objects
      * @return TXResponse
      */
-    public function display($view, $params=array(), $objects=array())
+    public function display($view, $params=[], $objects=[])
     {
         return new TXResponse($view, $params, $objects);
     }
@@ -213,9 +213,9 @@ class TXAction
      * @param bool $encode
      * @return TXJSONResponse
      */
-    public function correct($ret=array(), $encode=true)
+    public function correct($ret=[], $encode=true)
     {
-        $data = array("flag" => true, "ret" => $ret);
+        $data = ["flag" => true, "ret" => $ret];
         return $this->json($data, $encode);
     }
 
@@ -227,12 +227,12 @@ class TXAction
      */
     public function error($msg="数据异常", $encode=true, $json=false)
     {
-        TXEvent::trigger(onError, array($msg));
+        TXEvent::trigger(onError, [$msg]);
         if (!$json && (TXApp::$base->request->isShowTpl() || !TXApp::$base->request->isAjax())){
             $config = TXConfig::getConfig('exception');
             return $this->display($config['errorTpl'], ['msg'=> $msg]);
         } else {
-            $data = array("flag" => false, "error" => $msg);
+            $data = ["flag" => false, "error" => $msg];
             return $this->json($data, $encode);
         }
     }

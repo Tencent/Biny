@@ -43,7 +43,7 @@ class TXSingleDAO extends TXDAO
                 if ($master === $slave){
                     $this->database = $master;
                 } else {
-                    throw new TXException(3008, array($slave, $master));
+                    throw new TXException(3008, [$slave, $master]);
                 }
             }
         }
@@ -153,7 +153,7 @@ class TXSingleDAO extends TXDAO
         if (empty($cond)) {
             return '';
         } else {
-            $where = array();
+            $where = [];
             foreach($cond as $key => $value) {
                 $key = $this->real_escape_string($key);
                 if (in_array(strtolower($key), $this->extracts)){
@@ -248,7 +248,7 @@ class TXSingleDAO extends TXDAO
      * @return string
      * @throws TXException
      */
-    protected function buildFields($fields, $group=array()){
+    protected function buildFields($fields, $group=[]){
         if (is_array($fields)){
             foreach ($fields as $key => &$field){
                 if (is_int($key)){
@@ -268,7 +268,7 @@ class TXSingleDAO extends TXDAO
             }
             foreach ($group as $key => $values){
                 if (!in_array(strtolower($key), $this->calcs)){
-                    throw new TXException(3011, array($key));
+                    throw new TXException(3011, [$key]);
                 }
                 foreach ($values as $k => $value){
                     $value = $this->real_escape_string($value);
@@ -300,7 +300,7 @@ class TXSingleDAO extends TXDAO
      */
     protected function buildSets($set)
     {
-        $sets = array();
+        $sets = [];
         foreach($set as $key => $value) {
             $key = $this->real_escape_string($key);
             if (is_array($value)){
@@ -344,7 +344,7 @@ class TXSingleDAO extends TXDAO
      */
     protected function buildCount($set)
     {
-        $sets = array();
+        $sets = [];
         foreach($set as $key => $value) {
             if (!is_numeric($value) || $value == 0 ) {
                 continue;
@@ -361,7 +361,7 @@ class TXSingleDAO extends TXDAO
      * @param array $having
      * @return string
      */
-    protected function buildGroupBy($groupBy, $having=array())
+    protected function buildGroupBy($groupBy, $having=[])
     {
         if (!$groupBy){
             return '';
@@ -406,8 +406,8 @@ class TXSingleDAO extends TXDAO
      */
     protected function buildInsert($sets)
     {
-        $field = array();
-        $value = array();
+        $field = [];
+        $value = [];
         foreach ($sets as $key => $val){
             $field[] = "`{$this->real_escape_string($key)}`";
             if ($val === null) {
@@ -431,19 +431,19 @@ class TXSingleDAO extends TXDAO
      */
     protected function buildOrderBy($orderBy)
     {
-        $orders = array();
+        $orders = [];
         foreach ($orderBy as $key => $val){
             $key = $this->real_escape_string($key);
             if (is_array($val)){
                 $asc = isset($val[0]) ? $val[0] : 'ASC';
                 $code = isset($val[1]) ? $val[1] : 'gbk';
-                if (!in_array(strtoupper($asc), array('ASC', 'DESC'))){
+                if (!in_array(strtoupper($asc), ['ASC', 'DESC'])){
                     TXLogger::error("order must be ASC/DESC, {$asc} given", 'sql Error');
                     continue;
                 }
                 $orders[] = "CONVERT(`{$key}` USING {$code}) $asc";
             } else {
-                if (!in_array(strtoupper($val), array('ASC', 'DESC'))){
+                if (!in_array(strtoupper($val), ['ASC', 'DESC'])){
                     TXLogger::error("order must be ASC/DESC, {$val} given", 'sql Error');
                     continue;
                 }
@@ -490,7 +490,7 @@ class TXSingleDAO extends TXDAO
         unset($field);
         $fields = '(`'.join('`,`', $fields).'`)';
 
-        $columns = array();
+        $columns = [];
         $i = 0;
         $flag = true;
         foreach ($values as $value){
@@ -544,7 +544,7 @@ class TXSingleDAO extends TXDAO
      * @param $sets
      * @return bool|int|mysqli_result|string
      */
-    public function createOrUpdate($inserts, $sets=array())
+    public function createOrUpdate($inserts, $sets=[])
     {
         $set = $this->buildSets($sets ?: $inserts);
         $fields = $this->buildInsert($inserts);
@@ -577,7 +577,7 @@ class TXSingleDAO extends TXDAO
      * @param $cond
      * @return TXSingleFilter
      */
-    public function filter($cond=array())
+    public function filter($cond=[])
     {
         return $cond ? new TXSingleFilter($this, $cond, "__and__") : $this;
     }
@@ -587,7 +587,7 @@ class TXSingleDAO extends TXDAO
      * @param $cond
      * @return TXSingleFilter
      */
-    public function merge($cond=array())
+    public function merge($cond=[])
     {
         return $cond ? new TXSingleFilter($this, $cond, "__or__") : $this;
     }

@@ -34,7 +34,7 @@ class TXController {
     private function execute()
     {
         $requests = TXApp::$base->request;
-        TXEvent::trigger(onRequest, array($requests));
+        TXEvent::trigger(onRequest, [$requests]);
         $result = $this->call($requests);
         return $result;
     }
@@ -54,7 +54,7 @@ class TXController {
                 return $result;
             }
         }
-        TXEvent::trigger(beforeAction, array($request));
+        TXEvent::trigger(beforeAction, [$request]);
         return $object;
     }
 
@@ -72,13 +72,13 @@ class TXController {
 
         $object = $this->getAction($module, $request);
         if ($object instanceof TXResponse || $object instanceof TXJSONResponse){
-            TXEvent::trigger(afterAction, array($request));
+            TXEvent::trigger(afterAction, [$request]);
             return $object;
         }
 
         if ($object instanceof TXAction) {
             $result = call_user_func_array([$object, $method], $args);
-            TXEvent::trigger(afterAction, array($request));
+            TXEvent::trigger(afterAction, [$request]);
             return $result;
         } else {
             throw new TXException(2001, $request->getModule(), 404);
@@ -97,11 +97,11 @@ class TXController {
         $params = TXRouter::$ARGS;
         $args = [];
         if (!method_exists($obj, $method)){
-            throw new TXException(2002, array($method, $obj), 404);
+            throw new TXException(2002, [$method, $obj], 404);
         }
         $action = new ReflectionMethod($obj, $method);
         if ($action->getName() !== $method){
-            throw new TXException(2002, array($method, $obj), 404);
+            throw new TXException(2002, [$method, $obj], 404);
         }
         foreach ($action->getParameters() as $param) {
             $name = $param->getName();
