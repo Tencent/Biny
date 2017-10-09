@@ -1,7 +1,7 @@
 <?php
 /**
  * 演示Action
- * @property demoDAO $demoDAO
+ * @property userDAO $userDAO
  */
 class demoAction extends baseAction
 {
