@@ -1,4 +1,8 @@
 <?php
+
+namespace app\event;
+use biny\lib\TXLogger;
+
 /**
  * Created by PhpStorm.
  * User: billge

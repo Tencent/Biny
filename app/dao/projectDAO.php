@@ -1,4 +1,7 @@
 <?php
+
+namespace app\dao;
+
 /**
  * 项目表
  */

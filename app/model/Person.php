@@ -1,4 +1,10 @@
 <?php
+
+namespace app\model;
+use biny\lib\TXFactory;
+use biny\lib\TXModel;
+use TXApp;
+
 /**
  * Created by PhpStorm.
  * User: billge
@@ -11,7 +17,7 @@ class Person extends TXModel
 
     protected $_data;
     /**
-     * @var baseDAO
+     * @var \app\dao\baseDAO
      */
     protected $DAO;
     protected $_pk;

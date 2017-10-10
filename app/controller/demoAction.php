@@ -1,8 +1,11 @@
 <?php
+namespace app\controller;
+use biny\lib\TXEvent;
+use biny\lib\TXLogger;
+
 /**
  * 演示Action
- * @property userDAO $userDAO
- * @property testService $testService
+ * @property \app\dao\userDAO $userDAO
  */
 class demoAction extends baseAction
 {
@@ -18,6 +21,9 @@ class demoAction extends baseAction
 
     public function action_index()
     {
+        TXEvent::one('ttt', function(){TXLogger::info('ttt');});
+        TXLogger::info($this->testService->test());
+        \TXCommon::test(\TXConst::day);
         $view = $this->display('demo/demo');
         $view->title = "Biny演示页面";
         return $view;

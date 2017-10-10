@@ -14,6 +14,22 @@ include __DIR__.'/business/TXEvent.php';
 include __DIR__.'/logger/TXLogger.php';
 include __DIR__.'/exception/TXException.php';
 
+use biny\lib\TXConfig;
+use biny\lib\TXRequest;
+use biny\lib\TXSession;
+use biny\lib\TXRouter;
+use biny\lib\TXCache;
+use biny\lib\TXRedis;
+use biny\lib\TXMemcache;
+use biny\lib\TXSocket;
+use biny\lib\TXController;
+use biny\lib\TXException;
+use biny\lib\TXLogger;
+use biny\lib\TXEvent;
+use biny\lib\TXFactory;
+use biny\lib\TXAutoload;
+use app\model\Person;
+
 /**
  * Framework App核心
  * @property TXConfig $config

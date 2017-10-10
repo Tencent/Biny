@@ -1,4 +1,8 @@
 <?php
+
+namespace app\form;
+use biny\lib\TXForm;
+
 /**
  * Created by PhpStorm.
  * User: billge

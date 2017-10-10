@@ -1,10 +1,10 @@
 <?php
+
+namespace app\controller;
+use biny\lib\TXLogger;
+
 /**
  * 主页Action
- * @property TXSingleDAO $testDAO
- * @property userDAO $userDAO
- * @property projectDAO $projectDAO
- * @property testService $testService
  */
 class mainAction extends baseAction
 {

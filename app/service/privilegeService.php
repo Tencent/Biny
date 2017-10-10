@@ -1,4 +1,8 @@
 <?php
+namespace app\service;
+use biny\lib\TXService;
+use TXApp;
+
 /**
  * Created by PhpStorm.
  * User: billge
@@ -11,7 +15,7 @@ class privilegeService extends TXService
 
     /**
      * 验证登录
-     * @param $action baseAction
+     * @param $action \app\controller\baseAction
      * @return bool
      */
     public function login_required($action)

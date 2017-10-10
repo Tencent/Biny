@@ -8,6 +8,9 @@
  * Class TXAutoload
  */
 
+namespace biny\lib;
+use TXApp;
+
 class TXAutoload
 {
     private static $loaders;
@@ -28,7 +31,7 @@ class TXAutoload
             self::loading();
         }
 
-        if (false === spl_autoload_register(['TXAutoload', 'load'])) {
+        if (false === spl_autoload_register(['biny\lib\TXAutoload', 'load'])) {
             throw new TXException(1004);
         }
     }
@@ -42,15 +45,15 @@ class TXAutoload
         // 5秒缓存不更新
         if (!self::$loaders || !$lastTime || time()-$lastTime > self::$config['autoSkipLoad']){
             self::$loaders = [];
-            self::getLoads(__DIR__);
+            self::getLoads(__DIR__, 'biny\\lib\\');
             self::getLoads(TXApp::$extends_root);
-            self::getLoads(TXApp::$app_root. DS . "controller");
-            self::getLoads(TXApp::$app_root. DS . "shell");
-            self::getLoads(TXApp::$app_root. DS . "service");
-            self::getLoads(TXApp::$app_root. DS . "dao");
-            self::getLoads(TXApp::$app_root. DS . "form");
-            self::getLoads(TXApp::$app_root. DS . "event");
-            self::getLoads(TXApp::$app_root. DS . "model");
+            self::getLoads(TXApp::$app_root. DS . "controller", 'app\\controller\\');
+            self::getLoads(TXApp::$app_root. DS . "shell", 'app\\shell\\');
+            self::getLoads(TXApp::$app_root. DS . "service", 'app\\service\\');
+            self::getLoads(TXApp::$app_root. DS . "dao", 'app\\dao\\');
+            self::getLoads(TXApp::$app_root. DS . "form", 'app\\form\\');
+            self::getLoads(TXApp::$app_root. DS . "event", 'app\\event\\');
+            self::getLoads(TXApp::$app_root. DS . "model", 'app\\model\\');
             //写入文件
             if (is_writeable(self::$autoPath)) {
                 file_put_contents(self::$autoPath, "<?php\nreturn " . var_export(self::$loaders, true) . ';', LOCK_EX);
@@ -65,15 +68,16 @@ class TXAutoload
      * @param $path
      * @return array
      */
-    private static function getLoads($path)
+    private static function getLoads($path, $namespace='')
     {
         foreach (glob($path . DS.'*') as $file) {
             if (is_dir($file)) {
-                self::getLoads($file);
+                self::getLoads($file, $namespace);
             } else {
                 $name = explode(DS, $file);
                 $class = str_replace('.php', '', end($name));
-                self::$loaders[$class] = $file;
+                self::$loaders['namespace'][$class] = $namespace.$class;
+                self::$loaders['file'][$namespace.$class] = $file;
             }
         }
     }
@@ -85,12 +89,12 @@ class TXAutoload
      */
     public static function load($class)
     {
-        if ((!isset(self::$loaders[$class]) || !is_readable(self::$loaders[$class])) && !self::$isReload){
+        if ((!isset(self::$loaders['file'][$class]) || !is_readable(self::$loaders['file'][$class])) && !self::$isReload){
             self::loading();
         }
 
-        if (isset(self::$loaders[$class])) {
-            $path = self::$loaders[$class];
+        if (isset(self::$loaders['file'][$class])) {
+            $path = self::$loaders['file'][$class];
             if (is_readable($path)) {
                 include $path;
             } else {

@@ -7,7 +7,11 @@
  * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.
  * Core Exception
  */
-class TXException extends ErrorException
+
+namespace biny\lib;
+use TXApp;
+
+class TXException extends \ErrorException
 {
     private $config;
 
@@ -22,7 +26,7 @@ class TXException extends ErrorException
         $this->config = TXApp::$base->config->get('exception');
         $message = self::fmt_code($code, $params);
         TXEvent::trigger(onException, [$code, [$message, $this->getTraceAsString()]]);
-        if (class_exists('TXDatabase')){
+        if (class_exists('biny\lib\TXDatabase')){
             TXDatabase::rollback();
         }
         try{

@@ -1,4 +1,7 @@
 <?php
+
+namespace app\dao;
+
 /**
  * 测试表
  */

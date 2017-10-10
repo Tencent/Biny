@@ -8,6 +8,10 @@
  * Session service
  * @author billge
  */
+
+namespace biny\lib;
+use TXApp;
+
 class TXSession
 {
     private static $instance = null;
