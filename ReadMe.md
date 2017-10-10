@@ -1,4 +1,4 @@
-## 概况 general situation
+## 概况 General
 Biny是一款高性能的超轻量级PHP框架
 
 遵循 MVC 模式，用于快速开发现代 Web 应用程序
@@ -7,13 +7,13 @@ Biny代码简洁优雅，对应用层，数据层，模板渲染层的封装简�
 
 高性能，框架响应时间在1ms以内，单机qps轻松上3000
 
-Biny is a high performance lightweight PHP framework
+Biny is a high performance lightweight PHP framework.
 
-Follow the MVC pattern for rapid development of modern Web applications
+It follows the MVC pattern for rapid development of modern Web applications
 
-Biny code is simple and elegant, and the application layer, data layer, template rendering layer of the package is simple and easy to understand, and it can be used quickly
+Biny code is simple and elegant. The application layer, data layer, and template rendering layer of the package is simple and easy to understand. This makes it quick to pick up.
 
-High performance, framework response time of less than 1ms, stand-alone QPS easily up to 3000
+Biny is high performance. Framework comes default with response time of less than 1ms. Stand-alone QPS easily up to 3000.
 
 
 ## 功能介绍 Function introduction
@@ -71,24 +71,24 @@ A: 目前版本在多个项目中已经正常使用，相对成熟。后续会�
 
 Q: What is the difference between a framework and a traditional PHP framework? What are the advantages?
 
-A: Biny is a framework with high degree of freedom, unlike other frameworks that need to configure various routes, automatically load classes, and complex namespaces. These are unnecessary in Biny and can be quickly used with a simple rule. From the developer's point of view, the function is very simple to use. And it has fairly strong security. From the framework level, completely shielding the SQL injection and XSS injection two security problems, very suitable for new use.
+A: Biny is a framework with high degree of freedom, unlike other frameworks that need to configure various routes, automatically load classes, and complex namespaces. These are unnecessary in Biny and can be quickly used with simple rules. From the developer's point of view, the functionality is very simple to use. It defaults to strong security. From the framework level, the applications is completely shielded from SQL injection and XSS injection.
 
 Q: What is the performance of the Biny framework?
 
 A: Testing machine: Intel Xeon Processor E5506 (4M Cache, 2.13 GHz, 4.80 GT/s Intel QPI)
-A common query data page (50% hit cache), QPS can easily reach more than 3000, compared to Yii, Yii performance is more than 2 times.
+A common query data page (50% hit cache), QPS can easily reach more than 3000. This is twice as fast as Yii.
 
-Q: Does the Biny framework fit PHP7?
+Q: Does the Biny framework work with PHP7?
 
-A: Can be perfect operation, performance increased by more than 2 times.
+A: Yes. Performance increases have been seen of over 2x when compared with PHP5.
 
-Q: Is Biny the final version now, and will it continue to be updated?
+Q: Is Biny the final version now? Will it continue to be updated?
 
 A: The current version has been used in several projects and is relatively mature. The follow-up will be updated for both performance and functionality, and you'll need to update and replace the Lib library to use the latest framework.
 
 
 
-## 常见问题 Common problem
+## 常见问题 Common Problems
 
 Q：模版渲染出现错乱是为什么
 
