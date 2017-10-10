@@ -1,7 +1,12 @@
 <?php
+namespace app\controller;
+use biny\lib\TXAction;
+use biny\lib\TXResponse;
+use TXApp;
 /**
  * Base action
- * @property baseService $baseService
+ * @property \app\service\baseService $baseService
+ * @property \app\service\testService $testService
  */
 class baseAction extends TXAction
 {

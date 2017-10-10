@@ -1,4 +1,5 @@
 <?php
+use biny\lib\TXLogger;
 /**
  * Created by PhpStorm.
  * User: billge
@@ -8,6 +9,11 @@
  */
 class TXCommon
 {
+    public static function test($string)
+    {
+        TXLogger::info($string);
+    }
+
 //    /**
 //     * 日志示例
 //     * @param $message

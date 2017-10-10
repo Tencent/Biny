@@ -9,10 +9,15 @@
  * User: billge
  * Date: 15-12-1
  * Time: 上午11:12
+ */
+
+namespace biny\lib;
+
+/**
  * @method bool in_array($key)
  * @method bool array_key_exists($key)
  */
-class TXArray extends ArrayObject
+class TXArray extends \ArrayObject
 {
     private $storage = [];
     private $encodes = [];
@@ -35,7 +40,7 @@ class TXArray extends ArrayObject
                 $this->encodes[$key] = $this->encode($value);
             }
         }
-        return new ArrayIterator($this->encodes);
+        return new \ArrayIterator($this->encodes);
     }
 
     public function __get($k)

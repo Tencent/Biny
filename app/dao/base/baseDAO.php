@@ -1,4 +1,9 @@
 <?php
+
+namespace app\dao;
+use biny\lib\TXSingleDAO;
+use TXApp;
+
 /**
  * Created by PhpStorm.
  * User: billge

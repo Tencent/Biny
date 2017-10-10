@@ -1,10 +1,13 @@
 <?php
+namespace app\shell;
+use biny\lib\TXShell;
+use biny\lib\TXLogger;
 /**
  * Created by PhpStorm.
  * User: billge
  * Date: 16-10-1
  * Time: 上午11:00
- * @property userDAO $userDAO
+ * @property \app\dao\userDAO $userDAO
  */
 class testShell extends TXShell
 {

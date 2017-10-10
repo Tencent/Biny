@@ -7,6 +7,10 @@
  * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.
  * Database
  */
+
+namespace biny\lib;
+use TXApp;
+
 class TXDatabase {
     private static $instance = [];
     private static $autocommit = true;
@@ -32,7 +36,7 @@ class TXDatabase {
 
 
     /**
-     * @var mysqli
+     * @var \mysqli
      */
     private $handler;
 
@@ -157,7 +161,7 @@ class TXDatabase {
      * sql execute
      * @param $sql
      * @param bool $id
-     * @return bool|int|mysqli_result|string
+     * @return bool|int|\mysqli_result|string
      */
     public function execute($sql, $id=false)
     {

@@ -7,6 +7,10 @@
  * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.
  * Class TXRequest
  */
+
+namespace biny\lib;
+use TXApp;
+
 class TXRequest {
     private $module;
     private $method=null;
@@ -51,7 +55,6 @@ class TXRequest {
     private function __construct($module, $method=null)
     {
         $this->config = TXApp::$base->config->get('request');
-        $this->id = crc32(microtime(true));
         $this->module = $module;
         $this->method = $method ?: 'index';
         $this->csrfToken = $this->getCookie($this->config['csrfToken']);

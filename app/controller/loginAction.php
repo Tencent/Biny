@@ -1,10 +1,15 @@
 <?php
+
+namespace app\controller;
+use app\model\Person;
+use TXApp;
+
 /**
  * Created by PhpStorm.
  * User: billge
  * Date: 16-6-22
  * Time: 上午11:38
- * @property userDAO $userDAO
+ * @property \app\dao\userDAO $userDAO
  */
 class loginAction extends baseAction
 {

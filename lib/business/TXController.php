@@ -7,6 +7,10 @@
  * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.
  * Class TXDispatcher
  */
+
+namespace biny\lib;
+use TXApp;
+
 class TXController {
     /**
      * @var TXRouter
@@ -47,6 +51,7 @@ class TXController {
      */
     private function getAction($module, $request)
     {
+        $module = 'app\\controller\\'.$module;
         $object = new $module();
         if (method_exists($object, 'init')){
             $result = $object->init();
@@ -94,12 +99,13 @@ class TXController {
      */
     private function getArgs($obj, $method)
     {
+        $obj = 'app\\controller\\'.$obj;
         $params = TXRouter::$ARGS;
         $args = [];
         if (!method_exists($obj, $method)){
             throw new TXException(2002, [$method, $obj], 404);
         }
-        $action = new ReflectionMethod($obj, $method);
+        $action = new \ReflectionMethod($obj, $method);
         if ($action->getName() !== $method){
             throw new TXException(2002, [$method, $obj], 404);
         }
@@ -133,7 +139,7 @@ class TXController {
     public function shellStart()
     {
         TXApp::$base->router->shellRouter();
-        $module = TXApp::$base->request->getModule()."Shell";
+        $module = 'app\\shell\\'.TXApp::$base->request->getModule()."Shell";
         $method = TXApp::$base->request->getMethod();
         $params = TXApp::$base->router->getArgs();
         $shell = new $module($params);

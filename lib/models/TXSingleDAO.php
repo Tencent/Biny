@@ -5,6 +5,12 @@
  * Licensed under the BSD 3-Clause License (the "License"); you may not use this file except in compliance with the License. You may obtain a copy of the License at
  * https://opensource.org/licenses/BSD-3-Clause
  * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.
+ */
+
+namespace biny\lib;
+use TXApp;
+
+/**
  * 数据库
  * @method TXSingleCond limit($len, $start=0)
  * @method TXSingleCond group($groupby)
@@ -28,7 +34,12 @@ class TXSingleDAO extends TXDAO
     public function __construct($table=null, $called=null)
     {
         if ($table) $this->table = $table;
-        if ($called) $this->calledClass = $called;
+        if ($called) {
+            $this->calledClass = $called;
+        } else {
+            $name = explode('\\', get_called_class());
+            $this->calledClass = end($name);
+        }
         $this->setDbTable($table ?: $this->table);
     }
 
@@ -116,8 +127,9 @@ class TXSingleDAO extends TXDAO
      */
     protected function _join($dao, $relate, $type='join')
     {
-        $selfClass = substr($this->getCalledClass() ?: get_called_class(), 0, -3);
-        $relateClass = substr($dao->getCalledClass() ?: get_class($dao), 0, -3);
+        // todo remove substr
+        $selfClass = substr($this->getCalledClass(), 0, -3);
+        $relateClass = substr($dao->getCalledClass(), 0, -3);
         if ($selfClass == $relateClass){
             return $this;
         }
@@ -475,7 +487,7 @@ class TXSingleDAO extends TXDAO
      * 批量添加
      * @param $values
      * @param int $max
-     * @return bool|int|mysqli_result|string
+     * @return bool|int|\mysqli_result|string
      */
     public function addList($values, $max=100)
     {
@@ -558,7 +570,7 @@ class TXSingleDAO extends TXDAO
      * 更新数据或者加1
      * @param $inserts
      * @param $sets ['num'=>2]
-     * @return bool|int|mysqli_result|string
+     * @return bool|int|\mysqli_result|string
      */
     public function createOrAdd($inserts, $sets)
     {

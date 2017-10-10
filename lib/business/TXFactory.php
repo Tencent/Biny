@@ -7,6 +7,10 @@
  * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.
  * object factory
  */
+
+namespace biny\lib;
+use TXApp;
+
 class TXFactory {
     /**
      * 对象列表
@@ -35,9 +39,13 @@ class TXFactory {
                     $dao = new TXSingleDAO($dbConfig[$key], $class);
                     self::$objects[$alias] = $dao;
                 } else {
+                    $autoConfig = TXApp::$base->config->get('namespace', 'autoload');
+                    $class = isset($autoConfig[$class]) ? $autoConfig[$class] : $class;
                     self::$objects[$alias] = new $class();
                 }
             } else {
+                $autoConfig = TXApp::$base->config->get('namespace', 'autoload');
+                $class = isset($autoConfig[$class]) ? $autoConfig[$class] : $class;
                 self::$objects[$alias] = new $class();
             }
         }

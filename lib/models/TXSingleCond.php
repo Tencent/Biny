@@ -10,6 +10,9 @@
  * Date: 16-4-12
  * Time: 下午12:14
  */
+
+namespace biny\lib;
+
 class TXSingleCond extends TXCond
 {
     /**

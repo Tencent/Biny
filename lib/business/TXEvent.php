@@ -10,6 +10,9 @@
  * Date: 15-11-2
  * Time: 下午6:04
  */
+
+namespace biny\lib;
+
 class TXEvent
 {
     /**
@@ -128,8 +131,8 @@ class TXEvent
      */
     public static function init()
     {
-        TXEvent::on(onException, ['TXEvent', 'onException']);
-        TXEvent::on(onRequest, ['TXEvent', 'onRequest']);
+        TXEvent::on(onException, ['biny\lib\TXEvent', 'onException']);
+        TXEvent::on(onRequest, ['biny\lib\TXEvent', 'onRequest']);
     }
 
     /**

@@ -10,6 +10,10 @@
  * Date: 16-7-19
  * Time: 下午5:54
  */
+
+namespace biny\lib;
+use TXApp;
+
 class TXLanguage
 {
     private static $language = null;

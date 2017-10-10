@@ -10,6 +10,9 @@
  * Date: 16-4-12
  * Time: 下午12:15
  */
+
+namespace biny\lib;
+
 class TXDoubleCond extends TXCond
 {
     /**

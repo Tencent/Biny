@@ -5,6 +5,12 @@
  * Licensed under the BSD 3-Clause License (the "License"); you may not use this file except in compliance with the License. You may obtain a copy of the License at
  * https://opensource.org/licenses/BSD-3-Clause
  * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.
+ */
+
+namespace biny\lib;
+use TXApp;
+
+/**
  * Redis class
  * @method bool delete($key)
  * @method bool hdel($key, $hash)
@@ -15,7 +21,7 @@
 class TXRedis
 {
     /**
-     * @var Redis
+     * @var \Redis
      */
     private $handler;
     private $config;
@@ -63,7 +69,7 @@ class TXRedis
     private function connect()
     {
         $config = $this->connect;
-        $this->handler = new Redis();
+        $this->handler = new \Redis();
         if (isset($config['keep-alive']) && $config['keep-alive']){
             $fd = $this->handler->pconnect($config['host'], $config['port'], 60);
         } else {

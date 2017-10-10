@@ -10,6 +10,9 @@
  * Date: 15-11-4
  * Time: 下午3:05
  */
+
+namespace biny\lib;
+
 class TXForm
 {
     const typeInt = 1;

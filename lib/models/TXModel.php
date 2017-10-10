@@ -10,13 +10,16 @@
  * Date: 15-7-29
  * Time: 上午11:18
  */
+
+namespace biny\lib;
+
 class TXModel
 {
     protected $_data;
     private $_cache = [];
     protected $_dirty = false;
     /**
-     * @var baseDAO
+     * @var \app\dao\baseDAO
      */
     protected $DAO = null;
     protected $_pk;
