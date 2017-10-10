@@ -117,11 +117,24 @@
         <p>本例子中主要介绍linux下nginx的配置</p>
         <p>nginx根目录需要指向<code>/web/</code>目录下，示例如下</p>
         <pre class="code"><sys>location</sys> / {
-    <const>root</const>   /data/billge/biny/web/;
+    <const>root</const>   /data/billge/biny/web/; <note>// 这里为框架/web目录的绝对路径</note>
     <act>index</act>  index.php index.html index.htm;
     <act>try_files</act> $uri $uri/ /index.php?$args;
-}                </pre>
+}</pre>
+        <p>Apache 配置如下：</p>
+<pre class="code"><note># 设置文档根目录为框架/web目录</note>
+<const>DocumentRoot</const> <str>"/data/billge/biny/web/"</str>
 
+&lt;<const>Directory</const> <str>"/data/billge/biny/web/"</str>>
+    <act>RewriteEngine</act> <sys>on</sys>
+    <note># 如果请求的是真实存在的文件或目录，直接访问</note>
+    <act>RewriteCond</act> %{REQUEST_FILENAME} !-f
+    <act>RewriteCond</act> %{REQUEST_FILENAME} !-d
+    <note># 如果请求的不是真实文件或目录，分发请求至 index.php</note>
+    <act>RewriteRule</act> . index.php
+
+    <note># ...other settings...  </note>
+&lt;/<const>Directory</const>> </pre>
         <p><code>/web/index.php</code>是程序的主入口，其中有几个关键配置</p>
         <pre class="code"><note>//默认时区配置</note>
 <sys>date_default_timezone_set</sys>(<str>'Asia/Shanghai'</str>);
