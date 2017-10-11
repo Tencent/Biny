@@ -18,6 +18,7 @@ class baseAction extends TXAction
      */
     public function display($view, $array=array(), $objects=array())
     {
+        header("Content-type:text/html;charset=utf-8");  //解决克隆为ASC文件后产生的乱码问题
         $objects = array_merge(array(
             'webRoot' => TXApp::$base->app_config->get('webRoot'),
         ), $objects);
