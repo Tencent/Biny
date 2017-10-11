@@ -1,3 +1,9 @@
+## Biny
+
+[![license](http://img.shields.io/badge/license-BSD3-blue.svg?style=flat)](https://github.com/tencent/biny/blob/master/LICENSE.TXT)
+[![Release Version](https://img.shields.io/badge/release-2.7.2-red.svg)](https://github.com/tencent/biny/releases)
+[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](https://github.com/tencent/biny/pulls)
+
 ## 概况 General
 Biny是一款高性能的超轻量级PHP框架
 
