@@ -27,7 +27,6 @@ class TXAutoload
         if (is_readable(self::$autoPath)){
             self::$loaders = require(self::$autoPath);
         } else {
-            self::$isReload = true;
             self::loading();
         }
 
@@ -39,8 +38,9 @@ class TXAutoload
     /**
      * 加载
      */
-    private static function loading()
+    public static function loading()
     {
+        self::$isReload = true;
         $lastTime = is_readable(self::$autoPath) ? filemtime(self::$autoPath) : false;
         // 5秒缓存不更新
         if (!self::$loaders || !$lastTime || time()-$lastTime > self::$config['autoSkipLoad']){
@@ -55,12 +55,13 @@ class TXAutoload
             self::getLoads(TXApp::$app_root. DS . "event", 'app\\event\\');
             self::getLoads(TXApp::$app_root. DS . "model", 'app\\model\\');
             //写入文件
-            if (is_writeable(self::$autoPath)) {
+            if (!file_exists(self::$autoPath) || is_writeable(self::$autoPath)) {
                 file_put_contents(self::$autoPath, "<?php\nreturn " . var_export(self::$loaders, true) . ';', LOCK_EX);
             } else {
                 throw new TXException(1005, [self::$autoPath]);
             }
         }
+        return self::$loaders;
     }
 
     /**

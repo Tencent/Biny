@@ -26,4 +26,9 @@ class demoAction extends baseAction
         $view->title = "Biny演示页面";
         return $view;
     }
+
+    public function action_test()
+    {
+        return $this->correct('success');
+    }
 }

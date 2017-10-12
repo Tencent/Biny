@@ -39,17 +39,29 @@ class TXFactory {
                     $dao = new TXSingleDAO($dbConfig[$key], $class);
                     self::$objects[$alias] = $dao;
                 } else {
-                    $autoConfig = TXApp::$base->config->get('namespace', 'autoload');
-                    $class = isset($autoConfig[$class]) ? $autoConfig[$class] : $class;
-                    self::$objects[$alias] = new $class();
+                    self::loadClass($class, $alias);
                 }
             } else {
-                $autoConfig = TXApp::$base->config->get('namespace', 'autoload');
-                $class = isset($autoConfig[$class]) ? $autoConfig[$class] : $class;
-                self::$objects[$alias] = new $class();
+                self::loadClass($class, $alias);
             }
         }
 
         return self::$objects[$alias];
+    }
+
+    /**
+     * 加载类
+     * @param $class
+     * @param $alias
+     */
+    private static function loadClass($class, $alias)
+    {
+        $autoConfig = TXApp::$base->config->get('namespace', 'autoload');
+        if (!isset($autoConfig[$class])){
+            $config = TXAutoload::loading();
+            $autoConfig = $config['namespace'];
+        }
+        $class = isset($autoConfig[$class]) ? $autoConfig[$class] : $class;
+        self::$objects[$alias] = new $class();
     }
 }
