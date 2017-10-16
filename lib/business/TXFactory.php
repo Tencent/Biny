@@ -56,6 +56,9 @@ class TXFactory {
      */
     private static function loadClass($class, $alias)
     {
+        if (strpos($class, '\\')){
+            self::$objects[$alias] = new $class();
+        }
         $autoConfig = TXApp::$base->config->get('namespace', 'autoload');
         if (!isset($autoConfig[$class])){
             $config = TXAutoload::loading();

@@ -65,13 +65,15 @@
         <h2 id="overview-level">调用关系</h2>
         <p><code>Action</code>为总路由入口，<code>Action</code>可调用私有对象<code>Service</code>业务层 和 <code>DAO</code>数据库层</p>
         <p><code>Service</code>业务层 可调用私有对象<code>DAO</code>数据库层</p>
-        <p>程序全局可调用lib库下系统方法，例如：<code>TXLogger</code>（调试组件），<code>TXConfig</code>（配置类），<code>TXConst</code>（常量类）等</p>
+        <p>程序全局可调用lib库下系统方法，例如：<code>TXLogger</code>（调试组件）</p>
         <p><code>TXApp::$base</code>为全局单例类，可全局调用</p>
-        <p><code>TXApp::$base->person</code> 为当前用户，可在<code>/app/model/Person.php</code>中定义</p>
         <p><code>TXApp::$base->request</code> 为当前请求，可获取当前地址，客户端ip等</p>
         <p><code>TXApp::$base->session</code> 为系统session，可直接获取和复制，设置过期时间</p>
         <p><code>TXApp::$base->memcache</code> 为系统memcache，可直接获取和复制，设置过期时间</p>
         <p><code>TXApp::$base->redis</code> 为系统redis，可直接获取和复制，设置过期时间</p>
+
+        <p>用户可以在<code>/app/model/</code>下自定义model数据类，通过<code>TXApp::$model</code>获取，例如：</p>
+        <p><code>TXApp::$model->person</code> 为当前用户，可在<code>/app/model/person.php</code>中定义</p>
 
         <p>简单示例</p>
         <pre class="code"><span class="nc">/**
@@ -85,7 +87,7 @@
     <sys>public function</sys> <act>init</act>()
     {
         <note>// 未登录时调整登录页面</note>
-        <sys>if</sys>(!TXApp::<prm>$base</prm>-><prm>person</prm>-><func>exist</func>()){
+        <sys>if</sys>(!TXApp::<prm>$model</prm>-><prm>person</prm>-><func>exist</func>()){
             <sys>return</sys> TXApp::<prm>$base</prm>-><prm>request</prm>-><func>redirect</func>(<str>'/auth/login/'</str>);
         }
     }
@@ -94,7 +96,7 @@
     <sys>public function</sys> <act>action_index</act>()
     {
         <note>// 获取当前用户</note>
-        <prm>$person</prm> = TXApp::<prm>$base</prm>-><prm>person</prm>-><func>get</func>();
+        <prm>$person</prm> = TXApp::<prm>$model</prm>-><prm>person</prm>-><func>get</func>();
         <prm>$members</prm> = TXApp::<prm>$base</prm>-><prm>memcache</prm>-><func>get</func>(<str>'cache_'</str><sys>.</sys><prm>$person</prm>-><prm>project_id</prm>);
         <sys>if</sys> (!<prm>$members</prm>){
             <note>// 获取用户所在项目成员</note>
@@ -350,7 +352,7 @@
 <note>// privilegeService</note>
 <sys>public function</sys> <act>privilege_required</act>(<prm>$action</prm>, <prm>$privilege</prm>)
 {
-    <sys>if</sys>(TXApp::<prm>$base</prm>-><prm>person</prm>-><func>hasPrivilege</func>(<prm>$privilege</prm>)){
+    <sys>if</sys>(TXApp::<prm>$model</prm>-><prm>person</prm>-><func>hasPrivilege</func>(<prm>$privilege</prm>)){
         <note>// 该用户有相应权限</note>
         <sys>return</sys> <prm>$this</prm>-><func>correct</func>();
     } <sys>else</sys> {
@@ -1454,7 +1456,6 @@ TXLogger::<func>memory</func>(<str>'end-memory'</str>);</pre>
     <div class="bs-docs-section">
         <h1 id="other" class="page-header">其他</h1>
         <p>系统有很多单例都可以直接通过<code>TXApp::$base</code>直接获取</p>
-        <p><code>TXApp::$base->person</code> 为当前用户，可在<code>/app/model/Person.php</code>中定义</p>
         <p><code>TXApp::$base->request</code> 为当前请求，可获取当前地址，客户端ip等</p>
         <p><code>TXApp::$base->cache</code> 为请求静态缓存，只在当前请求中有效</p>
         <p><code>TXApp::$base->session</code> 为系统session，可直接获取和复制，设置过期时间</p>

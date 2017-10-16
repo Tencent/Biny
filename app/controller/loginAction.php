@@ -1,7 +1,6 @@
 <?php
 
 namespace app\controller;
-use app\model\Person;
 use TXApp;
 
 /**
@@ -18,7 +17,7 @@ class loginAction extends baseAction
      */
     public function action_index()
     {
-        if (TXApp::$base->person->exist()){
+        if (TXApp::$model->person->exist()){
             TXApp::$base->request->redirect('/');
         }
         $username = $this->getParam('username');
@@ -26,10 +25,10 @@ class loginAction extends baseAction
             return $this->display('main/login');
         }
         if ($user = $this->userDAO->filter(['name'=>$username])->find()){
-            Person::get($user['id'])->login();
+            TXApp::$model->person($user['id'])->login();
         } else {
             $id = $this->userDAO->add(['name'=>$username, 'registerTime'=>time()]);
-            Person::get($id)->login();
+            TXApp::$model->person($id)->login();
         }
         if ($lastUrl = TXApp::$base->session->lastUrl){
             unset(TXApp::$base->session->lastUrl);

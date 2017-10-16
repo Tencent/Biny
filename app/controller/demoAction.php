@@ -1,6 +1,5 @@
 <?php
 namespace app\controller;
-use biny\lib\TXEvent;
 use biny\lib\TXLogger;
 
 /**

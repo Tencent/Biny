@@ -48,6 +48,9 @@ return array(
     6000 => 'cannot read request uri',
     6001 => 'privilege [%s] is not access [%s]',
 
+    /* model error */
+    7000 => 'model[%s] can not be callable',
+
     /* custom error */
     8000 => 'custom Error',
 );

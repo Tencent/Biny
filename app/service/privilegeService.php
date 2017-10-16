@@ -41,7 +41,7 @@ class privilegeService extends TXService
      */
     private function checkUser()
     {
-        $user = TXApp::$base->person;
+        $user = TXApp::$model->person;
         if ($user->exist()){
             return true;
         } else {

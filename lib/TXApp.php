@@ -13,6 +13,7 @@ include __DIR__.'/config/TXConfig.php';
 include __DIR__.'/business/TXEvent.php';
 include __DIR__.'/logger/TXLogger.php';
 include __DIR__.'/exception/TXException.php';
+include __DIR__.'/models/TXModel.php';
 
 use biny\lib\TXConfig;
 use biny\lib\TXRequest;
@@ -28,7 +29,7 @@ use biny\lib\TXLogger;
 use biny\lib\TXEvent;
 use biny\lib\TXFactory;
 use biny\lib\TXAutoload;
-use app\model\Person;
+use biny\lib\TXModel;
 
 /**
  * Framework App核心
@@ -41,7 +42,6 @@ use app\model\Person;
  * @property TXRedis $redis
  * @property TXMemcache $memcache
  * @property TXSocket $socket
- * @property Person $person
  */
 class TXApp
 {
@@ -49,12 +49,15 @@ class TXApp
      * @var TXApp
      */
     public static $base;
+    /**
+     * @var TXModel
+     */
+    public static $model;
 
     public static $base_root;
     public static $app_root;
     public static $view_root;
     public static $log_root;
-    public static $plugins_root;
     public static $extends_root;
 
     /**
@@ -71,8 +74,8 @@ class TXApp
     {
         self::define();
         self::$base = new self();
+        self::$model = new TXModel();
         self::$base_root = dirname(__DIR__);
-        self::$plugins_root = self::$base_root.DS."plugins";
         self::$extends_root = self::$base_root.DS."extends";
         self::$log_root = self::$base_root.DS."logs";
         if (RUN_SHELL){
@@ -191,8 +194,6 @@ class TXApp
     public function __get($name)
     {
         switch ($name){
-            case 'person':
-                return Person::get();
             case 'config':
             case 'app_config':
                 return TXConfig::instance($name);

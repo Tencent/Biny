@@ -1,8 +1,6 @@
 <?php
 
 namespace app\model;
-use biny\lib\TXFactory;
-use biny\lib\TXModel;
 use TXApp;
 
 /**
@@ -11,11 +9,11 @@ use TXApp;
  * Date: 15-7-28
  * Time: 下午5:37
  */
-class Person extends TXModel
+class person extends baseModel
 {
     private static $_cache = [];
 
-    protected $_data;
+    protected $_data = [];
     /**
      * @var \app\dao\baseDAO
      */
@@ -24,10 +22,11 @@ class Person extends TXModel
 
     /**
      * @param null $id
-     * @return Person
+     * @return person
      */
-    public static function get($id=null)
+    public static function init($id=null)
     {
+        parent::init($id);
         $id = $id ?: TXApp::$base->session->userId;
         if (!isset(self::$_cache[$id])){
             self::$_cache[$id] = new self($id);
@@ -37,7 +36,7 @@ class Person extends TXModel
 
     private function __construct($id)
     {
-        $this->DAO = TXFactory::create('userDAO');
+        $this->DAO = $this->userDAO;
         if ($id !== NULL){
             $this->_data = $this->DAO->getByPk($id);
             $this->_pk = $id;
