@@ -14,5 +14,11 @@ error_reporting(E_ALL ^ E_NOTICE);
 
 include __DIR__.'/../lib/TXApp.php';
 
+//include __DIR__.'/../lib/XHProf.php';
+//XHProf::start();
+
 TXApp::registry(__DIR__. '/../app');
 TXApp::run();
+
+//$data = XHProf::end();
+//XHProf::display($data);
