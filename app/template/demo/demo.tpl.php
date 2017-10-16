@@ -40,7 +40,7 @@
         <p>GitHub 地址：<a href="https://github.com/Tencent/Biny">https://github.com/Tencent/Biny</a></p>
 
         <h2 id="overview-files">目录结构</h2>
-        <div class="col-lg-3"><img src="http://r.photo.store.qq.com/psb?/V130E8h51JH2da/.9gsh.Yw9u4O9rrwwiJTWNYEVPxTBA0eCwr0fNvGjcE!/o/dGIAAAAAAAAA&bo=yQAVAskAFQIDACU!"></div>
+        <div class="col-lg-3"><img src="http://f.wetest.qq.com/gqop/10000/20000/GuideImage_cb2a0980064cb1e61242742ed0b183be.png"></div>
         <div class="col-lg-8" style="margin-left: 20px">
             <p><code>/app/</code> 总工作目录</p>
             <p><code>/app/config/</code> 业务配置层</p>
@@ -53,12 +53,12 @@
             <p><code>/app/template/</code> 页面渲染层</p>
             <p><code>/config/</code> 框架配置层</p>
             <p><code>/lib/</code> 系统Lib层</p>
-            <p><code>/lib/extends/</code> 自定义Lib层（替代原vendor目录，该目录下内容用户都可以根据需要自行替换删除）</p>
+            <p><code>/extends/</code> 自定义Lib层（替代原vendor目录，该目录下内容用户都可以根据需要自行替换删除）</p>
             <p><code>/logs/</code> 工作日志目录</p>
-            <p><code>/plugins/</code> 插件目录</p>
             <p><code>/web/</code> 总执行入口</p>
             <p><code>/web/static/</code> 静态资源文件</p>
             <p><code>/web/index.php</code> 总执行文件</p>
+            <p><code>/shell.php</code> shell模式执行入口</p>
         </div>
         <div style="clear: both"></div>
 
@@ -1337,7 +1337,7 @@ TXLogger::<func>log</func>(<str>'do something'</str>);
 TXLogger::<func>time</func>(<str>'end-time'</str>);
 TXLogger::<func>memory</func>(<str>'end-memory'</str>);</pre>
 
-        <p><img src="http://shp.qpic.cn/gqop/20000/LabImage_2ee327c680046dc1d14d7dce5c7bcb45.png/0"></p>
+        <p><img src="http://f.wetest.qq.com/gqop/10000/20000/GuideImage_c2d7aac054bd9f9cd6069445e294e826.png"></p>
 
         <h2 id="debug-log">日志调试</h2>
 
