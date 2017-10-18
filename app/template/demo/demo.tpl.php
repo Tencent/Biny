@@ -313,20 +313,20 @@
     <note>// rest/(\d+) 的restful路由会自动转发到restAction中的 {method}_test方法</note>
     <str>'<prm>rest</prm>/&lt;<prm>id</prm>:\d+&gt;'</str> => <str>'rest/test'</str>,
     <note>// 匹配的参数可在转发路由中动态使用</note>
-    <str>'<prm>rest</prm>/&lt;<prm>id</prm>:\d+&gt;/&lt;<prm>method</prm>:[\w_]+&gt;'</str> => <str>'rest/&lt;<prm>method</prm>&gt;'</str>,
+    <str>'<prm>v</prm>&lt;<prm>version</prm>:\d+&gt;/rest/&lt;<prm>id</prm>:\d+&gt;/&lt;<prm>method</prm>:[\w_]+&gt;'</str> => <str>'rest/&lt;<prm>method</prm>&gt;'</str>,
 ),
 
 <note>/app/controller/restAction.php</note>
+<note>// [DELETE] http://www.billge.cc/v2/rest/123/person</note>
+<sys>public function</sys> <act>DELETE_person</act>(<prm>$version</prm>, <prm>$id</prm>)
+{
+    <sys>echo</sys> <prm>$version</prm>; <note>// 2</note>
+    <sys>echo</sys> <prm>$id</prm>; <note>// 123</note>
+}
 <note>// [PUT] http://www.billge.cc/rest/272 正则匹配的内容会传入方法</note>
 <sys>public function</sys> <act>PUT_test</act>(<prm>$id</prm>)
 {
     <sys>echo</sys> <prm>$id</prm>; <note>// 272</note>
-}
-
-<note>// [DELETE] http://www.billge.cc/rest/123/person</note>
-<sys>public function</sys> <act>DELETE_person</act>(<prm>$id</prm>)
-{
-    <sys>echo</sys> <prm>$id</prm>; <note>// 123</note>
 }
 </pre>
 
