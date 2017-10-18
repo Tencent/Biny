@@ -7,8 +7,8 @@ return array(
 
         //静态化配置
         'routeRule' => array(
-            '<method:\w+>/test/<id:\d+>.html' => 'test/<method>',
-//            'test/<id:[\w_%]+>' => 'test/view',
+//            '<method:\w+>/test/<id:\d+>.html' => 'test/<method>',
+//            'rest/<rid:[\d]+>/<method:\w+>/<mid:\d+>' => 'rest/<method>',
         ),
     ),
 

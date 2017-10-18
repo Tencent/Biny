@@ -48,12 +48,22 @@ class TXAction
     protected $csrfValidate = true;
 
     /**
+     * restful接口
+     * @var bool
+     */
+    protected $restApi = false;
+
+    /**
      * 构造函数
      */
     public function __construct()
     {
+        if ($this->restApi){
+            parse_str(file_get_contents('php://input'), $this->params);
+        } else {
+            $this->params = $_REQUEST;
+        }
         $this->posts = $_POST;
-        $this->params = $_REQUEST;
         $this->gets = $_GET;
         //判断是否维护中
         if (isMaintenance){
@@ -81,6 +91,11 @@ class TXAction
         if (substr($obj, -7) == 'Service' || substr($obj, -3) == 'DAO') {
             return TXFactory::create($obj);
         }
+    }
+
+    public function getResful()
+    {
+        return $this->restApi;
     }
 
     /**

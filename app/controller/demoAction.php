@@ -22,12 +22,12 @@ class demoAction extends baseAction
     {
         TXLogger::info('you can print some information in console like time: '.date('Y-m-d H:i:s'), 'info');
         $view = $this->display('demo/demo');
-        $view->title = "Biny演示页面";
+        $view->title = "Biny Framework Wiki";
         return $view;
     }
 
     public function action_test()
     {
-        return $this->correct('success');
+        return $this->display('main/index');
     }
 }

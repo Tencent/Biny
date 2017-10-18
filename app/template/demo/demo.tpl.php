@@ -14,7 +14,7 @@
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
             </button>
-            <a href="<?=$webRoot?>/demo/" class="navbar-brand">Biny 演示页面</a>
+            <a href="<?=$webRoot?>/demo/" class="navbar-brand">Biny Framework Wiki</a>
         </div>
     </div>
 </header>
@@ -76,10 +76,12 @@
         <p><code>TXApp::$model->person</code> 为当前用户，可在<code>/app/model/person.php</code>中定义</p>
 
         <p>简单示例</p>
-        <pre class="code"><span class="nc">/**
+        <pre class="code"><sys>namespace</sys> app\controller;
+<sys>use</sys> TXApp;
+<span class="nc">/**
 * 主页Action
-* @property projectService $projectService
-* @property projectDAO $projectDAO
+* @property \app\service\projectService $projectService
+* @property \app\dao\projectDAO $projectDAO
 */  </span>
 <sys>class</sys> testAction <sys>extends</sys> baseAction
 {
@@ -252,6 +254,81 @@
 
         <p>同样也可以在js中获取（前提是引用<code>/static/js/main.js</code>JS文件），加在POST参数中即可。</p>
         <pre class="code"><sys>var</sys> <prm>_csrf</prm> = <func>getCookie</func>(<str>'csrf-token'</str>);</pre>
+
+
+        <h2 id="router-restful">Restful</h2>
+        <p>Biny也同时支持restful协议的请求，可以在Action类中将<code>$restApi</code>置为<code>true</code>，则该Action会以restful的协议来解析路由</p>
+        <pre class="code"><sys>namespace</sys> app\controller;
+<note>/**
+ * restful演示
+ * @property \app\dao\userDAO $userDAO
+ */</note>
+<sys>class</sys> restAction <sys>extends</sys> baseAction
+{
+    <note>// 该action以restful协议解析路由</note>
+    <sys>protected</sys> <prm>$restApi</prm> = <sys>true</sys>;
+
+    <note>// [GET] http://www.billge.cc/rest/?id=xxx</note>
+    <sys>public function</sys> <act>GET_index</act>(<prm>$id</prm>)
+    {
+        <prm>$user</prm> = <prm>$this</prm>-><prm>userDAO</prm>-><func>filter</func>([<str>'id'</str>=><prm>$id</prm>])-><func>find</func>();
+        <sys>return</sys> <prm>$user</prm> ? <prm>$this</prm>-><func>correct</func>(<prm>$user</prm>) : <prm>$this</prm>-><func>error</func>(<str>'user not found'</str>);
+    }
+
+    <note>// [POST] http://www.billge.cc/rest/test</note>
+    <sys>public function</sys> <act>POST_test</act>()
+    {
+        <prm>$user</prm> = <prm>$this</prm>-><func>getParam</func>(<str>'user'</str>);
+        <prm>$user_id</prm> = <prm>$this</prm>-><prm>userDAO</prm>-><func>add</func>(<prm>$user</prm>);
+        <sys>return</sys> <prm>$user_id</prm> ? <prm>$this</prm>-><func>correct</func>(<prm>$user</prm>) : <prm>$this</prm>-><func>error</func>(<str>'data error'</str>);
+    }
+
+    <note>// [PUT] http://www.billge.cc/rest/?id=xxx</note>
+    <sys>public function</sys> <act>PUT_index</act>(<prm>$id</prm>)
+    {
+        <prm>$user</prm> = <prm>$this</prm>-><func>getParam</func>(<str>'user'</str>);
+        <prm>$ret</prm> = <prm>$this</prm>-><prm>userDAO</prm>-><func>filter</func>([<str>'id'</str>=><prm>$id</prm>])-><func>update</func>(<prm>$user</prm>);
+        <sys>return</sys> <prm>$ret</prm> ? <prm>$this</prm>-><func>correct</func>() : <prm>$this</prm>-><func>error</func>(<str>'data error'</str>);
+    }
+
+    <note>// [PATCH] http://www.billge.cc/rest/test?id=xxx</note>
+    <sys>public function</sys> <act>PATCH_test</act>(<prm>$id</prm>)
+    {
+        <prm>$sets</prm> = <prm>$this</prm>-><func>getParam</func>(<str>'sets'</str>);
+        <prm>$ret</prm> = <prm>$this</prm>-><prm>userDAO</prm>-><func>filter</func>([<str>'id'</str>=><prm>$id</prm>])-><func>update</func>(<prm>$sets</prm>);
+        <sys>return</sys> <prm>$ret</prm> ? <prm>$this</prm>-><func>correct</func>() : <prm>$this</prm>-><func>error</func>(<str>'data error'</str>);
+    }
+
+    <note>// [DELETE] http://www.billge.cc/rest/test?id=xxx</note>
+    <sys>public function</sys> <act>DELETE_test</act>(<prm>$id</prm>)
+    {
+        <prm>$ret</prm> = <prm>$this</prm>-><prm>userDAO</prm>-><func>filter</func>([<str>'id'</str>=><prm>$id</prm>])-><func>delete</func>();
+        <sys>return</sys> <prm>$ret</prm> ? <prm>$this</prm>-><func>correct</func>() : <prm>$this</prm>-><func>error</func>(<str>'data error'</str>);
+    }
+}</pre>
+
+        <p>同样，restful协议也可以通过自定义路由的模式来配置，例如</p>
+        <pre class="code"><note>/config/config.php</note>
+<str>'routeRule'</str> => <sys>array</sys>(
+    <note>// rest/(\d+) 的restful路由会自动转发到restAction中的 {method}_test方法</note>
+    <str>'<prm>rest</prm>/&lt;<prm>id</prm>:\d+&gt;'</str> => <str>'rest/test'</str>,
+    <note>// 匹配的参数可在转发路由中动态使用</note>
+    <str>'<prm>rest</prm>/&lt;<prm>id</prm>:\d+&gt;/&lt;<prm>method</prm>:[\w_]+&gt;'</str> => <str>'rest/&lt;<prm>method</prm>&gt;'</str>,
+),
+
+<note>/app/controller/restAction.php</note>
+<note>// [PUT] http://www.billge.cc/rest/272 正则匹配的内容会传入方法</note>
+<sys>public function</sys> <act>PUT_test</act>(<prm>$id</prm>)
+{
+    <sys>echo</sys> <prm>$id</prm>; <note>// 272</note>
+}
+
+<note>// [DELETE] http://www.billge.cc/rest/123/person</note>
+<sys>public function</sys> <act>DELETE_person</act>(<prm>$id</prm>)
+{
+    <sys>echo</sys> <prm>$id</prm>; <note>// 123</note>
+}
+</pre>
 
         <h2 id="router-param">参数传递</h2>
         <p>方法可以直接接收 GET 参数，并可以赋默认值，空则返回null</p>
@@ -621,9 +698,10 @@ TXApp::<prm>$base</prm>-><prm>config</prm>-><func>get</func>(<str>'path'</str>, 
         <p>然后就可以在<code>Action、Service、Model</code>各层中使用<code>testDAO</code>了</p>
 
 <pre class="code"><note>// testAction.php
+<sys>namespace</sys> app\controller;
 /**
 * DAO 或者 Service 会自动映射 生成对应类的单例
-* @property TXSingleDAO $testDAO
+* @property \biny\lib\TXSingleDAO $testDAO
 */</note>
 <sys>class</sys> testAction <sys>extends</sys> baseAction
 {
@@ -641,9 +719,10 @@ TXApp::<prm>$base</prm>-><prm>config</prm>-><func>get</func>(<str>'path'</str>, 
         <h2 id="dao-simple">基础查询</h2>
         <p>DAO提供了<code>query</code>，<code>find</code>等基本查询方式，使用也相当简单</p>
         <pre class="code"><note>// testAction.php
+<sys>namespace</sys> app\controller;
 /**
  * DAO 或者 Service 会自动映射 生成对应类的单例
- * @property testDAO $testDAO
+ * @property \app\dao\testDAO $testDAO
  */</note>
 <sys>class</sys> testAction <sys>extends</sys> baseAction
 {
@@ -1005,6 +1084,7 @@ TXDatabase::<func>end</func>();</pre>
         <p>然后需要在DAO中制定表键值，复合索引需要传<code>数组</code>，例如：<code>['id', 'type']</code></p>
         <p>因为系统缓存默认走<code>redis</code>，所以开启缓存的话，需要在<code>/app/config/dns_xxx.php</code>中配置环境相应的redis配置</p>
         <pre class="code"><note>// testDAO</note>
+<sys>namespace</sys> app\dao;
 <sys>class</sys> testDAO <sys>extends</sys> baseDAO
 {
     <sys>protected</sys> <prm>$dbConfig</prm> = [<str>'database'</str>, <str>'slaveDb'</str>];
@@ -1159,9 +1239,10 @@ TXEvent::<func>off</func>(<const>onSql</const>);</pre>
         <p>参数分别为<code>事件名</code>，<code>方法[类，方法名]</code> 方法可以不传，默认为<code>TXLogger::event()</code>方法，会在console中打印</p>
         <p><code>$fd</code>返回的是该事件的操作符。在调用off方法时，可以通过传递该操作符解绑该事件。</p>
 
-        <pre class="code"><note>/**
+        <pre class="code"><sys>namespace</sys> app\controller;
+<note>/**
 * 主页Action
-* @property testService $testService
+* @property \app\service\testService $testService
 */  </note>
 <sys>class</sys> testAction <sys>extends</sys> baseAction
 {
@@ -1225,8 +1306,10 @@ TXEvent::<func>trigger</func>(<str>'myEvent'</str>, <sys>array</sys>(<func>get_c
         <p>框架提供了一套完整的表单验证解决方案，适用于绝大多数场景。</p>
         <p>表单验证支持所有类型的验证以及自定义方法</p>
         <p>简单示例：</p>
-        <pre class="code"><note>/**
- * @property testService $testService
+        <pre class="code">
+<sys>namespace</sys> app\form;
+<note>/**
+ * @property \app\service\testService $testService
  * 自定义一个表单验证类型类 继承TXForm
  */</note>
 <sys>class</sys> testForm <sys>extends</sys> TXForm
@@ -1380,6 +1463,8 @@ TXLogger::<func>memory</func>(<str>'end-memory'</str>);</pre>
     )
 )
 <note>// /app/shell/indexShell.php</note>
+<sys>namespace</sys> app\shell;
+<sys>use</sys> biny\lib\TXShell;
 <sys>class</sys> testShell <sys>extends</sys> TXShell
 {
     <note>// 和http一样都会先执行init方法</note>
@@ -1403,6 +1488,8 @@ TXLogger::<func>memory</func>(<str>'end-memory'</str>);</pre>
         <p>另外，可以用<code>getParam</code>方法获取对应位置的参数</p>
         <p>例如：终端执行<code>php shell.php test/demo 1 2 aaa</code>，结果如下：</p>
         <pre class="code"><note>// php shell.php test/demo 1 2 aaa</note>
+<sys>namespace</sys> app\shell;
+<sys>use</sys> biny\lib\TXShell;
 <sys>class</sys> testShell <sys>extends</sys> TXShell
 {
     <note>test/demo => testShell/action_demo</note>
@@ -1424,6 +1511,8 @@ TXLogger::<func>memory</func>(<str>'end-memory'</str>);</pre>
         <p>同时框架还提供了变量化的参数传递方式，用法与http模式保持一致</p>
         <p>例如：终端执行<code>php shell.php test/demo --name="test" --id=23 demo</code>，结果如下：</p>
         <pre class="code"><note>// php shell.php test/demo --name="test" --id=23 demo</note>
+<sys>namespace</sys> app\shell;
+<sys>use</sys> biny\lib\TXShell;
 <sys>class</sys> testShell <sys>extends</sys> TXShell
 {
     <note>test/demo => testShell/action_demo</note>
@@ -1561,6 +1650,7 @@ TXApp::<prm>$base</prm>-><prm>session</prm>-><func>clear</func>();</pre>
                     <li><a href="#router-rule">默认路由</a></li>
                     <li><a href="#router-custom">自定义路由</a></li>
                     <li><a href="#router-ajax">异步请求</a></li>
+                    <li><a href="#router-restful">Restful</a></li>
                     <li><a href="#router-param">参数获取</a></li>
                     <li><a href="#router-check">权限验证</a></li>
                 </ul>

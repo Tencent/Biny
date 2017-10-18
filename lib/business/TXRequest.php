@@ -13,8 +13,11 @@ use TXApp;
 
 class TXRequest {
     private $module;
+    /**
+     * @var TXAction
+     */
+    private $action=null;
     private $method=null;
-    private $id;
     private $csrfToken = null;
     private $_hostInfo = null;
     private $_securePort = null;
@@ -217,14 +220,44 @@ class TXRequest {
 
     }
 
-    public function getModule()
+    /**
+     * 获取模块
+     * @param bool $action
+     * @return TXAction | string
+     */
+    public function getModule($action=false)
     {
-        return $this->module;
+        if ($action){
+            if (null === $this->action){
+                $this->action = TXFactory::create($this->module."Action");
+            }
+            return $this->action;
+        } else {
+            return $this->module;
+        }
     }
 
+    /**
+     * 获取方法
+     * @param bool $row
+     * @return null|string
+     */
     public function getMethod($row=false)
     {
-        return $row ? $this->method : 'action_' . $this->method;
+        if ($row){
+            return $this->method;
+        } else {
+            if ($this->action && $this->action->getResful()){
+                if (isset($_SERVER['HTTP_X_HTTP_METHOD_OVERRIDE'])) {
+                    $method = strtoupper($_SERVER['HTTP_X_HTTP_METHOD_OVERRIDE']);
+                } else {
+                    $method = isset($_SERVER['REQUEST_METHOD']) ? strtoupper($_SERVER['REQUEST_METHOD']) : 'GET';
+                }
+                return $method."_".$this->method;
+            } else {
+                return 'action_' . $this->method;
+            }
+        }
     }
 
     public function isShowTpl()

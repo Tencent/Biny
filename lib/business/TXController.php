@@ -44,26 +44,6 @@ class TXController {
     }
 
     /**
-     * @param $module
-     * @param $request
-     * @return mixed
-     * @throws TXException
-     */
-    private function getAction($module, $request)
-    {
-        $module = 'app\\controller\\'.$module;
-        $object = new $module();
-        if (method_exists($object, 'init')){
-            $result = $object->init();
-            if ($result instanceof TXResponse || $result instanceof TXJSONResponse){
-                return $result;
-            }
-        }
-        TXEvent::trigger(beforeAction, [$request]);
-        return $object;
-    }
-
-    /**
      * 执行请求
      * @param TXRequest $request
      * @throws TXException
@@ -71,23 +51,24 @@ class TXController {
      */
     private function call(TXRequest $request)
     {
-        $module = $request->getModule() . 'Action';
-        $method = $request->getMethod();
-        $args = $this->getArgs($module, $method);
-
-        $object = $this->getAction($module, $request);
-        if ($object instanceof TXResponse || $object instanceof TXJSONResponse){
-            TXEvent::trigger(afterAction, [$request]);
-            return $object;
-        }
-
-        if ($object instanceof TXAction) {
-            $result = call_user_func_array([$object, $method], $args);
-            TXEvent::trigger(afterAction, [$request]);
-            return $result;
-        } else {
+        $action = $request->getModule(true);
+        if (!($action instanceof TXAction)){
             throw new TXException(2001, $request->getModule(), 404);
         }
+        if (method_exists($action, 'init')){
+            $result = $action->init();
+            if ($result instanceof TXResponse || $result instanceof TXJSONResponse){
+                return $result;
+            }
+        }
+
+        $method = $request->getMethod();
+        $args = $this->getArgs($action, $method);
+
+        TXEvent::trigger(beforeAction, [$request]);
+        $result = call_user_func_array([$action, $method], $args);
+        TXEvent::trigger(afterAction, [$request]);
+        return $result;
     }
 
     /**
@@ -99,15 +80,14 @@ class TXController {
      */
     private function getArgs($obj, $method)
     {
-        $obj = 'app\\controller\\'.$obj;
         $params = TXRouter::$ARGS;
         $args = [];
         if (!method_exists($obj, $method)){
-            throw new TXException(2002, [$method, $obj], 404);
+            throw new TXException(2002, [$method, get_class($obj)], 404);
         }
         $action = new \ReflectionMethod($obj, $method);
         if ($action->getName() !== $method){
-            throw new TXException(2002, [$method, $obj], 404);
+            throw new TXException(2002, [$method, get_class($obj)], 404);
         }
         foreach ($action->getParameters() as $param) {
             $name = $param->getName();
