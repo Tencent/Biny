@@ -514,6 +514,12 @@
         <str>'slowQuery'</str> => 1000,
     ),
 
+    <note>// 数据库相关配置</note>
+    <str>'database'</str> => <sys>array</sys>(
+        <str>'returnIntOrFloat'</str> => <sys>true</sys>, <note>// 是否返回int或者float类型</note>
+        <str>'returnAffectedRows'</str> => <sys>false</sys>, <note>// 是否返回受影响行数，false下返回成功true/失败false, true情况下-1为失败</note>
+    ),
+
     <note>//缓存相关配置</note>
     <str>'cache'</str> => <sys>array</sys>(
         <str>'pkCache'</str> => <str>'tb:%s'</str>,
