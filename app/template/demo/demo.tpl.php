@@ -98,7 +98,7 @@
     <sys>public function</sys> <act>action_index</act>()
     {
         <note>// 获取当前用户</note>
-        <prm>$person</prm> = TXApp::<prm>$model</prm>-><prm>person</prm>-><func>get</func>();
+        <prm>$person</prm> = TXApp::<prm>$model</prm>-><prm>person</prm>;
         <prm>$members</prm> = TXApp::<prm>$base</prm>-><prm>memcache</prm>-><func>get</func>(<str>'cache_'</str><sys>.</sys><prm>$person</prm>-><prm>project_id</prm>);
         <sys>if</sys> (!<prm>$members</prm>){
             <note>// 获取用户所在项目成员</note>

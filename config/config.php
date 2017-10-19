@@ -61,6 +61,12 @@ return array(
         'slowQuery' => 1000,
     ),
 
+    // 数据库相关配置
+    'database' => array(
+        'returnIntOrFloat' => true, // 是否返回int或者float类型
+        'returnAffectedRows' => true, // 是否返回受影响行数
+    ),
+
     //缓存相关配置
     'cache' => array(
         'pkCache' => 'tb:%s',

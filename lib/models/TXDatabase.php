@@ -53,7 +53,12 @@ class TXDatabase {
             throw new TXException(3001, [$config['host']]);
         }
         $this->handler->autocommit(self::$autocommit);
-        $this->handler->options(MYSQLI_OPT_INT_AND_FLOAT_NATIVE, 1);
+        $dataConfig = TXApp::$base->config->get('database');
+        if ($dataConfig['returnIntOrFloat']){
+            $this->handler->options(MYSQLI_OPT_INT_AND_FLOAT_NATIVE, 1);
+        } else {
+            $this->handler->options(MYSQLI_OPT_INT_AND_FLOAT_NATIVE, 0);
+        }
 
         mysqli_query($this->handler, "set NAMES {$config['encode']}");
     }
@@ -165,16 +170,16 @@ class TXDatabase {
      */
     public function execute($sql, $id=false)
     {
+        $dataConfig = TXApp::$base->config->get('database');
         if (mysqli_query($this->handler, $sql)){
             if ($id){
                 return mysqli_insert_id($this->handler);
-//            return mysql_insert_id();
             }
-            return true;
+            return $dataConfig['returnAffectedRows'] ? mysqli_affected_rows($this->handler) : true;
         } else {
             TXLogger::addError(sprintf("sql Error: %s [%s]", mysqli_error($this->handler), $sql), 'sql Error:');
             TXLogger::error($sql, 'sql Error:');
-            return false;
+            return $dataConfig['returnAffectedRows'] ? -1 : false;
         }
     }
 
