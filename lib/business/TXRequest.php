@@ -462,14 +462,9 @@ class TXRequest {
     }
 
     //设置默认编码
-    public function setCharset($charset = 'UTF-8')
+    public function setContentType($contentType='text/html', $charset='utf-8')
     {
-        header('charset: ' . $charset);
-    }
-
-    public function setContentType($contentType='text/html')
-    {
-        header('Content-type: ' . $contentType);
+        header('Content-type: ' . $contentType.'; charset='.$charset);
     }
 
     public function redirect($url)

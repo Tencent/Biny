@@ -77,7 +77,6 @@ class TXAction
         // 权限验证
         $this->valid_privilege();
         TXApp::$base->request->createCsrfToken();
-        TXApp::$base->request->setCharset();
         TXApp::$base->request->setContentType();
     }
 
