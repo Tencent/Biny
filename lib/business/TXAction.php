@@ -60,6 +60,7 @@ class TXAction
     {
         if ($this->restApi){
             parse_str(file_get_contents('php://input'), $this->params);
+            $this->params = array_merge($this->params, $_GET);
         } else {
             $this->params = $_REQUEST;
         }
