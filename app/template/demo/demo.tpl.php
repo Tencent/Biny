@@ -715,7 +715,7 @@ TXApp::<prm>$base</prm>-><prm>config</prm>-><func>get</func>(<str>'path'</str>, 
     {
         <note>// 此处的testDAO为映射生成的，没有baseDAO中对于缓存的操作
             [['id'=>1, 'name'=>'xx', 'type'=>2], ['id'=>2, 'name'=>'yy', 'type'=>3]]</note>
-        <prm>$datas</prm> = <prm>$this</prm>-><prm>testDAO</prm>-><func>query</func>();
+        <prm>$data</prm> = <prm>$this</prm>-><prm>testDAO</prm>-><func>query</func>();
     }
 }</pre>
         <p>需要<code>注意</code>的是，映射的DAO不具备设置数据库功能（主从库都是默认的<code>database</code>配置）</p>
@@ -736,11 +736,11 @@ TXApp::<prm>$base</prm>-><prm>config</prm>-><func>get</func>(<str>'path'</str>, 
     {
         <note>// 返回 testDAO所对应表的全部内容 格式为二维数组
             [['id'=>1, 'name'=>'xx', 'type'=>2], ['id'=>2, 'name'=>'yy', 'type'=>3]]</note>
-        <prm>$datas</prm> = <prm>$this</prm>-><prm>testDAO</prm>-><func>query</func>();
+        <prm>$data</prm> = <prm>$this</prm>-><prm>testDAO</prm>-><func>query</func>();
         <note>// 第一个参数为返回的字段 [['id'=>1, 'name'=>'xx'], ['id'=>2, 'name'=>'yy']]</note>
-        <prm>$datas</prm> = <prm>$this</prm>-><prm>testDAO</prm>-><func>query</func>(<sys>array</sys>(<str>'id'</str>, <str>'name'</str>));
+        <prm>$data</prm> = <prm>$this</prm>-><prm>testDAO</prm>-><func>query</func>(<sys>array</sys>(<str>'id'</str>, <str>'name'</str>));
         <note>// 第二个参数返回键值，会自动去重 [1 => ['id'=>1, 'name'=>'xx'], 2 => ['id'=>2, 'name'=>'yy']]</note>
-        <prm>$datas</prm> = <prm>$this</prm>-><prm>testDAO</prm>-><func>query</func>(<sys>array</sys>(<str>'id'</str>, <str>'name'</str>), <str>'id'</str>);
+        <prm>$data</prm> = <prm>$this</prm>-><prm>testDAO</prm>-><func>query</func>(<sys>array</sys>(<str>'id'</str>, <str>'name'</str>), <str>'id'</str>);
 
         <note>// 返回 表第一条数据 格式为一维 ['id'=>1, 'name'=>'xx', 'type'=>2]</note>
         <prm>$data</prm> = <prm>$this</prm>-><prm>testDAO</prm>-><func>find</func>();
@@ -1127,13 +1127,13 @@ TXDatabase::<func>end</func>();</pre>
         <p>SQL调试方法已经集成在框架事件中，只需要在需要调试语句的方法前调用<code>TXEvent::on(onSql)</code>就可以在<code>页面控制台</code>中输出sql语句了</p>
         <pre class="code"><note>// one方法绑定一次事件，输出一次后自动释放</note>
 TXEvent::<func>one</func>(<const>onSql</const>);
-<prm>$datas</prm> = <prm>$this</prm>-><prm>testDAO</prm>-><func>query</func>();
+<prm>$data</prm> = <prm>$this</prm>-><prm>testDAO</prm>-><func>query</func>();
 
 <note>// on方法绑定事件，直到off释放前都会有效</note>
 TXEvent::<func>on</func>(<const>onSql</const>);
-<prm>$datas</prm> = <prm>$this</prm>-><prm>testDAO</prm>-><func>query</func>();
-<prm>$datas</prm> = <prm>$this</prm>-><prm>testDAO</prm>-><func>query</func>();
-<prm>$datas</prm> = <prm>$this</prm>-><prm>testDAO</prm>-><func>query</func>();
+<prm>$data</prm> = <prm>$this</prm>-><prm>testDAO</prm>-><func>query</func>();
+<prm>$data</prm> = <prm>$this</prm>-><prm>testDAO</prm>-><func>query</func>();
+<prm>$data</prm> = <prm>$this</prm>-><prm>testDAO</prm>-><func>query</func>();
 TXEvent::<func>off</func>(<const>onSql</const>);</pre>
 
         <p>该SQL事件功能还可自行绑定方法，具体用法会在后面<code>事件</code>介绍中详细展开</p>
@@ -1355,7 +1355,7 @@ TXEvent::<func>trigger</func>(<str>'myEvent'</str>, <sys>array</sys>(<func>get_c
 <note>// 获取对应字段</note>
 <prm>$status</prm> = <prm>$form</prm>-><prm>status</prm>;
 <note>// 获取全部字段 返回数组类型 ['id'=>1, 'name'=>'billge', 'status'=>2]</note>
-<prm>$datas</prm> = <prm>$form</prm>-><func>values</func>();
+<prm>$data</prm> = <prm>$form</prm>-><func>values</func>();
         </pre>
 
         <p><code>注意：</code>在<code>$_rules</code>中未定义的字段，无法在<code>$form</code>中被获取到，就算不需要验证，也最好定义一下</p>
