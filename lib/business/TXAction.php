@@ -150,7 +150,7 @@ class TXAction
      */
     public function getForm($name, $method=null)
     {
-        $name .= 'Form';
+        $name = 'app\\form\\'.$name.'Form';
         $form = new $name($this->params, $method);
         $form->init();
         return $form;
