@@ -60,6 +60,7 @@ class TXAction
     {
         if ($this->restApi){
             parse_str(file_get_contents('php://input'), $this->params);
+//            $this->params = array_merge($this->params, $_GET);
         } else {
             $this->params = $_REQUEST;
         }
@@ -150,6 +151,12 @@ class TXAction
     public function getForm($name, $method=null)
     {
         $name .= 'Form';
+        $autoConfig = TXApp::$base->config->get('namespace','autoload');
+        if(!isset($autoConfig[$name])){
+            $config = TXAutoload::loading();
+            $autoConfig = $config['namespace'];
+        }
+        $name = isset($autoConfig[$name]) ? $autoConfig[$name] : $name;
         $form = new $name($this->params, $method);
         $form->init();
         return $form;
