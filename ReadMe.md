@@ -4,7 +4,7 @@
 [![Release Version](https://img.shields.io/badge/release-2.7.8-red.svg)](https://github.com/tencent/biny/releases)
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](https://github.com/tencent/biny/pulls)
 
-Biny是一款高性能的超轻量级PHP框架
+Biny是一款高性能的轻量级PHP框架
 
 遵循 MVC 模式，用于快速开发现代 Web 应用程序
 

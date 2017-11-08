@@ -19,7 +19,7 @@
 <div <?if (TXApp::$base->request->isMobile()){?>class="col-md-12"<?} else {?> class="col-md-9" <?}?> role="main">
     <div class="bs-docs-section">
         <h1 id="overview" class="page-header">概览</h1>
-        <p>Biny是一款高性能的超轻量级PHP框架</p>
+        <p>Biny是一款高性能的轻量级PHP框架</p>
         <p>遵循 MVC 模式，用于快速开发现代 Web 应用程序</p>
         <p>Biny代码简洁优雅，对应用层，数据层，模板渲染层的封装简单易懂，能够快速上手使用</p>
         <p>高性能，框架响应时间在1ms以内，单机qps轻松上3000</p>
