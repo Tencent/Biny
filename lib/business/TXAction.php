@@ -93,7 +93,7 @@ class TXAction
         }
     }
 
-    public function getResful()
+    public function getRestful()
     {
         return $this->restApi;
     }
@@ -150,9 +150,12 @@ class TXAction
      */
     public function getForm($name, $method=null)
     {
-        $name = 'app\\form\\'.$name.'Form';
-        $form = new $name($this->params, $method);
-        $form->init();
+        $name = $name.'Form';
+        /**
+         * @var TXForm $form
+         */
+        $form = TXFactory::create($name);
+        $form->init($this->params, $method);
         return $form;
     }
 
@@ -166,12 +169,22 @@ class TXAction
     }
 
     /**
+     * 兼容原有api
+     * @param $key
+     * @param null $default
+     * @return float|int|mixed|null
+     */
+    public function getParam($key, $default=null){return $this->param($key, $default);}
+    public function getGet($key, $default=null){return $this->get($key, $default);}
+    public function getPost($key, $default=null){return $this->post($key, $default);}
+
+    /**
      * 获取请求参数
      * @param $key
      * @param null $default
      * @return float|int|mixed|null
      */
-    public function getParam($key, $default=null)
+    public function param($key, $default=null)
     {
         if (TXApp::$base->request->getContentType() == 'application/json' || TXApp::$base->request->getContentType() == 'text/json'){
             return $this->getJson($key, $default);
@@ -186,7 +199,7 @@ class TXAction
      * @param null $default
      * @return float|int|mixed|null
      */
-    public function getPost($key, $default=null)
+    public function post($key, $default=null)
     {
         return isset($this->posts[$key]) ? $this->posts[$key] : $default;
     }
@@ -197,7 +210,7 @@ class TXAction
      * @param null $default
      * @return float|int|mixed|null
      */
-    public function getGet($key, $default=null)
+    public function get($key, $default=null)
     {
         return isset($this->gets[$key]) ? $this->gets[$key] : $default;
     }

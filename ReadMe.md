@@ -42,7 +42,7 @@ Supports Form validation and supports event triggering mechanisms
 
 Supports browser side debugging, rapid positioning problems and performance bottlenecks
 
-With SQL anti injection, HTML automatic, anti XSS and other characteristics
+With SQL anti injection, HTML automatic anti XSS and other characteristics
 
 
 ## 使用文档 documents

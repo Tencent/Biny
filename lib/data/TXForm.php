@@ -36,24 +36,17 @@ class TXForm
     private $checkMethods = [];
 
     /**
-     * 构造函数
+     * 构造form
      * @param array $params
      * @param null $method
      */
-    public function __construct($params=[], $method=null)
+    public function init($params=[], $method=null)
     {
         $this->_params = array_merge($params, TXRouter::$ARGS);
         $this->_method = $method;
         if ($method && method_exists($this, $method)){
             $this->$method();
         }
-    }
-
-    /**
-     * 构造form
-     */
-    public function init()
-    {
         foreach ($this->_rules as $key => $default){
             $this->_data[$key] = isset($this->_params[$key]) ? $this->_params[$key] : (isset($default[1]) ? $default[1] : null);
         }

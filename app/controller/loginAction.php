@@ -20,7 +20,7 @@ class loginAction extends baseAction
         if (TXApp::$model->person->exist()){
             TXApp::$base->request->redirect('/');
         }
-        $username = $this->getParam('username');
+        $username = $this->param('username');
         if (!$username){
             return $this->display('main/login');
         }

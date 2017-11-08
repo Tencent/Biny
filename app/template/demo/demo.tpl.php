@@ -2,19 +2,13 @@
 <? include TXApp::$view_root . "/base/header.tpl.php" ?>
 <link href="<?=$webRoot?>/static/css/demo.css" rel="stylesheet" type="text/css"/>
 
-<a id="skippy" class="sr-only sr-only-focusable" href="#content"><div class="container"><span class="skiplink-text">Skip to main content</span></div></a>
-
 <!-- Docs master nav -->
 <header class="navbar navbar-static-top navbar-inverse" id="top" role="banner">
     <div class="container">
-        <div class="navbar-header">
-            <button class="navbar-toggle collapsed" type="button" data-toggle="collapse" data-target="#bs-navbar" aria-controls="bs-navbar" aria-expanded="false">
-                <span class="sr-only">Toggle navigation</span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-            </button>
-            <a href="<?=$webRoot?>/demo/" class="navbar-brand">Biny Framework Wiki</a>
+        <a href="<?=$webRoot?>/demo/" class="navbar-brand">Biny Framework Wiki</a>
+        <div class="pull-right" style="margin-right: 15%">
+            <a class="navbar-brand <?if ($PRM['lan']==='cn'){?>active<?}?>" href="javascript:void(0)" onclick="changeLanguage('cn')">中文</a>
+            <a class="navbar-brand <?if ($PRM['lan']==='en'){?>active<?}?>" href="javascript:void(0)" onclick="changeLanguage('en')">English</a>
         </div>
     </div>
 </header>
@@ -278,7 +272,7 @@
     <note>// [POST] http://www.billge.cc/rest/test</note>
     <sys>public function</sys> <act>POST_test</act>()
     {
-        <prm>$user</prm> = <prm>$this</prm>-><func>getParam</func>(<str>'user'</str>);
+        <prm>$user</prm> = <prm>$this</prm>-><func>param</func>(<str>'user'</str>);
         <prm>$user_id</prm> = <prm>$this</prm>-><prm>userDAO</prm>-><func>add</func>(<prm>$user</prm>);
         <sys>return</sys> <prm>$user_id</prm> ? <prm>$this</prm>-><func>correct</func>(<prm>$user</prm>) : <prm>$this</prm>-><func>error</func>(<str>'data error'</str>);
     }
@@ -286,7 +280,7 @@
     <note>// [PUT] http://www.billge.cc/rest/?id=xxx</note>
     <sys>public function</sys> <act>PUT_index</act>(<prm>$id</prm>)
     {
-        <prm>$user</prm> = <prm>$this</prm>-><func>getParam</func>(<str>'user'</str>);
+        <prm>$user</prm> = <prm>$this</prm>-><func>param</func>(<str>'user'</str>);
         <prm>$ret</prm> = <prm>$this</prm>-><prm>userDAO</prm>-><func>filter</func>([<str>'id'</str>=><prm>$id</prm>])-><func>update</func>(<prm>$user</prm>);
         <sys>return</sys> <prm>$ret</prm> ? <prm>$this</prm>-><func>correct</func>() : <prm>$this</prm>-><func>error</func>(<str>'data error'</str>);
     }
@@ -294,7 +288,7 @@
     <note>// [PATCH] http://www.billge.cc/rest/test?id=xxx</note>
     <sys>public function</sys> <act>PATCH_test</act>(<prm>$id</prm>)
     {
-        <prm>$sets</prm> = <prm>$this</prm>-><func>getParam</func>(<str>'sets'</str>);
+        <prm>$sets</prm> = <prm>$this</prm>-><func>param</func>(<str>'sets'</str>);
         <prm>$ret</prm> = <prm>$this</prm>-><prm>userDAO</prm>-><func>filter</func>([<str>'id'</str>=><prm>$id</prm>])-><func>update</func>(<prm>$sets</prm>);
         <sys>return</sys> <prm>$ret</prm> ? <prm>$this</prm>-><func>correct</func>() : <prm>$this</prm>-><func>error</func>(<str>'data error'</str>);
     }
@@ -343,20 +337,20 @@
     <sys>echo</sys>(<prm>$name</prm>);
 }</pre>
 
-        <p>同时也可以调用<code>getParam</code>，<code>getGet</code>，<code>getPost</code> 方法获取参数。</p>
-        <p><code>getParam($key, $default)</code> 获取GET/POST参数{$key}, 默认值为{$default}</p>
-        <p><code>getGet($key, $default)</code> 获取GET参数{$key}, 默认值为{$default}</p>
-        <p><code>getPost($key, $default)</code> 获取POST参数{$key}, 默认值为{$default}</p>
+        <p>同时也可以调用<code>param</code>，<code>get</code>，<code>post</code> 方法获取参数。</p>
+        <p><code>param($key, $default)</code> 获取GET/POST/JSON参数{$key}, 默认值为{$default}</p>
+        <p><code>get($key, $default)</code> 获取GET参数{$key}, 默认值为{$default}</p>
+        <p><code>post($key, $default)</code> 获取POST参数{$key}, 默认值为{$default}</p>
         <p><code>getJson($key, $default)</code> 如果传递过来的参数为完整json流可使用该方法获取</p>
         <pre class="code"><note>// http://www.billge.cc/test/demo5/?id=33</note>
 <sys>public function</sys> <act>action_demo5</act>()
 {
     <note>// NULL</note>
-    <sys>echo</sys>(<prm>$this</prm>-><func>getParam</func>(<str>'name'</str>));
+    <sys>echo</sys>(<prm>$this</prm>-><func>param</func>(<str>'name'</str>));
     <note>// 'install'</note>
-    <sys>echo</sys>(<prm>$this</prm>-><func>getPost</func>(<str>'type'</str>, <str>'install'</str>));
+    <sys>echo</sys>(<prm>$this</prm>-><func>post</func>(<str>'type'</str>, <str>'install'</str>));
     <note>// 33</note>
-    <sys>echo</sys>(<prm>$this</prm>-><func>getGet</func>(<str>'id'</str>, 1));
+    <sys>echo</sys>(<prm>$this</prm>-><func>get</func>(<str>'id'</str>, 1));
 }</pre>
 
         <h2 id="router-check">权限验证</h2>
@@ -388,7 +382,7 @@
         <note>// do something</note>
     }
     <note>// my_required验证失败后调用, $action为验证失败的action（这里是$this）</note>
-    <sys>public function</sys> <act>test</act>(<prm>$action</prm>)
+    <sys>public function</sys> <act>test</act>(<prm>$action</prm>, <prm>$error</prm>)
     {
         <note>// do something</note>
     }
@@ -445,7 +439,7 @@
     <div class="bs-docs-section">
         <h1 id="config" class="page-header">配置</h1>
         <p>程序配置分两块，一块是系统配置，一块是程序配置</p>
-        <p><code>/config/</code> 系统配置路径，用户一般不需要修改（除了默认路由，默认为indexAction，可替换）</p>
+        <p><code>/config/</code> 系统配置路径</p>
         <p><code>/app/config/</code> 程序逻辑配置路径</p>
 
         <h2 id="config-system">系统配置</h2>
@@ -470,7 +464,7 @@
         <str>'autoPath'</str> => <str>'config/autoload.php'</str>,
         <note>//重新构建间隔时间s</note>
         <str>'autoSkipLoad'</str> => 5,
-        <str>'autoThrow'</str> => <sys>true</sys>, <note>//不在系统库中的类即抛出异常</note>
+        <str>'autoThrow'</str> => <sys>true</sys>, <note>//使用外部autoload机制(如composer) 需设置为false</note>
     ),
 
     <note>//请求配置</note>
@@ -488,6 +482,8 @@
         <str>'csrfWhiteIps'</str> => <sys>array</sys>(
             <str>'127.0.0.1/24'</str>
         ),
+        <note>//多语言cookie字段</note>
+        <str>'languageCookie'</str> => <str>'biny_language'</str>
     ),
 
     <note>//响应配置</note>
@@ -621,7 +617,7 @@ TXApp::<prm>$base</prm>-><prm>app_config</prm>-><func>get</func>(<str>'demo'</st
 TXApp::<prm>$base</prm>-><prm>config</prm>-><func>get</func>(<str>'path'</str>);</pre>
 
         <p>用户也可以自定义别名，例如</p>
-        <pre class="code"><note>// getConfig 之前执行</note>
+        <pre class="code"><note>// config->get 之前执行</note>
 TXApp::<prm>$base</prm>-><prm>config</prm>-><func>setAlias</func>(<str>'time'</str>, <sys>time</sys>());
 
 <note>// config.php</note>
@@ -781,6 +777,8 @@ TXApp::<prm>$base</prm>-><prm>config</prm>-><func>get</func>(<str>'path'</str>, 
 <note>// false 时返回true/false</note>
 <prm>$id</prm> = <prm>$this</prm>-><prm>testDAO</prm>-><func>add</func>(<prm>$sets</prm>, <sys>false</sys>);</pre>
 
+        <p>框架同时也提供了受影响行数的返回，可以在<code>/config/config.php</code>中，将字段<code>returnAffectedRows</code>置为<code>true</code>即可</p>
+
         <p><code>addCount</code>方法返回成功（<code>true</code>）或者失败（<code>false</code>），相当于<code>update set count = count+n</code></p>
 <pre class="code"><note>// update `DATABASE`.`TABLE` set `type`=`type`+5</note>
 <prm>$result</prm> = <prm>$this</prm>-><prm>testDAO</prm>-><func>addCount</func>(<sys>array</sys>(<str>'type'</str>=>5);</pre>
@@ -851,7 +849,7 @@ TXApp::<prm>$base</prm>-><prm>config</prm>-><func>get</func>(<str>'path'</str>, 
     -><func>on</func>(<sys>array</sys>(
         <sys>array</sys>(<str>'type'</str>=>10),
         <sys>array</sys>(<str>'cash'</str>=><sys>array</sys>(<str>'>'</str>, 100)),
-    ))->query();</pre>
+    ))-><func>query</func>();</pre>
 
         <p>多联表的查询和修改（<code>update</code>），和单表操作基本一致，需要注意的是单表参数为<code>一维数组</code>，多表则为<code>二维数组</code>，写错会导致执行失败。</p>
 
@@ -897,7 +895,7 @@ TXApp::<prm>$base</prm>-><prm>config</prm>-><func>get</func>(<str>'path'</str>, 
 
         <p>由上述例子可知，添加之间关联符是跟<code>后面</code>的选择器表达式<code>保持一致</code></p>
 
-        <p><code>选择器</code>获取数据跟<code>DAO</code>方法一致，单表的<code>选择器</code>具有单表的所有查询，删改方法，而多表的<code>选择器</code>具有多表的所有查询，修改改方法</p>
+        <p><code>选择器</code>获取数据跟<code>DAO</code>方法一致，单表的<code>选择器</code>具有单表的所有查询，删改方法，而多表的<code>选择器</code>具有多表的所有查询，修改方法</p>
         <pre class="code"><note>// UPDATE `DATABASE`.`TABLE` AS `user` SET `user`.`name` = 'test' WHERE `user`.`id` = 1</note>
 <prm>$result</prm> = <prm>$this</prm>-><prm>userDAO</prm>-><func>filter</func>(<sys>array</sys>(<str>'id'</str>=>1)-><func>update</func>(<sys>array</sys>(<str>'name'</str>=><str>'test'</str>));
 
@@ -945,13 +943,13 @@ TXApp::<prm>$base</prm>-><prm>config</prm>-><func>get</func>(<str>'path'</str>, 
         <p>同时<code>filter/merge</code>也可以被迭代调用，以应对不确定筛选条件的复杂查询</p>
         <pre class="code"><note>// 某一个返回筛选数据的Action</note>
 <prm>$DAO</prm> = <prm>$this</prm>-><prm>userDAO</prm>;
-<sys>if </sys>(<prm>$status</prm>=<prm>$this</prm>-><func>getParam</func>(<str>'status'</str>)){
+<sys>if </sys>(<prm>$status</prm>=<prm>$this</prm>-><func>param</func>(<str>'status'</str>)){
     <prm>$DAO</prm> = <prm>$DAO</prm>-><func>filter</func>(<sys>array</sys>(<str>'status'</str>=><prm>$status</prm>));
 }
-<sys>if </sys>(<prm>$startTime</prm>=<prm>$this</prm>-><func>getParam</func>(<str>'start'</str>, 0)){
+<sys>if </sys>(<prm>$startTime</prm>=<prm>$this</prm>-><func>param</func>(<str>'start'</str>, 0)){
     <prm>$DAO</prm> = <prm>$DAO</prm>-><func>filter</func>(<sys>array</sys>(<str>'>='</str>=><sys>array</sys>(<str>'start'</str>=><prm>$startTime</prm>)));
 }
-<sys>if </sys>(<prm>$endTime</prm>=<prm>$this</prm>-><func>getParam</func>(<str>'end'</str>, <func>time</func>())){
+<sys>if </sys>(<prm>$endTime</prm>=<prm>$this</prm>-><func>param</func>(<str>'end'</str>, <func>time</func>())){
     <prm>$DAO</prm> = <prm>$DAO</prm>-><func>filter</func>(<sys>array</sys>(<str>'<'</str>=><sys>array</sys>(<str>'end'</str>=><prm>$endTime</prm>)));
 }
 <note>// 获取复合条件数量</note>
@@ -1192,7 +1190,7 @@ TXEvent::<func>off</func>(<const>onSql</const>);</pre>
         <p>而多层结构数组参数会在使用时<code>自动转义</code>，不使用时则不会进行转义，避免资源浪费，影响渲染效率。</p>
 
 
-        <p><code>注意：</code>第三个参数必定会进行参数<code>html实例化</code>，如果有参数不需要转义的，请放到第二个参数对象中使用。</p>
+        <p><code>注意：</code>第三个参数是否<code>html实例化</code>，可在<code>/config/config.php</code>中对字段<code>objectEncode</code>进行配置。</p>
 
         <h2 id="view-func">参数方法</h2>
         <p>渲染参数除了渲染外，还提供了一些原有<code>array</code>的方法，例如：</p>
@@ -1314,6 +1312,7 @@ TXEvent::<func>trigger</func>(<str>'myEvent'</str>, <sys>array</sys>(<func>get_c
         <p>简单示例：</p>
         <pre class="code">
 <sys>namespace</sys> app\form;
+<sys>use</sys> biny\lib\TXForm;
 <note>/**
  * @property \app\service\testService $testService
  * 自定义一个表单验证类型类 继承TXForm
@@ -1491,7 +1490,7 @@ TXLogger::<func>memory</func>(<str>'end-memory'</str>);</pre>
 
         <h2 id="shell-param">脚本参数</h2>
         <p>脚本执行可传复数的参数，同http请求可在方法中直接捕获，顺序跟参数顺序保持一致，可缺省</p>
-        <p>另外，可以用<code>getParam</code>方法获取对应位置的参数</p>
+        <p>另外，可以用<code>param</code>方法获取对应位置的参数</p>
         <p>例如：终端执行<code>php shell.php test/demo 1 2 aaa</code>，结果如下：</p>
         <pre class="code"><note>// php shell.php test/demo 1 2 aaa</note>
 <sys>namespace</sys> app\shell;
@@ -1504,13 +1503,13 @@ TXLogger::<func>memory</func>(<str>'end-memory'</str>);</pre>
         <note>//1, 2, aaa, default</note>
         <sys>echo</sys> <str>"<prm>$prm1</prm>, <prm>$prm2</prm>, <prm>$prm3</prm>, <prm>$prm4</prm>"</str>;
         <note>//1</note>
-        <sys>echo</sys> <prm>$this</prm>-><func>getParam</func>(0);
+        <sys>echo</sys> <prm>$this</prm>-><func>param</func>(0);
         <note>//2</note>
-        <sys>echo</sys> <prm>$this</prm>-><func>getParam</func>(1);
+        <sys>echo</sys> <prm>$this</prm>-><func>param</func>(1);
         <note>//aaa</note>
-        <sys>echo</sys> <prm>$this</prm>-><func>getParam</func>(2);
+        <sys>echo</sys> <prm>$this</prm>-><func>param</func>(2);
         <note>//default</note>
-        <sys>echo</sys> <prm>$this</prm>-><func>getParam</func>(3, <str>'default'</str>);
+        <sys>echo</sys> <prm>$this</prm>-><func>param</func>(3, <str>'default'</str>);
     }
 }</pre>
 
@@ -1527,18 +1526,18 @@ TXLogger::<func>memory</func>(<str>'end-memory'</str>);</pre>
         <note>//23, test, default</note>
         <sys>echo</sys> <str>"<prm>$id</prm>, <prm>$name</prm>, <prm>$prm</prm></prm>"</str>;
         <note>//23</note>
-        <sys>echo</sys> <prm>$this</prm>-><func>getParam</func>(<str>'id'</str>);
+        <sys>echo</sys> <prm>$this</prm>-><func>param</func>(<str>'id'</str>);
         <note>//demo</note>
-        <sys>echo</sys> <prm>$this</prm>-><func>getParam</func>(<str>'name'</str>);
+        <sys>echo</sys> <prm>$this</prm>-><func>param</func>(<str>'name'</str>);
         <note>//default</note>
-        <sys>echo</sys> <prm>$this</prm>-><func>getParam</func>(<str>'prm'</str>, <str>'default'</str>);
+        <sys>echo</sys> <prm>$this</prm>-><func>param</func>(<str>'prm'</str>, <str>'default'</str>);
 
         <note>// 不带参数话模式的变量 将顺序从第0位开始</note>
         <note>// demo</note>
-        <sys>echo</sys> <prm>$this</prm>-><func>getParam</func>(0);
+        <sys>echo</sys> <prm>$this</prm>-><func>param</func>(0);
     }
 }</pre>
-        <p><code>注意：</code>使用变量化传递后，方法中默认参数将不会捕获非变量化的参数，如上例的<code>demo</code>需要通过<code>getParam</code>方法获取</p>
+        <p><code>注意：</code>使用变量化传递后，方法中默认参数将不会捕获非变量化的参数，如上例的<code>demo</code>需要通过<code>param</code>方法获取</p>
 
         <h2 id="shell-log">脚本日志</h2>
         <p>脚本执行不再具有HTTP模式的其他功能，例如<code>表单验证</code>，<code>页面渲染</code>，<code>浏览器控制台调试</code>。
@@ -1563,6 +1562,9 @@ TXLogger::<func>memory</func>(<str>'end-memory'</str>);</pre>
 
 <note>// 获取Action名 返回test</note>
 TXApp::<prm>$base</prm>-><prm>request</prm>-><func>getModule</func>();
+
+<note>// 获取Action对象 返回testAction</note>
+TXApp::<prm>$base</prm>-><prm>request</prm>-><func>getModule</func>(<sys>true</sys>);
 
 <note>// 获取Method名 返回action_demo</note>
 TXApp::<prm>$base</prm>-><prm>request</prm>-><func>getMethod</func>();
@@ -1714,7 +1716,7 @@ TXApp::<prm>$base</prm>-><prm>session</prm>-><func>clear</func>();</pre>
                 <a href="#debug">调试</a>
                 <ul class="nav">
                     <li><a href="#debug-console">控制台调试</a></li>
-                    <li><a href="#debug-console">日志调试</a></li>
+                    <li><a href="#debug-log">日志调试</a></li>
                 </ul>
             </li>
             <li>

@@ -13,6 +13,7 @@
 
 namespace biny\lib;
 use app\model\person;
+use TXApp;
 
 /**
  * Class TXModel
@@ -30,24 +31,36 @@ class TXModel
      */
     public function __get($name)
     {
-        $class = 'app\\model\\'.$name;
-        return $this->create($class);
+        return $this->create($name);
     }
 
     /**
      * 获取单例模型
      * @param $name
+     * @param $params
      * @return mixed
      * @throws TXException
      */
     public function __call($name, $params)
     {
-        $class = 'app\\model\\'.$name;
-        return $this->create($class, $params);
+        return $this->create($name, $params);
     }
 
+    /**
+     * 模型获取
+     * @param $class
+     * @param array $params
+     * @return mixed
+     * @throws TXException
+     */
     private function create($class, $params=[])
     {
+        $autoConfig = TXApp::$base->config->get('namespace', 'autoload');
+        if (!isset($autoConfig[$class])){
+            $config = TXAutoload::loading();
+            $autoConfig = $config['namespace'];
+        }
+        $class = isset($autoConfig[$class]) ? $autoConfig[$class] : $class;
         if (is_callable([$class, 'init'])){
             return call_user_func_array([$class, 'init'], $params);
         } else {

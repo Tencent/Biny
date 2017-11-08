@@ -247,7 +247,7 @@ class TXRequest {
         if ($row){
             return $this->method;
         } else {
-            if ($this->action && $this->action->getResful()){
+            if ($this->action && $this->action->getRestful()){
                 if (isset($_SERVER['HTTP_X_HTTP_METHOD_OVERRIDE'])) {
                     $method = strtoupper($_SERVER['HTTP_X_HTTP_METHOD_OVERRIDE']);
                 } else {

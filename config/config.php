@@ -35,6 +35,8 @@ return array(
         'csrfWhiteIps' => array(
             '127.0.0.1/24'
         ),
+        // 多语言cookie字段
+        'languageCookie' => 'biny_language'
     ),
 
     //响应配置

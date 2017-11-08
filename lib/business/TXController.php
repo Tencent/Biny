@@ -119,10 +119,10 @@ class TXController {
     public function shellStart()
     {
         TXApp::$base->router->shellRouter();
-        $module = 'app\\shell\\'.TXApp::$base->request->getModule()."Shell";
+        $module = TXApp::$base->request->getModule()."Shell";
         $method = TXApp::$base->request->getMethod();
         $params = TXApp::$base->router->getArgs();
-        $shell = new $module($params);
+        $shell = TXFactory::create($module);
         if ($shell instanceof TXShell){
             if (method_exists($shell, 'init')){
                 $result = $shell->init();
