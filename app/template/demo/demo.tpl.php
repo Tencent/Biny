@@ -352,6 +352,7 @@
     <note>// 33</note>
     <sys>echo</sys>(<prm>$this</prm>-><func>get</func>(<str>'id'</str>, 1));
 }</pre>
+        <p><code>注意：</code>旧版本的<code>getParam</code>/<code>getPost</code>/<code>getGet</code>效果与上面的一致，但已不建议使用</p>
 
         <h2 id="router-check">权限验证</h2>
         <p>框架中提供了一套完整的权限验证逻辑，可对路由下所有<code>method</code>进行权限验证</p>
