@@ -49,6 +49,8 @@ With SQL anti injection, HTML automatic anti XSS and other characteristics
 
 Wiki URL：[http://www.billge.cc](http://www.billge.cc)
 
+English Wiki URL：[http://www.billge.cc?lang=en](http://www.billge.cc?lang=en)
+
 GitHub URL：[https://github.com/Tencent/Biny](https://github.com/Tencent/Biny)
 
 ## FAQ
