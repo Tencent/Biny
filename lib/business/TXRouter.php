@@ -54,14 +54,15 @@ class TXRouter {
         TXApp::$base->config->setAlias('web', $this->rootPath);
         TXApp::$base->app_config->setAlias('web', $this->rootPath);
         $pathRoot = strpos($_SERVER['REQUEST_URI'], '?') ? strstr($_SERVER['REQUEST_URI'], '?', true) : $_SERVER['REQUEST_URI'];
+        if (substr($pathRoot, -9) === 'index.php'){
+            $pathRoot = substr($pathRoot, 0, -9);
+        }
         if ($this->rootPath){
             $len = strpos($pathRoot, $this->rootPath) + strlen($this->rootPath);
             $pathRoot = substr($pathRoot, $len);
         }
+
         $path = $this->reRouter(rtrim($pathRoot, '/'));
-        if (substr($path, -9) === 'index.php'){
-            $path = substr($path, 0, -9);
-        }
         if ($path !== NULL){
             $pathRoot = $path;
         }
