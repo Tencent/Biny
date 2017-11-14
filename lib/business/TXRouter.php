@@ -54,6 +54,9 @@ class TXRouter {
         TXApp::$base->config->setAlias('web', $this->rootPath);
         TXApp::$base->app_config->setAlias('web', $this->rootPath);
         $pathRoot = strpos($_SERVER['REQUEST_URI'], '?') ? strstr($_SERVER['REQUEST_URI'], '?', true) : $_SERVER['REQUEST_URI'];
+        if (substr($pathRoot, -9) === 'index.php'){
+            $pathRoot = substr($pathRoot, 0, -9);
+        }
         if ($this->rootPath){
             $len = strpos($pathRoot, $this->rootPath) + strlen($this->rootPath);
             $pathRoot = substr($pathRoot, $len);
@@ -83,30 +86,29 @@ class TXRouter {
         $rules = $this->routerInfo['routeRule'];
         foreach ($rules as $key => $value){
             $key = trim($key, '/');
-            if (preg_match_all("/<([\w_]+):([^>]+)>/", $key, $matchs)){
-                foreach ($matchs[2] as &$val){
-                    $val = '('.$val.')';
+            preg_match_all("/<([\w_]+):([^>]+)>/", $key, $matchs);
+            foreach ($matchs[2] as &$val){
+                $val = '('.$val.')';
+            }
+            unset($val);
+            $matchs[0][] = '/';
+            $matchs[0][] = '.';
+            $matchs[2][] = '\/';
+            $matchs[2][] = '\.';
+            $key = str_replace($matchs[0], $matchs[2], $key);
+            if (preg_match('/'.$key.'$/', $url, $args)){
+                foreach ($matchs[1] as $key => $val){
+                    self::$ARGS[$val] = $args[$key+1];
                 }
-                unset($val);
-                $matchs[0][] = '/';
-                $matchs[0][] = '.';
-                $matchs[2][] = '\/';
-                $matchs[2][] = '\.';
-                $key = str_replace($matchs[0], $matchs[2], $key);
-                if (preg_match('/'.$key.'$/', $url, $args)){
-                    foreach ($matchs[1] as $key => $val){
-                        self::$ARGS[$val] = $args[$key+1];
+                if (preg_match_all("/<([\w_]+)>/", $value, $matchs)){
+                    $replaces = [];
+                    foreach ($matchs[1] as &$val){
+                        $replaces[] = isset(self::$ARGS[$val]) ? self::$ARGS[$val] : $val;
                     }
-                    if (preg_match_all("/<([\w_]+)>/", $value, $matchs)){
-                        $replaces = [];
-                        foreach ($matchs[1] as &$val){
-                            $replaces[] = isset(self::$ARGS[$val]) ? self::$ARGS[$val] : $val;
-                        }
-                        $value = str_replace($matchs[0], $replaces, $value);
-                    }
-                    $path = str_replace($args[0], $value, $url);
-                    break;
+                    $value = str_replace($matchs[0], $replaces, $value);
                 }
+                $path = str_replace($args[0], $value, $url);
+                break;
             }
         }
         return $path;

@@ -554,7 +554,7 @@ class TXSingleDAO extends TXDAO
      * 更新数据或者插入数据
      * @param $inserts
      * @param $sets
-     * @return bool|int|mysqli_result|string
+     * @return bool|int|\mysqli_result|string
      */
     public function createOrUpdate($inserts, $sets=[])
     {

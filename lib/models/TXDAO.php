@@ -118,7 +118,7 @@ class TXDAO
      * 执行sql
      * @param $sql
      * @param bool $id
-     * @return bool|int|mysqli_result|string
+     * @return bool|int|\mysqli_result|string
      */
     protected function execute($sql, $id=false) {
         $dns = is_array($this->dbConfig) ? $this->dbConfig[0] : $this->dbConfig;
@@ -159,7 +159,7 @@ class TXDAO
      * 语句执行
      * @param $sql
      * @param $querys
-     * @return bool|int|mysqli_result|string
+     * @return bool|int|\mysqli_result|string
      */
     public function command($sql, $querys=[])
     {

@@ -223,12 +223,16 @@ class TXRequest {
     /**
      * 获取模块
      * @param bool $action
-     * @return TXAction | string
+     * @return TXAction|TXSingleDAO|mixed
+     * @throws TXException
      */
     public function getModule($action=false)
     {
         if ($action){
             if (null === $this->action){
+                if (!preg_match("/^[\\w_]+$/", $this->module)){
+                    throw new TXException(2001, $this->module."Action");
+                }
                 $this->action = TXFactory::create($this->module."Action");
             }
             return $this->action;
