@@ -234,7 +234,7 @@ class TXAction
      * @param bool $encode
      * @return TXJSONResponse
      */
-    public function json($data, $encode=true)
+    public function json($data, $encode=false)
     {
         $config = TXApp::$base->config->get('response');
         if ($config['jsonContentType']){
@@ -248,7 +248,7 @@ class TXAction
      * @param bool $encode
      * @return TXJSONResponse
      */
-    public function correct($ret=[], $encode=true)
+    public function correct($ret=[], $encode=false)
     {
         $data = ["flag" => true, "ret" => $ret];
         return $this->json($data, $encode);
@@ -256,11 +256,11 @@ class TXAction
 
     /**
      * @param string $msg
-     * @param bool $encode
      * @param bool $json 是否强制显示json
+     * @param bool $encode
      * @return TXJSONResponse|TXResponse
      */
-    public function error($msg="数据异常", $encode=true, $json=false)
+    public function error($msg="数据异常", $json=false, $encode=false)
     {
         TXEvent::trigger(onError, [$msg]);
         if (!$json && (TXApp::$base->request->isShowTpl() || !TXApp::$base->request->isAjax())){

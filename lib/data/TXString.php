@@ -69,21 +69,20 @@ class TXString
     /**
      * 递归替换Encode
      * @param $array
-     * @param bool $encode
      * @return array
      */
-    public static function recursionEncode(&$array, $encode=true)
+    public static function recursionEncode(&$array)
     {
         $newArray = [];
         foreach ($array as $key => $arr){
             if (is_array($arr)){
-                $arr = self::recursionEncode($arr, $encode);
+                $arr = self::recursionEncode($arr);
             } elseif (is_string($arr)){
-                $arr = $encode ? self::encode($arr) : $arr;
+                $arr = self::encode($arr);
             } elseif ($arr instanceof TXResponse){
                 $arr = $arr->getContent();
             }
-            $key = (is_string($key) && $encode) ? self::encode($key) : $key;
+            $key = is_string($key) ? self::encode($key) : $key;
             $newArray[$key] = $arr;
         }
         unset($array);

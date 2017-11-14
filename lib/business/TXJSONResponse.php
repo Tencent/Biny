@@ -20,7 +20,7 @@ class TXJSONResponse {
      */
     public function __construct($data, $encode=true)
     {
-        $data = TXString::recursionEncode($data, $encode);
+        $data = $encode ? TXString::recursionEncode($data) : $data;
         if (SYS_CONSOLE && TXLogger::$ConsoleOut){
             TXLogger::format();
             $data['__logs'] = TXLogger::$ConsoleOut;
