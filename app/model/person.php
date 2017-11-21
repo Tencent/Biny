@@ -11,14 +11,10 @@ use TXApp;
  */
 class person extends baseModel
 {
-    private static $_cache = [];
-
-    protected $_data = [];
     /**
-     * @var \app\dao\baseDAO
+     * @var array 单例对象
      */
-    protected $DAO;
-    protected $_pk;
+    protected static $_instance = [];
 
     /**
      * @param null $id
@@ -26,15 +22,14 @@ class person extends baseModel
      */
     public static function init($id=null)
     {
-        parent::init($id);
         $id = $id ?: TXApp::$base->session->userId;
-        if (!isset(self::$_cache[$id])){
-            self::$_cache[$id] = new self($id);
+        if (!isset(self::$_instance[$id])){
+            self::$_instance[$id] = new self($id);
         }
-        return self::$_cache[$id];
+        return self::$_instance[$id];
     }
 
-    private function __construct($id)
+    protected function __construct($id)
     {
         $this->DAO = $this->userDAO;
         if ($id !== NULL){

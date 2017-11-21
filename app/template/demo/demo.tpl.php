@@ -1634,6 +1634,71 @@ TXApp::<prm>$base</prm>-><prm>session</prm>-><func>clear</func>();</pre>
         <p><code>setCookie</code>参数有4个，分别为键值，值，过期时间(单位秒)，cookie所属路径，过期时间不传默认1天，路径默认<code>'/'</code></p>
         <pre class="code">TXApp::<prm>$base</prm>-><prm>request</prm>-><func>setCookie</func>(<str>'param'</str>, <str>'test'</str>, 86400, <str>'/'</str>);</pre>
 
+        <h2 id="other-model">模型数据</h2>
+        <p>用户可以在<code>/app/model/</code>下自定义model数据类，通过<code>TXApp::$model</code>获取，例如：</p>
+        <p><code>TXApp::$model->person</code> 为当前用户，可在<code>/app/model/person.php</code>中定义</p>
+        <p>除了系统预设的<code>person</code>模型外，用户也可自定义模型，例如我们新建一个<code>team</code>模型</p>
+        <p>第一步，我们在<code>/app/model/</code>目录或者子目录/孙目录下新建一个文件<code>/app/model/team.php</code></p>
+        <pre class="code"><note>// team.php</note>
+<sys>namespace</sys> app\model;
+<sys>use</sys> TXApp;
+<note>/**
+* @property \app\dao\teamDAO $teamDAO
+* @property \app\dao\userDAO $userDAO
+*/</note>
+<sys>class</sys> team <sys>extends</sys> baseModel
+{
+    <note>/**
+     * @var array 单例对象
+     */</note>
+    <sys>protected static</sys> <prm>$_instance</prm> = [];
+
+    <note>/**
+     * 构造函数
+     * @param $id
+     */</note>
+    <sys>protected function</sys> <func>__construct</func>(<prm>$id</prm>)
+    {
+        <prm>$this</prm>-><prm>DAO</prm> = <prm>$this</prm>-><prm>teamDAO</prm>;
+        <sys>if</sys> (<prm>$id</prm> !== <sys>NULL</sys>){
+            <prm>$this</prm>-><prm>_data</prm> = <prm>$this</prm>-><prm>DAO</prm>-><func>getByPk</func>(<prm>$id</prm>);
+            <prm>$this</prm>-><prm>_pk</prm> = <prm>$id</prm>;
+        }
+    }
+
+    <note>/**
+     * 自定义方法 返回用户人数
+     */</note>
+    <sys>public function</sys> <func>getTotal</func>()
+    {
+        <note>// 获取team_id标记为当前team的用户数</note>
+        <sys>return</sys> <prm>$this</prm>-><prm>userDAO</prm>-><func>filter</func>([<str>'team_id'</str>=><prm>$this</prm>-><prm>id</prm>])-><func>count</func>();
+    }
+}</pre>
+
+        <p>然后就可以在代码中调用了，例如一个标记团队vip等级的功能，如下：</p>
+        <pre class="code"><note>// 获取team数据模型</note>
+<prm>$team</prm> = TXApp::<prm>$model</prm>-><func>team</func>(<prm>$id</prm>)
+<sys>if</sys> (<prm>$team</prm>-><func>getTotal</func>() > 100) {
+    <note>// 修改对应数据库字段并保存，以下方法为baseModel中公共方法，继承baseModel即可使用</note>
+    <prm>$team</prm>-><prm>vipLevel</prm> = 1;
+    <prm>$team</prm>-><func>save</func>();
+}</pre>
+        <p><code>注意</code>：类名，文件名，model变量名，三者需要保持一致，否者系统会找不到对应的模型。</p>
+
+        <p>数据模型也可以定义参数的调用方式，或者多参数模式的函数调用方式，都通过<code>init</code>方法来实现</p>
+        <p><code>TXApp::$model->team</code> 相当于调用 <code>\app\model\team::init()</code></p>
+        <p><code>TXApp::$model->team(10, false)</code> 相当于调用 <code>\app\model\team::init(10, false)</code></p>
+        <p>所以只需要覆盖掉<code>baseModel</code>中的<code>init</code>方法，即可自定义初始化模型了。</p>
+
+        <p>另外，可以在<code>/lib/TXModel.php</code>中添加 <code>@property</code> 和  <code>@method</code> 使得IDE能够认识变量并具有补全的功能。 </p>
+        <pre class="code"><note>/**
+ * Class TXModel
+ * @package biny\lib
+ * @property \app\model\person $person
+ * @method \app\model\person person($id)
+ * @method \app\model\team team($id)
+ */</note></pre>
 
         <div style="height: 200px"></div>
     </div>
@@ -1735,6 +1800,8 @@ TXApp::<prm>$base</prm>-><prm>session</prm>-><func>clear</func>();</pre>
                     <li><a href="#other-cache">Cache</a></li>
                     <li><a href="#other-session">Session</a></li>
                     <li><a href="#other-cookie">Cookie</a></li>
+                    <li><a href="#other-model">模型数据</a></li>
+                    <li><a href="#other-language">多语言</a></li>
                 </ul>
             </li>
 

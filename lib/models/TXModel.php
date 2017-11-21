@@ -12,14 +12,13 @@
  */
 
 namespace biny\lib;
-use app\model\person;
 use TXApp;
 
 /**
  * Class TXModel
  * @package biny\lib
- * @property person $person
- * @method person person($id)
+ * @property \app\model\person $person
+ * @method \app\model\person person($id)
  */
 class TXModel
 {

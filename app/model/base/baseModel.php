@@ -17,8 +17,12 @@ use biny\lib\TXString;
  */
 class baseModel
 {
+    /**
+     * @var array 单例对象
+     */
+    protected static $_instance = [];
     protected $_data;
-    private $_cache = [];
+    protected $_cache = [];
     protected $_dirty = false;
     /**
      * @var \app\dao\baseDAO
@@ -26,9 +30,16 @@ class baseModel
     protected $DAO = null;
     protected $_pk;
 
-    public static function init()
+    /**
+     * @param null $id
+     * @return person
+     */
+    public static function init($id=null)
     {
-
+        if (!isset(static::$_instance[$id])){
+            static::$_instance[$id] = new static($id);
+        }
+        return static::$_instance[$id];
     }
 
     public function __get($key)
