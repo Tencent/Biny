@@ -1801,7 +1801,6 @@ TXApp::<prm>$base</prm>-><prm>session</prm>-><func>clear</func>();</pre>
                     <li><a href="#other-session">Session</a></li>
                     <li><a href="#other-cookie">Cookie</a></li>
                     <li><a href="#other-model">模型数据</a></li>
-                    <li><a href="#other-language">多语言</a></li>
                 </ul>
             </li>
 
