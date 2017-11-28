@@ -259,7 +259,8 @@ class TXDAO
         $params = func_get_args();
         $where = isset($params[1]) && $params[1]->get('where') ? " WHERE ".$params[1]->get('where') : "";
         $fields = $this->buildFields($fields, isset($params[1]) ? $params[1]->get('additions') : []);
-        $sql = sprintf("SELECT %s FROM %s%s", $fields, $this->getTable(), $where);
+        $orderBy = $this->buildOrderBy(isset($params[1]) ? $params[1]->get('orderby') : []);
+        $sql = sprintf("SELECT %s FROM %s%s%s", $fields, $this->getTable(), $where, $orderBy);
         TXEvent::trigger(onSql, [$sql]);
         $result = $this->sql($sql, null, TXDatabase::FETCH_TYPE_ONE);
         return $result;
