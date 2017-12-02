@@ -1,4 +1,4 @@
 </body>
 </html>
 
-<? include TXApp::$view_root . "/base/commonJs.tpl.php" ?>
+<?php include TXApp::$view_root . "/base/commonJs.tpl.php" ?>
