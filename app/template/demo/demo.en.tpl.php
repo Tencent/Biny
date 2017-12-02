@@ -1,5 +1,5 @@
-<? include TXApp::$view_root . "/base/common.tpl.php" ?>
-<? include TXApp::$view_root . "/base/header.tpl.php" ?>
+<?php include TXApp::$view_root . "/base/common.tpl.php" ?>
+<?php include TXApp::$view_root . "/base/header.tpl.php" ?>
 <link href="<?=$webRoot?>/static/css/demo.css" rel="stylesheet" type="text/css"/>
 <style type="text/css">.bs-docs-section > p{word-break: normal}</style>
 <!-- Docs master nav -->
@@ -7,8 +7,8 @@
     <div class="container">
         <a href="<?=$webRoot?>/demo/" class="navbar-brand">Biny Framework Wiki</a>
         <div class="pull-right" style="margin-right: 15%">
-            <a class="navbar-brand <?if ($PRM['lan']==='cn'){?>active<?}?>" href="javascript:void(0)" onclick="changeLanguage('cn')">中文</a>
-            <a class="navbar-brand <?if ($PRM['lan']==='en'){?>active<?}?>" href="javascript:void(0)" onclick="changeLanguage('en')">English</a>
+            <a class="navbar-brand <?php if ($PRM['lan']==='cn'){?>active<?php } ?>" href="javascript:void(0)" onclick="changeLanguage('cn')">中文</a>
+            <a class="navbar-brand <?php if ($PRM['lan']==='en'){?>active<?php } ?>" href="javascript:void(0)" onclick="changeLanguage('en')">English</a>
         </div>
     </div>
 </header>
@@ -16,7 +16,7 @@
 <div class="container bs-docs-container">
 
 <div class="row">
-<div <?if (TXApp::$base->request->isMobile()){?>class="col-md-12"<?} else {?> class="col-md-9" <?}?> role="main">
+<div <?php if (TXApp::$base->request->isMobile()){?>class="col-md-12"<?php } else {?> class="col-md-9" <?php } ?> role="main">
     <div class="bs-docs-section">
         <h1 id="overview" class="page-header">Overview</h1>
         <p>Biny is a high performance lightweight PHP framework. </p>
@@ -1662,7 +1662,7 @@ TXApp::<prm>$base</prm>-><prm>session</prm>-><func>clear</func>();</pre>
     </div>
 
 </div>
-<?if (!TXApp::$base->request->isMobile()){?>
+<?php if (!TXApp::$base->request->isMobile()){?>
 <div class="col-md-3" role="complementary">
     <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm">
         <ul class="nav bs-docs-sidenav">
@@ -1768,10 +1768,10 @@ TXApp::<prm>$base</prm>-><prm>session</prm>-><func>clear</func>();</pre>
 
     </nav>
 </div>
-<?}?>
+<?php } ?>
 
 </div>
 </div>
 
-<? include TXApp::$view_root . "/base/footer.tpl.php" ?>
+<?php include TXApp::$view_root . "/base/footer.tpl.php" ?>
 <script type="text/javascript" src="<?=$webRoot?>/static/js/demo.js"></script>
