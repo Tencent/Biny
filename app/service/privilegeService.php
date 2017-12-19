@@ -27,7 +27,7 @@ class privilegeService extends TXService
 //            echo $action->display('main/login');
 //            exit;
         }
-        return true;
+        return true; // return $this->correct();
     }
 
     public function my_required($action, $key)
@@ -47,6 +47,15 @@ class privilegeService extends TXService
         } else {
             return false;
         }
+    }
+
+    /**
+     * 返回正确，兼容老写法
+     * @return bool
+     */
+    private function correct()
+    {
+        return true;
     }
 
     /**

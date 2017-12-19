@@ -395,7 +395,7 @@
 {
     <sys>if</sys>(<prm>$key</prm>){
         <note>// 通过校验</note>
-        <sys>return</sys> <prm>$this</prm>-><func>correct</func>();
+        <sys>return</sys> <prm>$this</prm>-><func>correct</func>(); <note>// 等同于 return true;</note>
     } <sys>else</sys> {
         <note>// 校验失败，错误信息可通过$this->privilegeService->getError()获取</note>
         <sys>return</sys> <prm>$this</prm>-><func>error</func>(<str>'key not exist'</str>);
@@ -426,7 +426,7 @@
 {
     <sys>if</sys>(TXApp::<prm>$model</prm>-><prm>person</prm>-><func>hasPrivilege</func>(<prm>$privilege</prm>)){
         <note>// 该用户有相应权限</note>
-        <sys>return</sys> <prm>$this</prm>-><func>correct</func>();
+        <sys>return</sys> <prm>$this</prm>-><func>correct</func>(); <note>// 等同于 return true;</note>
     } <sys>else</sys> {
         <note>// 校验失败，错误信息可通过$this->privilegeService->getError()获取</note>
         <sys>return</sys> <prm>$this</prm>-><func>error</func>(<str>'forbidden'</str>);
