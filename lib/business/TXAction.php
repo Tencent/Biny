@@ -68,7 +68,8 @@ class TXAction
         $this->gets = $_GET;
         //判断是否维护中
         if (isMaintenance){
-            return $this->display('Main/maintenance');
+            echo $this->display('Main/maintenance');
+            exit;
         }
         if ($this->csrfValidate && !TXApp::$base->request->validateCsrfToken()){
             header(TXApp::$base->config->get(401, 'http'));
