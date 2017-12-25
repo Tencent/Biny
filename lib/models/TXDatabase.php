@@ -130,7 +130,7 @@ class TXDatabase {
     public function sql($sql, $key=null, $mode = self::FETCH_TYPE_ALL)
     {
         $start = microtime(true);
-        $rs = mysqli_query($this->handler, $sql);
+        $rs = mysqli_query($this->handler, $sql, $mode === self::FETCH_TYPE_CURSOR ? MYSQLI_USE_RESULT : MYSQLI_STORE_RESULT);
         $time = (microtime(true)-$start)*1000;
         $config = TXApp::$base->config->get('logger');
         if ($time > ($config['slowQuery'] ?: 1000)){
