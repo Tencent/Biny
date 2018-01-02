@@ -53,9 +53,9 @@ class TXRedis
     }
 
     /**
-     * 选择库
+     * 选择 Redis 实例
      * @param $name
-     * @return TXMemcache
+     * @return TXRedis
      */
     public function choose($name)
     {
@@ -114,7 +114,7 @@ class TXRedis
         if ($serialize === null){
             $serialize = $this->config['serialize'];
         }
-        return $serialize ? unserialize($this->handler->hget($key, $hash)) : $this->handler->hget($key, $hash);
+        return $serialize ? unserialize($this->handler->hGet($key, $hash)) : $this->handler->hGet($key, $hash);
     }
 
     public function hset($key, $hash, $value, $serialize=null)
@@ -126,7 +126,7 @@ class TXRedis
             $serialize = $this->config['serialize'];
         }
         $value = $serialize ? serialize($value) : $value;
-        return $this->handler->hset($key, $hash, $value);
+        return $this->handler->hSet($key, $hash, $value);
     }
 
     /**
