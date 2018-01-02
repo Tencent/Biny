@@ -55,7 +55,7 @@ class TXRedis
     /**
      * 选择库
      * @param $name
-     * @return TXMemcache
+     * @return TXRedis
      */
     public function choose($name)
     {
