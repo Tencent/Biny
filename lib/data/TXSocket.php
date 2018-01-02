@@ -42,7 +42,7 @@ class TXSocket
     /**
      * 选择库
      * @param $name
-     * @return TXMemcache
+     * @return TXSocket
      */
     public function choose($name)
     {
