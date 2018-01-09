@@ -21,7 +21,7 @@ namespace biny\lib;
  * @method array distinct($field)
  * @method array find($field='')
  * @method array query($field='', $key=null)
- * @method array cursor($field='')
+ * @method array cursor($field='', $instance=true)
  * @method array select($sql, $querys=array())
  * @method array command($sql, $querys=array())
  * @method array count($field='')

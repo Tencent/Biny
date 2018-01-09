@@ -130,11 +130,12 @@ class TXDAO
      * @param $sql
      * @param $key
      * @param int $mode
+     * @param bool $instance
      * @return array
      */
-    private function sql($sql, $key=null, $mode=TXDatabase::FETCH_TYPE_ALL) {
+    private function sql($sql, $key=null, $mode=TXDatabase::FETCH_TYPE_ALL, $instance=true) {
         $dns = is_array($this->dbConfig) ? $this->dbConfig[1] : $this->dbConfig;
-        return TXDatabase::instance($dns)->sql($sql, $key, $mode);
+        return TXDatabase::instance($dns, $instance)->sql($sql, $key, $mode);
     }
 
     /**
@@ -289,20 +290,21 @@ class TXDAO
     /**
      * 返回数据游标
      * @param string $fields
+     * @param bool $instance
      * @return array
      */
-    public function cursor($fields='')
+    public function cursor($fields='', $instance=true)
     {
         $params = func_get_args();
-        $where = isset($params[1]) && $params[1]->get('where') ? " WHERE ".$params[1]->get('where') : "";
-        $limit = $this->buildLimit(isset($params[1]) ? $params[1]->get('limit') : []);
-        $orderBy = $this->buildOrderBy(isset($params[1]) ? $params[1]->get('orderby') : []);
-        $fields = $this->buildFields($fields, isset($params[1]) ? $params[1]->get('additions') : []);
-        $groupBy = $this->buildGroupBy(isset($params[1]) ? $params[1]->get('groupby') : [], isset($params[1]) ? $params[1]->get('having') : []);
+        $where = isset($params[2]) && $params[2]->get('where') ? " WHERE ".$params[2]->get('where') : "";
+        $limit = $this->buildLimit(isset($params[2]) ? $params[2]->get('limit') : []);
+        $orderBy = $this->buildOrderBy(isset($params[2]) ? $params[2]->get('orderby') : []);
+        $fields = $this->buildFields($fields, isset($params[2]) ? $params[2]->get('additions') : []);
+        $groupBy = $this->buildGroupBy(isset($params[2]) ? $params[2]->get('groupby') : [], isset($params[2]) ? $params[2]->get('having') : []);
         $sql = sprintf("SELECT %s FROM %s%s%s%s%s", $fields, $this->getTable(), $where, $groupBy, $orderBy, $limit);
         TXEvent::trigger(onSql, [$sql]);
 
-        return $this->sql($sql, null, TXDatabase::FETCH_TYPE_CURSOR);
+        return $this->sql($sql, null, TXDatabase::FETCH_TYPE_CURSOR, $instance);
     }
 
     /**

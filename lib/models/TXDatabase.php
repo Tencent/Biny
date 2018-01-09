@@ -14,17 +14,27 @@ use TXApp;
 class TXDatabase {
     private static $instance = [];
     private static $autocommit = true;
+    /**
+     * @var $this
+     */
+    private static $cursor;
 
     /**
      * @param string $name
+     * @param bool $instance
      * @return TXDatabase
      */
-    public static function instance($name)
+    public static function instance($name, $instance=true)
     {
+        // 兼容异步模式
+        if (!$instance){
+            $dbConfig = TXApp::$base->app_config->get($name, 'dns');
+            self::$cursor = new self($dbConfig);
+            return self::$cursor;
+        }
         if (!isset(self::$instance[$name])) {
-            $dbconfig = TXApp::$base->app_config->get($name, 'dns');
-
-            self::$instance[$name] = new self($dbconfig);
+            $dbConfig = TXApp::$base->app_config->get($name, 'dns');
+            self::$instance[$name] = new self($dbConfig);
         }
 
         return self::$instance[$name];
@@ -61,6 +71,16 @@ class TXDatabase {
         }
 
         mysqli_query($this->handler, "set NAMES {$config['encode']}");
+    }
+
+    /**
+     * 构建表达式
+     * @param $field
+     * @return object
+     */
+    public static function field($field)
+    {
+        return (object)$field;
     }
 
     /**

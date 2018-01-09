@@ -97,11 +97,12 @@ class TXCond
     /**
      * cursor
      * @param string $field
+     * @param bool $instance
      * @return array
      */
-    public function cursor($field='')
+    public function cursor($field='', $instance=true)
     {
-        return $this->DAO->cursor($field, $this);
+        return $this->DAO->cursor($field, $instance, $this);
     }
 
     /**

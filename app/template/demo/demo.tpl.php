@@ -1043,6 +1043,14 @@ TXApp::<prm>$base</prm>-><prm>config</prm>-><func>get</func>(<str>'path'</str>, 
 <sys>while</sys> (<prm>$data</prm>=TXDatabase::<func>step</func>(<prm>$rs</prm>)){
     <note>do something...</note>
 }</pre>
+        <p>如果在游标数据中需要再使用其他sql语句，则需要在<code>cursor</code>方法中传第二个参数<code>false</code>，否则在cursor未执行完之前其他语句无法执行</p>
+        <pre class="code"><note>// 选择器，条件类模式完全一样，在获取数据时使用cursor方法</note>
+<prm>$rs</prm> = <prm>$this</prm>-><prm>testDAO</prm>-><func>filter</func>(<sys>array</sys>(<str>'type'</str>=>1))-><func>cursor</func>(<sys>array</sys>(<str>'id'</str>, <str>'name'</str>), <sys>false</sys>);
+<note>// 通过 TXDatabase::step 逐个取出data数据，e.g: ['id'=>2, 'name'=>'test']</note>
+<sys>while</sys> (<prm>$data</prm>=TXDatabase::<func>step</func>(<prm>$rs</prm>)){
+    <note>// other sql...</note>
+    <prm>$count</prm> = <prm>$this</prm>-><prm>testDAO</prm>-><func>count</func>();
+}</pre>
 
         <p>如果使用SQL模版的话，也可以通过传递第三个参数<code>TXDatabase::FETCH_TYPE_CURSOR</code>来实现游标的使用</p>
         <pre class="code"><note>// 使用方法跟上诉方式一样</note>
