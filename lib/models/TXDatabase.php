@@ -14,10 +14,6 @@ use TXApp;
 class TXDatabase {
     private static $instance = [];
     private static $autocommit = true;
-    /**
-     * @var $this
-     */
-    private static $cursor;
 
     /**
      * @param string $name
@@ -29,8 +25,7 @@ class TXDatabase {
         // 兼容异步模式
         if (!$instance){
             $dbConfig = TXApp::$base->app_config->get($name, 'dns');
-            self::$cursor = new self($dbConfig);
-            return self::$cursor;
+            return new self($dbConfig);
         }
         if (!isset(self::$instance[$name])) {
             $dbConfig = TXApp::$base->app_config->get($name, 'dns');
@@ -137,7 +132,7 @@ class TXDatabase {
      */
     public static function step($rs)
     {
-        return mysqli_fetch_assoc($rs);
+        return is_array($rs) ? mysqli_fetch_assoc($rs[0]) : mysqli_fetch_assoc($rs);
     }
 
     /**
@@ -170,7 +165,7 @@ class TXDatabase {
                 }
                 return $result;
             } else if ($mode == self::FETCH_TYPE_CURSOR){
-                return $rs;
+                return [$rs, $this->handler];
             } else {
                 $result = mysqli_fetch_assoc($rs) ?: [];
             }
