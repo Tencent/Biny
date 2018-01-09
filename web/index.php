@@ -17,7 +17,7 @@ include __DIR__.'/../lib/TXApp.php';
 //include __DIR__.'/../lib/XHProf.php';
 //XHProf::start();
 
-TXApp::registry(__DIR__. '/../app');
+TXApp::registry(realpath(__DIR__. '/../app'));
 TXApp::run();
 
 //$data = XHProf::end();
