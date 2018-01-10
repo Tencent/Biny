@@ -44,6 +44,7 @@ class TXAutoload
         $lastTime = is_readable(self::$autoPath) ? filemtime(self::$autoPath) : false;
         // 5秒缓存不更新
         if (!self::$loaders || !$lastTime || time()-$lastTime > self::$config['autoSkipLoad']){
+            $oldLoaders = (array)self::$loaders;
             self::$loaders = [];
             self::getLoads(__DIR__, 'biny\\lib\\');
             self::getLoads(TXApp::$extends_root);
@@ -54,11 +55,19 @@ class TXAutoload
             self::getLoads(TXApp::$app_root. DS . "form", 'app\\form\\');
             self::getLoads(TXApp::$app_root. DS . "event", 'app\\event\\');
             self::getLoads(TXApp::$app_root. DS . "model", 'app\\model\\');
-            //写入文件
-            if (!file_exists(self::$autoPath) || is_writeable(self::$autoPath)) {
-                file_put_contents(self::$autoPath, "<?php\nreturn " . var_export(self::$loaders, true) . ';', LOCK_EX);
-            } else {
-                throw new TXException(1005, [self::$autoPath]);
+
+            $needWrite = array_diff_assoc(self::$loaders, $oldLoaders) || array_diff_assoc($oldLoaders, self::$loaders)
+                    || array_diff_assoc(self::$loaders['namespace'], $oldLoaders['namespace']) || array_diff_assoc($oldLoaders['namespace'], self::$loaders['namespace'])
+                    || array_diff_assoc(self::$loaders['file'], $oldLoaders['file']) || array_diff_assoc($oldLoaders['file'], self::$loaders['file']);
+
+            if ($needWrite) { //与之前的不同，写入文件
+                if (!file_exists(self::$autoPath) || is_writeable(self::$autoPath)) {
+                    file_put_contents(self::$autoPath, "<?php\nreturn " . var_export(self::$loaders, true) . ';', LOCK_EX);
+                } else {
+                    throw new TXException(1005, [self::$autoPath]);
+                }
+            } else { //刷新更新时间
+                touch(self::$autoPath);
             }
         }
         return self::$loaders;
