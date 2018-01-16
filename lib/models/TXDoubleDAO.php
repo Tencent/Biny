@@ -174,6 +174,8 @@ class TXDoubleDAO extends TXDAO
                         } else if (is_string($arrv)){
                             $arrv = $this->real_escape_string($arrv);
                             $where[] = "`{$table}`.`{$arrk}`{$key}'{$arrv}'";
+                        } else if ($arrv instanceof \stdClass){
+                            $where[] = "`{$table}`.`{$arrk}`{$key}{$arrv->scalar}";
                         } else if (is_array($arrv)){
                             foreach ($arrv as $av){
                                 $arrv = $this->real_escape_string($av);
@@ -212,6 +214,8 @@ class TXDoubleDAO extends TXDAO
                     }
                 } elseif (is_null($value)){
                     $where[] = "`{$table}`.`{$key}`is NULL";
+                } elseif ($value instanceof \stdClass) {
+                    $where[] = "`{$table}`.`{$key}`={$value->scalar}";
                 } elseif (is_string($value)) {
                     $value = $this->real_escape_string($value);
                     $where[] = "`{$table}`.`{$key}`='{$value}'";
@@ -258,11 +262,14 @@ class TXDoubleDAO extends TXDAO
                     $temps[] = "`{$table}`.*";
                 } else {
                     foreach ($field as $key => $column){
-                        $column = $this->real_escape_string($column);
                         if (is_string($key)){
+                            $column = $this->real_escape_string($column);
                             $key = $this->real_escape_string($key);
                             $temps[] = "`{$table}`.`".$key."` AS `$column`";
+                        } elseif ($column instanceof \stdClass) {
+                            $temps[] = $column->scalar;
                         } else {
+                            $column = $this->real_escape_string($column);
                             $temps[] = "`{$table}`.`".$column."`";
                         }
                     }
@@ -396,11 +403,18 @@ class TXDoubleDAO extends TXDAO
                 }
                 if (is_array($group)){
                     foreach ($group as $column){
-                        $column = $this->real_escape_string($column);
-                        $temps[] = $table.".`".$column."`";
+                        if ($column instanceof \stdClass){
+                            $temps[] = $column->scalar;
+                        } else {
+                            $column = $this->real_escape_string($column);
+                            $temps[] = $table.".`".$column."`";
+                        }
                     }
+                } elseif ($group instanceof \stdClass) {
+                    $temps[] = $group->scalar;
                 } else {
-                    $temps[] = $group;
+                    $column = $this->real_escape_string($group);
+                    $temps[] = $table.".`".$column."`";
                 }
             }
             $groupBy = join(',', $temps);
@@ -491,6 +505,8 @@ class TXDoubleDAO extends TXDAO
                 } else if (is_string($value)) {
                     $value = $this->real_escape_string($value);
                     $sets[] = "`{$table}`.`{$key}`='{$value}'";
+                } else if ($value instanceof \stdClass) {
+                    $sets[] = "`{$table}`.`{$key}`={$value->scalar}";
                 } else {
                     $sets[] = "`{$table}`.`{$key}`={$value}";
                 }
@@ -546,7 +562,13 @@ class TXDoubleDAO extends TXDAO
             foreach ($relate as $key => $value){
                 $key = "`{$this->real_escape_string($table)}`.`{$this->real_escape_string($key)}`";
                 if (is_array($value) && count($value)>=2 && in_array($value[0], $this->extracts)){
-                    $tmp[] = [$key, [$value[0], "'{$this->real_escape_string($value[1])}'"]];
+                    if ($value[1] instanceof \stdClass){
+                        $tmp[] = [$key, [$value[0], $value[1]->scalar]];
+                    } else {
+                        $tmp[] = [$key, [$value[0], "'{$this->real_escape_string($value[1])}'"]];
+                    }
+                } elseif ($value instanceof \stdClass) {
+                    $tmp[] = [$key, $value->scalar];
                 } else {
                     $tmp[] = [$key, "'{$this->real_escape_string($value)}'"];
                 }

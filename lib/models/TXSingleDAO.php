@@ -173,10 +173,12 @@ class TXSingleDAO extends TXDAO
                         $arrk = $this->real_escape_string($arrk);
                         if (is_null($arrv)){
                             $where[] = "`{$arrk}`{$key} NULL";
-                        }elseif (is_string($arrv)){
+                        } elseif (is_string($arrv)){
                             $arrv = $this->real_escape_string($arrv);
                             $where[] = "`{$arrk}`{$key}'{$arrv}'";
-                        }  else if (is_array($arrv)){
+                        } elseif ($arrv instanceof \stdClass){
+                            $where[] = "`{$arrk}`{$key}{$arrv->scalar}";
+                        } else if (is_array($arrv)){
                             foreach ($arrv as $av){
                                 $arrv = $this->real_escape_string($av);
                                 $where[] = "`{$arrk}`{$key}'{$arrv}'";
@@ -214,6 +216,8 @@ class TXSingleDAO extends TXDAO
                     }
                 } elseif (is_null($value)){
                     $where[] = "`{$key}`is NULL";
+                } elseif ($value instanceof \stdClass){
+                    $where[] = "`{$key}`={$value->scalar}";
                 } elseif (is_string($value)) {
                     $value = $this->real_escape_string($value);
                     $where[] = "`{$key}`='{$value}'";
@@ -265,6 +269,8 @@ class TXSingleDAO extends TXDAO
             foreach ($fields as $key => &$field){
                 if (is_int($key)){
                     $field = '`'.$this->real_escape_string($field).'`';
+                } elseif ($field instanceof \stdClass) {
+                    $field = $field->scalar;
                 } else {
                     $field = "`{$this->real_escape_string($key)}` AS `{$this->real_escape_string($field)}`";
                 }
@@ -340,6 +346,8 @@ class TXSingleDAO extends TXDAO
             } else if (is_string($value)) {
                 $value = $this->real_escape_string($value);
                 $sets[] = "`{$key}`='{$value}'";
+            } else if ($value instanceof \stdClass) {
+                $sets[] = "`{$key}`= {$value->scalar}";
             } else {
                 $sets[] = "`{$key}`={$value}";
             }
@@ -380,10 +388,14 @@ class TXSingleDAO extends TXDAO
         }
         if (is_array($groupBy)){
             foreach ($groupBy as &$group){
-                $group = $this->real_escape_string($group);
+                if ($group instanceof \stdClass){
+                    $group = $group->scalar;
+                } else {
+                    $group = '`'.$this->real_escape_string($group).'`';
+                }
             }
             unset($group);
-            $groupBy = '`'.join('`,`', $groupBy).'`';
+            $groupBy = join(',', $groupBy);
         }
         if ($having){
             $havings = [];
@@ -424,8 +436,7 @@ class TXSingleDAO extends TXDAO
             $field[] = "`{$this->real_escape_string($key)}`";
             if ($val === null) {
                 $value[] = "NULL";
-            }
-            elseif (is_string($val)) {
+            } elseif (is_string($val)) {
                 $val = $this->real_escape_string($val);//mysqli_real_escape_string(null, $val);
                 $value[] = "'{$val}'";
             } else {
@@ -437,7 +448,7 @@ class TXSingleDAO extends TXDAO
     }
 
     /**
-     * 拼装orderby
+     * 拼装orderby ['id'=>'ASC', 'name'=>['DESC', 'gbk']]
      * @param $orderBy
      * @return string
      */
