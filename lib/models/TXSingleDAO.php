@@ -288,21 +288,22 @@ class TXSingleDAO extends TXDAO
                 if (!in_array(strtolower($key), $this->calcs)){
                     throw new TXException(3011, [$key]);
                 }
+                $calc = $key == 'distinct' ? "COUNT(DISTINCT " : "{$key}(";
+                if (is_string($values)){
+                    $values = $values === '*' ? $values : '`'.$this->real_escape_string($values).'`';
+                    $groups[] = $calc."{$values}) as '{$key}'";
+                    continue;
+                } else if ($values instanceof \stdClass){
+                    $groups[] = $calc."{$values->scalar}) as '{$key}'";
+                    continue;
+                }
                 foreach ($values as $k => $value){
                     $value = $this->real_escape_string($value);
                     if (is_string($k)){
                         $k = $this->real_escape_string($k);
-                        if ($key == 'distinct'){
-                            $groups[] = "COUNT(DISTINCT `{$k}`) as '{$value}'";
-                        } else {
-                            $groups[] = "{$key}(`{$k}`) as '{$value}'";
-                        }
+                        $groups[] = $calc."`{$k}`) as '{$value}'";
                     } else {
-                        if ($key == 'distinct'){
-                            $groups[] = "COUNT(DISTINCT `{$value}`) as '{$value}'";
-                        } else {
-                            $groups[] = "{$key}(`{$value}`) as '{$value}'";
-                        }
+                        $groups[] = $calc."`{$value}`) as '{$value}'";
                     }
                 }
             }

@@ -905,6 +905,13 @@ TXApp::<prm>$base</prm>-><prm>config</prm>-><func>get</func>(<str>'path'</str>, 
     -><func>filter</func>(<sys>array</sys>(<sys>array</sys>(),<sys>array</sys>(<str>'type'</str>=><str>'admin'</str>)))
     -><func>query</func>();</pre>
 
+        <p>另外，如果想实现<code>where start=end</code>或者<code>where start=end+86400</code>这类的条件也是支持的，方法如下：</p>
+        <pre class="code"><note>// ... WHERE `user`.`lastLoginTime` = `user`.`registerTime` and `user`.`lastLoginTime` <= refreshTime+86400</note>
+<prm>$filter</prm> = <prm>$this</prm>-><prm>userDAO</prm>-><func>filter</func>(<sys>array</sys>(
+    <str>'lastLoginTime'</str>=>TXDatabase::<func>field</func>(<str>'`user`.`registerTime`'</str>),
+    <str>'<='</str>=><sys>array</sys>(<str>'lastLoginTime'</str>=>TXDatabase::<func>field</func>(<str>'refreshTime+86400'</str>)),
+));</pre>
+
         <p>无论是<code>filter</code>还是<code>merge</code>，在执行SQL语句前都<code>不会被执行</code>，不会增加sql负担，可以放心使用。</p>
 
         <h2 id="dao-extracts">复杂选择</h2>
@@ -1001,6 +1008,12 @@ TXApp::<prm>$base</prm>-><prm>config</prm>-><func>get</func>(<str>'path'</str>, 
 <note>// 100 (user表总行数)</note>
 <prm>$count</prm> = <prm>$this</prm>-><prm>userDAO</prm>-><func>count</func>()</pre>
 
+        <p>Biny同时也可以使用<code>TXDatabase::field()</code>来支持复杂的<code>Group By</code>语句，例如：</p>
+        <pre class="code"><note>// SELECT FROM_UNIXTIME(time,'%Y-%m-%d') AS time, count(*) AS 'count'
+                FROM `user` Group By FROM_UNIXTIME(time,'%Y-%m-%d')</note>
+<prm>$result</prm> = <prm>$this</prm>-><prm>userDAO</prm>-><func>group</func>(TXDatabase::<func>field</func>(<str>"FROM_UNIXTIME(time,'%Y-%m-%d')"</str>))
+    -><func>addition</func>(<sys>array</sys>(<str>'count'</str>=><str>'*'</str>))
+    -><func>query</func>(<str>"FROM_UNIXTIME(time,'%Y-%m-%d') AS time");</pre>
 
         <h2 id="dao-command">SQL模版</h2>
         <p>框架中提供了上述<code>选择器</code>，<code>条件语句</code>，<code>联表</code>等，基本覆盖了所有sql语法，但可能还有部分生僻的用法无法被实现，
