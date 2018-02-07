@@ -491,7 +491,6 @@ class TXSingleDAO extends TXDAO
     {
         $fields = $this->buildInsert($sets);
         $sql = sprintf("INSERT INTO %s %s", $this->dbTable, $fields);
-        TXEvent::trigger(onSql, [$sql]);
         return $this->execute($sql, $id);
     }
 
@@ -531,7 +530,6 @@ class TXSingleDAO extends TXDAO
                 $values = join(',', $columns);
                 $columns = []; $i = 0;
                 $sql = sprintf("INSERT INTO %s %s VALUES  %s", $this->dbTable, $fields, $values);
-                TXEvent::trigger(onSql, [$sql]);
                 if (!$this->execute($sql, false)){
                     $flag = false;
                 }
@@ -540,7 +538,6 @@ class TXSingleDAO extends TXDAO
         if ($columns){
             $values = join(',', $columns);
             $sql = sprintf("INSERT INTO %s %s VALUES  %s", $this->dbTable, $fields, $values);
-            TXEvent::trigger(onSql, [$sql]);
             if (!$this->execute($sql, false)){
                 $flag = false;
             }
@@ -557,7 +554,6 @@ class TXSingleDAO extends TXDAO
         $params = func_get_args();
         $where = isset($params[0]) && $params[0]->get('where') ? " WHERE ".$params[0]->get('where') : "";
         $sql = sprintf("DELETE FROM %s%s", $this->dbTable, $where);
-        TXEvent::trigger(onSql, [$sql]);
 
         return $this->execute($sql);
     }
@@ -573,7 +569,6 @@ class TXSingleDAO extends TXDAO
         $set = $this->buildSets($sets ?: $inserts);
         $fields = $this->buildInsert($inserts);
         $sql = sprintf("INSERT INTO %s %s ON DUPLICATE KEY UPDATE %s", $this->dbTable, $fields, $set);
-        TXEvent::trigger(onSql, [$sql]);
 
         return $this->execute($sql, true);
     }
@@ -590,7 +585,6 @@ class TXSingleDAO extends TXDAO
         $set = $this->buildCount($sets);
         $fields = $this->buildInsert($inserts);
         $sql = sprintf("INSERT INTO %s %s ON DUPLICATE KEY UPDATE %s", $this->dbTable, $fields, $set);
-        TXEvent::trigger(onSql, [$sql]);
 
         return $this->execute($sql, true);
     }
