@@ -12,11 +12,6 @@ use TXApp;
 
 /**
  * Redis class
- * @method bool delete($key)
- * @method bool hdel($key, $hash)
- * @method int incr($key)
- * @method int incrBy($key, $value)
- * @method bool expire($key, $value)
  */
 class TXRedis
 {

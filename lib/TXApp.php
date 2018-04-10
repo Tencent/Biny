@@ -39,7 +39,7 @@ use biny\lib\TXModel;
  * @property TXSession $session
  * @property TXRouter $router
  * @property TXCache $cache
- * @property TXRedis $redis
+ * @property TXRedis|\Redis $redis
  * @property TXMemcache $memcache
  * @property TXSocket $socket
  */

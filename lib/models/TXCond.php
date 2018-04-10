@@ -95,9 +95,31 @@ class TXCond
     }
 
     /**
+     * paginate
+     * @param $size
+     * @param null $page
+     * @param string $fields
+     * @return array
+     */
+    public function paginate($size, $page=null, $fields='')
+    {
+        return $this->DAO->paginate($size, $page, $fields, $this);
+    }
+
+    /**
+     * pluck
+     * @param string $field
+     * @return array
+     */
+    public function pluck($field)
+    {
+        return $this->DAO->pluck($field, $this);
+    }
+
+    /**
      * cursor
      * @param string $field
-     * @param bool $instance
+     * @param bool|mixed $instance
      * @return array
      */
     public function cursor($field='', $instance=true)

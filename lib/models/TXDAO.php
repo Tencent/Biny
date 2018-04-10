@@ -286,9 +286,34 @@ class TXDAO
     }
 
     /**
-     * 返回数据游标
+     * 返回字段列表 ['name1', 'name2']
+     * @param $field
+     * @return array
+     */
+    public function pluck($field)
+    {
+        $params = func_get_args();
+        $key = $field;
+        if (is_array($field)){
+            foreach ($field as $f){
+                if (!$f){
+                    continue;
+                }
+                $key = $f[0];
+                break;
+            }
+        }
+        $cond = isset($params[1]) ? $params[1] : null;
+        $result = [];
+        $this->cursor($field, function($data) use($key, &$result){
+            isset($data[$key]) && $result[] = $data[$key];
+        }, $cond);
+        return $result;
+    }
+
+    /**
      * @param string $fields
-     * @param bool $instance
+     * @param bool|mixed $instance
      * @return array
      */
     public function cursor($fields='', $instance=true)
@@ -300,8 +325,45 @@ class TXDAO
         $fields = $this->buildFields($fields, isset($params[2]) ? $params[2]->get('additions') : []);
         $groupBy = $this->buildGroupBy(isset($params[2]) ? $params[2]->get('groupby') : [], isset($params[2]) ? $params[2]->get('having') : []);
         $sql = sprintf("SELECT %s FROM %s%s%s%s%s", $fields, $this->getTable(), $where, $groupBy, $orderBy, $limit);
+        if ($instance && is_callable($instance)){
+            $rs = $this->sql($sql, null, TXDatabase::FETCH_TYPE_CURSOR, false);
+            $i = 0;
+            while ($data = TXDatabase::step($rs)){
+                $instance($data, $i++);
+            }
+        } else {
+            return $this->sql($sql, null, TXDatabase::FETCH_TYPE_CURSOR, $instance);
+        }
+    }
 
-        return $this->sql($sql, null, TXDatabase::FETCH_TYPE_CURSOR, $instance);
+    /**
+     * 返回分页逻辑
+     * @param $size
+     * @param null $page
+     * @param string $fields
+     * @return array
+     */
+    public function paginate($size, $page=null, $fields='')
+    {
+        if ($size === 0){
+            TXLogger::addError('param size in function paginate can not be zero', 'Division by zero', WARNING);
+            return [];
+        }
+        $params = func_get_args();
+        /**
+         * @var $cond TXSingleCond|TXDoubleCond
+         */
+        $cond = isset($params[3]) ? $params[3] : null;
+        if (null === $page){
+            $result = [];
+            $this->cursor($fields, function($data, $i) use(&$result, $size){
+                $result[floor($i/$size)][] = $data;
+            }, $cond);
+            return $result;
+        } else{
+            $cond = $cond instanceof TXCond ? $cond->limit($size, $page*$size) : $this->limit($size, $page*$size);
+            return $this->query($fields, null, $cond);
+        }
     }
 
     /**
