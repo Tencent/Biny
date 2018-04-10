@@ -761,6 +761,34 @@ TXApp::<prm>$base</prm>-><prm>config</prm>-><func>get</func>(<str>'path'</str>, 
 </pre>
         <p>这里运算都为简单运算，需要用到复合运算或者多表运算时，建议使用<code>addition</code>方法</p>
 
+        <p id="update28"><code>==============v2.8更新分割线=============</code></p>
+
+        <p>Biny2.8.1之后添加了<code>pluck</code>（快速拉取列表）具体用法如下：</p>
+<pre class="code"><note>// ['test1', 'test2', 'test3']</note>
+<prm>$list</prm> = <prm>$this</prm>-><prm>testDAO</prm>-><func>filter</func>(<sys>array</sys>(<str>'type'</str>=>5))-><func>pluck</func>(<str>'name'</str>);
+<note>// 同样也可以运用到多联表中，</note>
+<prm>$filter</prm> = <prm>$this</prm>-><prm>testDAO</prm>-><func>join</func>(<prm>$this</prm>-><prm>projectDAO</prm>, <sys>array</sys>(<str>'projectId'</str>=><str>'id'</str>))
+    -><func>filter</func>(<sys>array</sys>(
+        <sys>array</sys>(<str>'type'</str>=>5),
+    ));
+<note>// 如果所使用字段在多表中重复会报错</note>
+<prm>$list</prm> = <prm>$filter</prm>-><func>pluck</func>(<str>'name'</str>);
+<note>// 如果所使用字段在多表中重复出现需要指明所属的表</note>
+<prm>$list</prm> = <prm>$filter</prm>-><func>pluck</func>(<sys>array</sys>(<str>'project'</str>=><str>'name'</str>));
+</pre>
+
+        <p>Biny2.8.1之后还添加了<code>paginate</code>（自动分页）方法，具体用法如下：</p>
+<pre class="code"><note>// 返回一个以10条数据为一组的二维数组</note>
+<prm>$results</prm> = <prm>$this</prm>-><prm>testDAO</prm>-><func>filter</func>(<sys>array</sys>(<str>'type'</str>=>5))-><func>paginate</func>(10);
+<note>// 同样也可以运用到多联表中，</note>
+<prm>$filter</prm> = <prm>$this</prm>-><prm>testDAO</prm>-><func>join</func>(<prm>$this</prm>-><prm>projectDAO</prm>, <sys>array</sys>(<str>'projectId'</str>=><str>'id'</str>))
+    -><func>filter</func>(<sys>array</sys>(
+        <sys>array</sys>(<str>'type'</str>=>5),
+    ));
+<note>// 第二个参数默认为null，非null返回第n+1页（计数从0开始）的内容</note>
+<note>// 第三个参数等同于fields的用法，为筛选的字段集合</note>
+<prm>$results</prm> = <prm>$filter</prm>-><func>paginate</func>(10, 3, <sys>array</sys>(<sys>array</sys>(<str>'project'</str>=><str>'id'</str>, <str>'name'</str>));
+</pre>
 
         <h2 id="dao-update">删改数据</h2>
         <p>在单表操作中可以用到删改数据方法，包括<code>update</code>（多联表也可），<code>delete</code>，<code>add</code>等</p>
@@ -1073,6 +1101,15 @@ TXApp::<prm>$base</prm>-><prm>config</prm>-><func>get</func>(<str>'path'</str>, 
 <sys>while</sys> (<prm>$data</prm>=TXDatabase::<func>step</func>(<prm>$rs</prm>)){
     <note>do something...</note>
 }</pre>
+
+        <p>Biny 2.8.2之后<code>cursor</code>第二个参数可传匿名函数function作为数据回调使用，使用方法如下：</p>
+        <pre class="code">
+<prm>$result</prm> = <sys>array</sys>();
+<note>// $data为迭代的数据，$index为索引</note>
+<prm>$this</prm>-><prm>testDAO</prm>-><func>filter</func>(<sys>array</sys>(<str>'type'</str>=>1))
+  -><func>cursor</func>(<str>'*'</str>, <sys>function</sys>(<prm>$data</prm>, <prm>$index</prm>) <sys>use</sys>(&<prm>$result</prm>){
+    <note>do something...</note>
+});</pre>
 
         <h2 id="dao-transaction">事务处理</h2>
         <p>框架为DAO提供了一套简单的事务处理机制，默认是关闭的，可以通过<code>TXDatebase::start()</code>方法开启</p>

@@ -260,6 +260,8 @@ class TXDoubleDAO extends TXDAO
                 }
                 if ($field === "*"){
                     $temps[] = "`{$table}`.*";
+                } elseif(is_string($field)){
+                    $temps[] = "`{$table}`.`{$field}`";
                 } else {
                     foreach ($field as $key => $column){
                         if (is_string($key)){
