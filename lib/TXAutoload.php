@@ -25,7 +25,12 @@ class TXAutoload
         self::$config = TXApp::$base->config->get('autoload');
         self::$autoPath = TXApp::$base_root.DS.self::$config['autoPath'];
         if (is_readable(self::$autoPath)){
-            self::$loaders = require(self::$autoPath);
+            // 文件结尾判断保护
+            if (substr(file_get_contents(self::$autoPath), -5, 5) === '//END'){
+                self::$loaders = require(self::$autoPath);
+            } else {
+                self::loading();
+            }
         } else {
             self::loading();
         }
@@ -62,7 +67,7 @@ class TXAutoload
 
             if ($needWrite) { //与之前的不同，写入文件
                 if (!file_exists(self::$autoPath) || is_writeable(self::$autoPath)) {
-                    file_put_contents(self::$autoPath, "<?php\nreturn " . var_export(self::$loaders, true) . ';', LOCK_EX);
+                    file_put_contents(self::$autoPath, "<?php\nreturn " . var_export(self::$loaders, true) . '; //END', LOCK_EX);
                 } else {
                     throw new TXException(1005, [self::$autoPath]);
                 }
