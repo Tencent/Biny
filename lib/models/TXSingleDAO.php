@@ -131,7 +131,7 @@ class TXSingleDAO extends TXDAO
         $selfClass = substr($this->getCalledClass(), 0, -3);
         $relateClass = substr($dao->getCalledClass(), 0, -3);
         if ($selfClass == $relateClass){
-            return $this;
+            $relateClass .= '1';
         }
         if (!$this->checkConfig($dao)){
             throw new TXException(3002, "DAOs must be the same Host");

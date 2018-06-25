@@ -111,8 +111,8 @@ class TXDoubleDAO extends TXDAO
     protected function _join($dao, $relateD, $type='join')
     {
         $daoClass = substr($dao->getCalledClass(), 0, -3);
-        if (isset($this->doubles[$daoClass])){
-            return $this;
+        if (in_array($daoClass, $this->doubles)){
+            $daoClass .= count($this->doubles);
         }
         if (!$this->checkConfig($dao)){
             throw new TXException(3002, "DAOs must be the same Host");
