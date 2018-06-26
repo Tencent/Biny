@@ -102,7 +102,7 @@ class TXDoubleDAO extends TXDAO
 
     /**
      * 链接表
-     * @param $dao
+     * @param $dao TXSingleDAO
      * @param $relateD
      * @param string $type
      * @return $this|TXDoubleDAO
@@ -110,7 +110,7 @@ class TXDoubleDAO extends TXDAO
      */
     protected function _join($dao, $relateD, $type='join')
     {
-        $daoClass = substr($dao->getCalledClass(), 0, -3);
+        $daoClass = $dao->getCalledClass();
         if (in_array($daoClass, $this->doubles)){
             $daoClass .= count($this->doubles);
         }

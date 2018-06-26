@@ -36,7 +36,7 @@ class TXFactory {
                 $key = substr($class, 0, -3);
                 $dbConfig = TXApp::$base->config->get('dbConfig', 'database');
                 if (isset($dbConfig[$key])){
-                    $dao = new TXSingleDAO($dbConfig[$key], $class);
+                    $dao = new TXSingleDAO($dbConfig[$key], $key);
                     self::$objects[$alias] = $dao;
                 } else {
                     self::loadClass($class, $alias);

@@ -38,7 +38,7 @@ class TXSingleDAO extends TXDAO
             $this->calledClass = $called;
         } else {
             $name = explode('\\', get_called_class());
-            $this->calledClass = end($name);
+            $this->calledClass = substr(end($name), 0, -3);
         }
         $this->setDbTable($table ?: $this->table);
     }
@@ -119,7 +119,7 @@ class TXSingleDAO extends TXDAO
 
     /**
      * 链接表
-     * @param $dao
+     * @param $dao TXSingleDAO
      * @param $relate
      * @param string $type
      * @return $this|TXDoubleDAO
@@ -127,9 +127,8 @@ class TXSingleDAO extends TXDAO
      */
     protected function _join($dao, $relate, $type='join')
     {
-        // todo remove substr
-        $selfClass = substr($this->getCalledClass(), 0, -3);
-        $relateClass = substr($dao->getCalledClass(), 0, -3);
+        $selfClass = $this->getCalledClass();
+        $relateClass = $dao->getCalledClass();
         if ($selfClass == $relateClass){
             $relateClass .= '1';
         }
