@@ -882,6 +882,16 @@ TXApp::<prm>$base</prm>-><prm>config</prm>-><func>get</func>(<str>'path'</str>, 
 
         <p>多联表的查询和修改（<code>update</code>），和单表操作基本一致，需要注意的是单表参数为<code>一维数组</code>，多表则为<code>二维数组</code>，写错会导致执行失败。</p>
 
+        <p><code>注意：</code>多联表中的选择器应该使用二维数组，例如：</p>
+        <pre class="code"><note>// ... where `user`.`type` = 10 and `project`.`cash` = 100</note>
+<prm>$this</prm>-><prm>userDAO</prm>-><func>join</func>(<prm>$this</prm>-><prm>projectDAO</prm>, <sys>array</sys>(<str>'projectId'</str>=><str>'id'</str>))
+    -><func>filter</func>(<sys>array</sys>(
+        <sys>array</sys>(<str>'type'</str>=>10),
+        <sys>array</sys>(<str>'cash'</str>=>100),
+    ))-><func>query</func>();</pre>
+
+        <p>具体选择器使用请参考选择器文档内容。</p>
+
 
         <h2 id="dao-filter">选择器</h2>
 
