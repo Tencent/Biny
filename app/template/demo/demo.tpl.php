@@ -131,6 +131,11 @@
     <note># 如果请求的不是真实文件或目录，分发请求至 index.php</note>
     <act>RewriteRule</act> . index.php
 
+    <note># 以下三行apache默认会有，如无法正常使用请自行添加</note>
+    <note># Options +Indexes +Includes +FollowSymLinks +MultiViews</note>
+    <note># AllowOverride All</note>
+    <note># Require local</note>
+
     <note># ...other settings...  </note>
 &lt;/<const>Directory</const>> </pre>
         <p><code>/web/index.php</code>是程序的主入口，其中有几个关键配置</p>
