@@ -409,9 +409,11 @@ class TXDAO
     public function update($sets)
     {
         $params = func_get_args();
+        $limit = $this->buildLimit(isset($params[1]) ? $params[1]->get('limit') : [], true);
+        $orderBy = $this->buildOrderBy(isset($params[1]) ? $params[1]->get('orderby') : []);
         $where = isset($params[1]) && $params[1]->get('where') ? " WHERE ".$params[1]->get('where') : "";
         $set = $this->buildSets($sets);
-        $sql = sprintf("UPDATE %s SET %s%s", $this->getTable(), $set, $where);
+        $sql = sprintf("UPDATE %s SET %s%s%s%s", $this->getTable(), $set, $where, $orderBy, $limit);
 
         return $this->execute($sql);
     }

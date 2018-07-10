@@ -449,12 +449,15 @@ class TXDoubleDAO extends TXDAO
     /**
      * 拼装Limit
      * @param $limit
+     * @param bool $update
      * @return string
      */
-    protected function buildLimit($limit)
+    protected function buildLimit($limit, $update=false)
     {
         if (empty($limit)) {
             return '';
+        } else if ($update){
+            return sprintf(' LIMIT %d', $limit[1]);
         } else {
             return sprintf(' LIMIT %d,%d', $limit[0], $limit[1]);
         }
