@@ -7,8 +7,8 @@ return array(
 
         //静态化配置
         'routeRule' => array(
-            '<method:\w+>/test/<id:\d+>.html' => 'test/<method>',
-//            'test/<id:[\w_%]+>' => 'test/view',
+//            '<method:\w+>/test/<id:\d+>.html' => 'test/<method>',
+//            'rest/<rid:[\d]+>/<method:\w+>/<mid:\d+>' => 'rest/<method>',
         ),
     ),
 
@@ -35,6 +35,8 @@ return array(
         'csrfWhiteIps' => array(
             '127.0.0.1/24'
         ),
+        // 多语言cookie字段
+        'languageCookie' => 'biny_language'
     ),
 
     //响应配置
@@ -59,6 +61,12 @@ return array(
         'errorLevel' => NOTICE,
         //慢查询阀值
         'slowQuery' => 1000,
+    ),
+
+    // 数据库相关配置
+    'database' => array(
+        'returnIntOrFloat' => true, // 是否返回int或者float类型
+        'returnAffectedRows' => false, // 是否返回受影响行数
     ),
 
     //缓存相关配置

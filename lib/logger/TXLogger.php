@@ -66,6 +66,9 @@ class TXLogger
     protected function logger($message, $key, $level="info")
     {
         self::$ConsoleOut[] = ['value' => $message, 'key' => $key, 'type' => $level];
+        if (RUN_SHELL){
+            self::showLogs();
+        }
     }
 
     public static function log($message, $key="phpLogs")

@@ -1,5 +1,10 @@
-## 概况 General
-Biny是一款高性能的超轻量级PHP框架
+## Biny
+
+[![license](http://img.shields.io/badge/license-BSD3-blue.svg?style=flat)](https://github.com/tencent/biny/blob/master/LICENSE.TXT)
+[![Release Version](https://img.shields.io/badge/release-2.8.5-red.svg)](https://github.com/tencent/biny/releases)
+[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](https://github.com/tencent/biny/pulls)
+
+Biny是一款高性能的轻量级PHP框架
 
 遵循 MVC 模式，用于快速开发现代 Web 应用程序
 
@@ -37,12 +42,14 @@ Supports Form validation and supports event triggering mechanisms
 
 Supports browser side debugging, rapid positioning problems and performance bottlenecks
 
-With SQL anti injection, HTML automatic, anti XSS and other characteristics
+With SQL anti injection, HTML automatic anti XSS and other characteristics
 
 
 ## 使用文档 documents
 
 Wiki URL：[http://www.billge.cc](http://www.billge.cc)
+
+English Wiki URL：[http://www.billge.cc?lang=en](http://www.billge.cc?lang=en)
 
 GitHub URL：[https://github.com/Tencent/Biny](https://github.com/Tencent/Biny)
 
@@ -50,7 +57,7 @@ GitHub URL：[https://github.com/Tencent/Biny](https://github.com/Tencent/Biny)
 
 Q: 框架跟传统PHP框架区别在哪儿，有什么优势？
 
-A: Biny是个自由度很高的框架，不像其他框架需要配置各种路由，自动加载类，复杂的命名空间。这些在Biny中都是不需要的，按照一个简单的规则就能快速使用这些功能。从开发者的角度出发，在功能上使用非常简单。而且具有相当强的安全性。从框架层面完全屏蔽了 SQL注入和 XSS注入两大安全难题，非常适合新人使用。
+A: Biny是个自由度很高的框架，不像其他框架需要配置各种路由，依赖外部组件。这些在Biny中都是不需要的，按照一个简单的规则就能快速使用这些功能。同时框架已集成了自动加载机制，从开发者的角度出发，在功能上使用非常简单。而且具有相当强的安全性。从框架层面完全屏蔽了 SQL注入和 XSS注入两大安全难题，非常适合新人使用。
 
 Q: Biny框架的性能如何？
 
@@ -71,7 +78,7 @@ A: 目前版本在多个项目中已经正常使用，相对成熟。后续会�
 
 Q: What is the difference between a framework and a traditional PHP framework? What are the advantages?
 
-A: Biny is a framework with high degree of freedom, unlike other frameworks that need to configure various routes, automatically load classes, and complex namespaces. These are unnecessary in Biny and can be quickly used with simple rules. From the developer's point of view, the functionality is very simple to use. It defaults to strong security. From the framework level, the applications is completely shielded from SQL injection and XSS injection.
+A: Biny is a framework with high degree of freedom, unlike other frameworks that need to configure various routes, relying on external components. These are unnecessary in Biny and can be quickly used with simple rules. At the same time, the framework has been integrated with the autoload mechanism. From the developer's point of view, the functionality is very simple to use. It defaults to strong security. From the framework level, the applications is completely shielded from SQL injection and XSS injection.
 
 Q: What is the performance of the Biny framework?
 

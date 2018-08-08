@@ -21,15 +21,30 @@ class TXLanguage
 
     /**
      * 获取语言
-     * @param $lang
-     * @return null|string
+     * @param string $default
+     * @return string
      */
-    public static function getLanguage($lang=null)
+    public static function getLanguage($default=null)
     {
         if (self::$language === null){
-            self::$language = $lang ?: (isset($_COOKIE['biny_language']) ? $_COOKIE['biny_language'] : '');
+            $requestConfig = TXApp::$base->config->get('request');
+            $key = $requestConfig['languageCookie'];
+            self::$language = isset($_COOKIE[$key]) ? $_COOKIE[$key] : '';
         }
-        return $lang ?: self::$language;
+        return self::$language ?: $default;
+    }
+
+    /**
+     * 设置语言
+     * @param $lang
+     * @param int $expire
+     */
+    public static function setLanguage($lang, $expire=86400)
+    {
+        $requestConfig = TXApp::$base->config->get('request');
+        $key = $requestConfig['languageCookie'];
+        TXApp::$base->request->setCookie($key, $lang, $expire);
+        self::$language = $lang;
     }
 
     /**

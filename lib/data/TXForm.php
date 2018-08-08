@@ -30,32 +30,25 @@ class TXForm
     protected $_dateFormats = ["Y-m-d", "Y/m/d"];
     protected $_datetimeFormats = ["Y-m-d H:i", "Y/m/d H:i", "Y-m-d H:i:s", "Y/m/d H:i:s"];
 
-    protected $_datas = [];
+    protected $_data = [];
 
     private $_errorMsg = [];
     private $checkMethods = [];
 
     /**
-     * 构造函数
+     * 构造form
      * @param array $params
      * @param null $method
      */
-    public function __construct($params=[], $method=null)
+    public function init($params=[], $method=null)
     {
         $this->_params = array_merge($params, TXRouter::$ARGS);
         $this->_method = $method;
         if ($method && method_exists($this, $method)){
             $this->$method();
         }
-    }
-
-    /**
-     * 构造form
-     */
-    public function init()
-    {
         foreach ($this->_rules as $key => $default){
-            $this->_datas[$key] = isset($this->_params[$key]) ? $this->_params[$key] : (isset($default[1]) ? $default[1] : null);
+            $this->_data[$key] = isset($this->_params[$key]) ? $this->_params[$key] : (isset($default[1]) ? $default[1] : null);
         }
     }
 
@@ -65,7 +58,7 @@ class TXForm
      */
     public function values()
     {
-        return $this->_datas;
+        return $this->_data;
     }
 
     /**
@@ -79,10 +72,10 @@ class TXForm
         if (substr($name, -7) == 'Service' || substr($name, -3) == 'DAO') {
             return TXFactory::create($name);
         }
-        if (!array_key_exists($name, $this->_datas)){
+        if (!array_key_exists($name, $this->_data)){
             throw new TXException(5001, [$name, get_class($this)]);
         }
-        return $this->_datas[$name];
+        return $this->_data[$name];
     }
 
     /**

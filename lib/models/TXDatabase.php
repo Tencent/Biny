@@ -17,14 +17,19 @@ class TXDatabase {
 
     /**
      * @param string $name
+     * @param bool $instance
      * @return TXDatabase
      */
-    public static function instance($name)
+    public static function instance($name, $instance=true)
     {
+        // 兼容异步模式
+        if (!$instance){
+            $dbConfig = TXApp::$base->app_config->get($name, 'dns');
+            return new self($dbConfig);
+        }
         if (!isset(self::$instance[$name])) {
-            $dbconfig = TXApp::$base->app_config->get($name, 'dns');
-
-            self::$instance[$name] = new self($dbconfig);
+            $dbConfig = TXApp::$base->app_config->get($name, 'dns');
+            self::$instance[$name] = new self($dbConfig);
         }
 
         return self::$instance[$name];
@@ -53,9 +58,24 @@ class TXDatabase {
             throw new TXException(3001, [$config['host']]);
         }
         $this->handler->autocommit(self::$autocommit);
-        $this->handler->options(MYSQLI_OPT_INT_AND_FLOAT_NATIVE, 1);
+        $dataConfig = TXApp::$base->config->get('database');
+        if ($dataConfig['returnIntOrFloat']){
+            $this->handler->options(MYSQLI_OPT_INT_AND_FLOAT_NATIVE, 1);
+        } else {
+            $this->handler->options(MYSQLI_OPT_INT_AND_FLOAT_NATIVE, 0);
+        }
 
         mysqli_query($this->handler, "set NAMES {$config['encode']}");
+    }
+
+    /**
+     * 构建表达式
+     * @param $field
+     * @return object
+     */
+    public static function field($field)
+    {
+        return (object)$field;
     }
 
     /**
@@ -112,7 +132,7 @@ class TXDatabase {
      */
     public static function step($rs)
     {
-        return mysqli_fetch_assoc($rs);
+        return is_array($rs) ? mysqli_fetch_assoc($rs[0]) : mysqli_fetch_assoc($rs);
     }
 
     /**
@@ -125,7 +145,7 @@ class TXDatabase {
     public function sql($sql, $key=null, $mode = self::FETCH_TYPE_ALL)
     {
         $start = microtime(true);
-        $rs = mysqli_query($this->handler, $sql);
+        $rs = mysqli_query($this->handler, $sql, $mode === self::FETCH_TYPE_CURSOR ? MYSQLI_USE_RESULT : MYSQLI_STORE_RESULT);
         $time = (microtime(true)-$start)*1000;
         $config = TXApp::$base->config->get('logger');
         if ($time > ($config['slowQuery'] ?: 1000)){
@@ -145,7 +165,7 @@ class TXDatabase {
                 }
                 return $result;
             } else if ($mode == self::FETCH_TYPE_CURSOR){
-                return $rs;
+                return [$rs, $this->handler];
             } else {
                 $result = mysqli_fetch_assoc($rs) ?: [];
             }
@@ -165,16 +185,16 @@ class TXDatabase {
      */
     public function execute($sql, $id=false)
     {
+        $dataConfig = TXApp::$base->config->get('database');
         if (mysqli_query($this->handler, $sql)){
             if ($id){
                 return mysqli_insert_id($this->handler);
-//            return mysql_insert_id();
             }
-            return true;
+            return $dataConfig['returnAffectedRows'] ? mysqli_affected_rows($this->handler) : true;
         } else {
             TXLogger::addError(sprintf("sql Error: %s [%s]", mysqli_error($this->handler), $sql), 'sql Error:');
             TXLogger::error($sql, 'sql Error:');
-            return false;
+            return $dataConfig['returnAffectedRows'] ? -1 : false;
         }
     }
 

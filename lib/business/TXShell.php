@@ -9,6 +9,7 @@
  */
 
 namespace biny\lib;
+use TXApp;
 
 class TXShell
 {
@@ -27,8 +28,9 @@ class TXShell
     /**
      * 构造函数
      */
-    public function __construct($params)
+    public function __construct()
     {
+        $params = TXApp::$base->router->getArgs();
         $this->args = $params['args'];
         $this->params = $params['params'];
     }
@@ -51,7 +53,7 @@ class TXShell
      * @param null $default
      * @return float|int|mixed|null
      */
-    public function getParam($key, $default=null)
+    public function param($key, $default=null)
     {
         if (is_int($key)){
             return isset($this->args[$key]) ? $this->args[$key] : $default;

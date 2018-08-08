@@ -12,61 +12,59 @@
  */
 
 namespace biny\lib;
+use TXApp;
 
+/**
+ * Class TXModel
+ * @package biny\lib
+ * @property \app\model\person $person
+ * @method \app\model\person person($id)
+ */
 class TXModel
 {
-    protected $_data;
-    private $_cache = [];
-    protected $_dirty = false;
     /**
-     * @var \app\dao\baseDAO
+     * 获取单例模型
+     * @param $name
+     * @return mixed
+     * @throws TXException
      */
-    protected $DAO = null;
-    protected $_pk;
-
-    public function __get($key)
+    public function __get($name)
     {
-        if (substr($key, -7) == 'Service' || substr($key, -3) == 'DAO') {
-            return TXFactory::create($key);
+        return $this->create($name);
+    }
+
+    /**
+     * 获取单例模型
+     * @param $name
+     * @param $params
+     * @return mixed
+     * @throws TXException
+     */
+    public function __call($name, $params)
+    {
+        return $this->create($name, $params);
+    }
+
+    /**
+     * 模型获取
+     * @param $class
+     * @param array $params
+     * @return mixed
+     * @throws TXException
+     */
+    private function create($class, $params=[])
+    {
+        $autoConfig = TXApp::$base->config->get('namespace', 'autoload');
+        if (!isset($autoConfig[$class])){
+            $config = TXAutoload::loading();
+            $autoConfig = $config['namespace'];
         }
-        $data = array_merge($this->_data, $this->_cache);
-        return isset($data[$key]) ? TXString::encode($data[$key]) : null;
-    }
-
-    public function _get($key)
-    {
-        $data = array_merge($this->_data, $this->_cache);
-        return isset($data[$key]) ? $data[$key] : null;
-    }
-
-    public function __set($key, $value)
-    {
-        if (array_key_exists($key, $this->_data)){
-            $this->_data[$key] = $value;
-            $this->_dirty = true;
+        $class = isset($autoConfig[$class]) ? $autoConfig[$class] : $class;
+        if (is_callable([$class, 'init'])){
+            return call_user_func_array([$class, 'init'], $params);
         } else {
-            $this->_cache[$key] = $value;
+            throw new TXException(7000, $class);
         }
-    }
-
-    public function __isset($key)
-    {
-        return isset($this->_data[$key]) || isset($this->_cache[$key]);
-    }
-
-    public function save()
-    {
-        if ($this->_dirty && $this->_data && $this->DAO){
-            $this->DAO->updateByPK($this->_pk, $this->_data);
-            $this->_dirty = false;
-        }
-    }
-
-
-
-    public function __toLogger()
-    {
-        return $this->_data;
     }
 
 }

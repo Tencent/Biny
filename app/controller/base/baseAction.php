@@ -5,8 +5,6 @@ use biny\lib\TXResponse;
 use TXApp;
 /**
  * Base action
- * @property \app\service\baseService $baseService
- * @property \app\service\testService $testService
  */
 class baseAction extends TXAction
 {

@@ -38,7 +38,7 @@ class TXSingleDAO extends TXDAO
             $this->calledClass = $called;
         } else {
             $name = explode('\\', get_called_class());
-            $this->calledClass = end($name);
+            $this->calledClass = substr(end($name), 0, -3);
         }
         $this->setDbTable($table ?: $this->table);
     }
@@ -119,7 +119,7 @@ class TXSingleDAO extends TXDAO
 
     /**
      * 链接表
-     * @param $dao
+     * @param $dao TXSingleDAO
      * @param $relate
      * @param string $type
      * @return $this|TXDoubleDAO
@@ -127,11 +127,10 @@ class TXSingleDAO extends TXDAO
      */
     protected function _join($dao, $relate, $type='join')
     {
-        // todo remove substr
-        $selfClass = substr($this->getCalledClass(), 0, -3);
-        $relateClass = substr($dao->getCalledClass(), 0, -3);
+        $selfClass = $this->getCalledClass();
+        $relateClass = $dao->getCalledClass();
         if ($selfClass == $relateClass){
-            return $this;
+            $relateClass .= '1';
         }
         if (!$this->checkConfig($dao)){
             throw new TXException(3002, "DAOs must be the same Host");
@@ -173,10 +172,12 @@ class TXSingleDAO extends TXDAO
                         $arrk = $this->real_escape_string($arrk);
                         if (is_null($arrv)){
                             $where[] = "`{$arrk}`{$key} NULL";
-                        }elseif (is_string($arrv)){
+                        } elseif (is_string($arrv)){
                             $arrv = $this->real_escape_string($arrv);
                             $where[] = "`{$arrk}`{$key}'{$arrv}'";
-                        }  else if (is_array($arrv)){
+                        } elseif ($arrv instanceof \stdClass){
+                            $where[] = "`{$arrk}`{$key}{$arrv->scalar}";
+                        } else if (is_array($arrv)){
                             foreach ($arrv as $av){
                                 $arrv = $this->real_escape_string($av);
                                 $where[] = "`{$arrk}`{$key}'{$arrv}'";
@@ -214,6 +215,8 @@ class TXSingleDAO extends TXDAO
                     }
                 } elseif (is_null($value)){
                     $where[] = "`{$key}`is NULL";
+                } elseif ($value instanceof \stdClass){
+                    $where[] = "`{$key}`={$value->scalar}";
                 } elseif (is_string($value)) {
                     $value = $this->real_escape_string($value);
                     $where[] = "`{$key}`='{$value}'";
@@ -242,12 +245,15 @@ class TXSingleDAO extends TXDAO
     /**
      * 拼装Limit
      * @param $limit
+     * @param bool $update
      * @return string
      */
-    protected function buildLimit($limit)
+    protected function buildLimit($limit, $update=false)
     {
         if (empty($limit)) {
             return '';
+        } else if ($update){
+            return sprintf(' LIMIT %d', $limit[1]);
         } else {
             return sprintf(' LIMIT %d,%d', $limit[0], $limit[1]);
         }
@@ -265,6 +271,8 @@ class TXSingleDAO extends TXDAO
             foreach ($fields as $key => &$field){
                 if (is_int($key)){
                     $field = '`'.$this->real_escape_string($field).'`';
+                } elseif ($field instanceof \stdClass) {
+                    $field = $field->scalar;
                 } else {
                     $field = "`{$this->real_escape_string($key)}` AS `{$this->real_escape_string($field)}`";
                 }
@@ -282,21 +290,22 @@ class TXSingleDAO extends TXDAO
                 if (!in_array(strtolower($key), $this->calcs)){
                     throw new TXException(3011, [$key]);
                 }
+                $calc = $key == 'distinct' ? "COUNT(DISTINCT " : "{$key}(";
+                if (is_string($values)){
+                    $values = $values === '*' ? $values : '`'.$this->real_escape_string($values).'`';
+                    $groups[] = $calc."{$values}) as '{$key}'";
+                    continue;
+                } else if ($values instanceof \stdClass){
+                    $groups[] = $calc."{$values->scalar}) as '{$key}'";
+                    continue;
+                }
                 foreach ($values as $k => $value){
                     $value = $this->real_escape_string($value);
                     if (is_string($k)){
                         $k = $this->real_escape_string($k);
-                        if ($key == 'distinct'){
-                            $groups[] = "COUNT(DISTINCT `{$k}`) as '{$value}'";
-                        } else {
-                            $groups[] = "{$key}(`{$k}`) as '{$value}'";
-                        }
+                        $groups[] = $calc."`{$k}`) as '{$value}'";
                     } else {
-                        if ($key == 'distinct'){
-                            $groups[] = "COUNT(DISTINCT `{$value}`) as '{$value}'";
-                        } else {
-                            $groups[] = "{$key}(`{$value}`) as '{$value}'";
-                        }
+                        $groups[] = $calc."`{$value}`) as '{$value}'";
                     }
                 }
             }
@@ -340,6 +349,8 @@ class TXSingleDAO extends TXDAO
             } else if (is_string($value)) {
                 $value = $this->real_escape_string($value);
                 $sets[] = "`{$key}`='{$value}'";
+            } else if ($value instanceof \stdClass) {
+                $sets[] = "`{$key}`= {$value->scalar}";
             } else {
                 $sets[] = "`{$key}`={$value}";
             }
@@ -380,10 +391,14 @@ class TXSingleDAO extends TXDAO
         }
         if (is_array($groupBy)){
             foreach ($groupBy as &$group){
-                $group = $this->real_escape_string($group);
+                if ($group instanceof \stdClass){
+                    $group = $group->scalar;
+                } else {
+                    $group = '`'.$this->real_escape_string($group).'`';
+                }
             }
             unset($group);
-            $groupBy = '`'.join('`,`', $groupBy).'`';
+            $groupBy = join(',', $groupBy);
         }
         if ($having){
             $havings = [];
@@ -424,8 +439,7 @@ class TXSingleDAO extends TXDAO
             $field[] = "`{$this->real_escape_string($key)}`";
             if ($val === null) {
                 $value[] = "NULL";
-            }
-            elseif (is_string($val)) {
+            } elseif (is_string($val)) {
                 $val = $this->real_escape_string($val);//mysqli_real_escape_string(null, $val);
                 $value[] = "'{$val}'";
             } else {
@@ -437,7 +451,7 @@ class TXSingleDAO extends TXDAO
     }
 
     /**
-     * 拼装orderby
+     * 拼装orderby ['id'=>'ASC', 'name'=>['DESC', 'gbk']]
      * @param $orderBy
      * @return string
      */
@@ -479,7 +493,6 @@ class TXSingleDAO extends TXDAO
     {
         $fields = $this->buildInsert($sets);
         $sql = sprintf("INSERT INTO %s %s", $this->dbTable, $fields);
-        TXEvent::trigger(onSql, [$sql]);
         return $this->execute($sql, $id);
     }
 
@@ -519,7 +532,6 @@ class TXSingleDAO extends TXDAO
                 $values = join(',', $columns);
                 $columns = []; $i = 0;
                 $sql = sprintf("INSERT INTO %s %s VALUES  %s", $this->dbTable, $fields, $values);
-                TXEvent::trigger(onSql, [$sql]);
                 if (!$this->execute($sql, false)){
                     $flag = false;
                 }
@@ -528,7 +540,6 @@ class TXSingleDAO extends TXDAO
         if ($columns){
             $values = join(',', $columns);
             $sql = sprintf("INSERT INTO %s %s VALUES  %s", $this->dbTable, $fields, $values);
-            TXEvent::trigger(onSql, [$sql]);
             if (!$this->execute($sql, false)){
                 $flag = false;
             }
@@ -545,7 +556,6 @@ class TXSingleDAO extends TXDAO
         $params = func_get_args();
         $where = isset($params[0]) && $params[0]->get('where') ? " WHERE ".$params[0]->get('where') : "";
         $sql = sprintf("DELETE FROM %s%s", $this->dbTable, $where);
-        TXEvent::trigger(onSql, [$sql]);
 
         return $this->execute($sql);
     }
@@ -554,14 +564,13 @@ class TXSingleDAO extends TXDAO
      * 更新数据或者插入数据
      * @param $inserts
      * @param $sets
-     * @return bool|int|mysqli_result|string
+     * @return bool|int|\mysqli_result|string
      */
     public function createOrUpdate($inserts, $sets=[])
     {
         $set = $this->buildSets($sets ?: $inserts);
         $fields = $this->buildInsert($inserts);
         $sql = sprintf("INSERT INTO %s %s ON DUPLICATE KEY UPDATE %s", $this->dbTable, $fields, $set);
-        TXEvent::trigger(onSql, [$sql]);
 
         return $this->execute($sql, true);
     }
@@ -578,7 +587,6 @@ class TXSingleDAO extends TXDAO
         $set = $this->buildCount($sets);
         $fields = $this->buildInsert($inserts);
         $sql = sprintf("INSERT INTO %s %s ON DUPLICATE KEY UPDATE %s", $this->dbTable, $fields, $set);
-        TXEvent::trigger(onSql, [$sql]);
 
         return $this->execute($sql, true);
     }

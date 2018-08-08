@@ -3,12 +3,12 @@
 /* @var $PRM TXArray */
 ?>
 
-<?if (!TXApp::$base->request->isAjax()){?>
-<? include TXApp::$view_root . "/base/common.tpl.php" ?>
-<? include TXApp::$view_root . "/base/header.tpl.php" ?>
+<?php if (!TXApp::$base->request->isAjax()){?>
+<?php include TXApp::$view_root . "/base/common.tpl.php" ?>
+<?php include TXApp::$view_root . "/base/header.tpl.php" ?>
 
 <div class="container">
-<?}?>
+<?php } ?>
 
 <div class="messageImage">
     <img src="<?=TXApp::$base->config->get('webRoot')?>/static/images/source/error.gif" />
@@ -20,7 +20,7 @@
     <a href="/" class='mlink'>[返回首页]</a>
 </div>
 
-<?if (!TXApp::$base->request->isAjax()){?>
+<?php if (!TXApp::$base->request->isAjax()){?>
 </div>
-<? include TXApp::$view_root . "/base/footer.tpl.php" ?>
-<?}?>
+<?php include TXApp::$view_root . "/base/footer.tpl.php" ?>
+<?php } ?>

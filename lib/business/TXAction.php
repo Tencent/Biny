@@ -48,16 +48,28 @@ class TXAction
     protected $csrfValidate = true;
 
     /**
+     * restful接口
+     * @var bool
+     */
+    protected $restApi = false;
+
+    /**
      * 构造函数
      */
     public function __construct()
     {
+        if ($this->restApi){
+            parse_str(file_get_contents('php://input'), $this->params);
+            $this->params = array_merge($this->params, $_GET);
+        } else {
+            $this->params = array_merge($_REQUEST, TXRouter::$ARGS);
+        }
         $this->posts = $_POST;
-        $this->params = $_REQUEST;
         $this->gets = $_GET;
         //判断是否维护中
         if (isMaintenance){
-            return $this->display('Main/maintenance');
+            echo $this->display('Main/maintenance');
+            exit;
         }
         if ($this->csrfValidate && !TXApp::$base->request->validateCsrfToken()){
             header(TXApp::$base->config->get(401, 'http'));
@@ -67,7 +79,6 @@ class TXAction
         // 权限验证
         $this->valid_privilege();
         TXApp::$base->request->createCsrfToken();
-        TXApp::$base->request->setCharset();
         TXApp::$base->request->setContentType();
     }
 
@@ -81,6 +92,11 @@ class TXAction
         if (substr($obj, -7) == 'Service' || substr($obj, -3) == 'DAO') {
             return TXFactory::create($obj);
         }
+    }
+
+    public function getRestful()
+    {
+        return $this->restApi;
     }
 
     /**
@@ -135,9 +151,12 @@ class TXAction
      */
     public function getForm($name, $method=null)
     {
-        $name .= 'Form';
-        $form = new $name($this->params, $method);
-        $form->init();
+        $name = $name.'Form';
+        /**
+         * @var TXForm $form
+         */
+        $form = TXFactory::create($name);
+        $form->init($this->params, $method);
         return $form;
     }
 
@@ -151,12 +170,22 @@ class TXAction
     }
 
     /**
+     * 兼容原有api
+     * @param $key
+     * @param null $default
+     * @return float|int|mixed|null
+     */
+    public function getParam($key, $default=null){return $this->param($key, $default);}
+    public function getGet($key, $default=null){return $this->get($key, $default);}
+    public function getPost($key, $default=null){return $this->post($key, $default);}
+
+    /**
      * 获取请求参数
      * @param $key
      * @param null $default
      * @return float|int|mixed|null
      */
-    public function getParam($key, $default=null)
+    public function param($key, $default=null)
     {
         if (TXApp::$base->request->getContentType() == 'application/json' || TXApp::$base->request->getContentType() == 'text/json'){
             return $this->getJson($key, $default);
@@ -171,7 +200,7 @@ class TXAction
      * @param null $default
      * @return float|int|mixed|null
      */
-    public function getPost($key, $default=null)
+    public function post($key, $default=null)
     {
         return isset($this->posts[$key]) ? $this->posts[$key] : $default;
     }
@@ -182,7 +211,7 @@ class TXAction
      * @param null $default
      * @return float|int|mixed|null
      */
-    public function getGet($key, $default=null)
+    public function get($key, $default=null)
     {
         return isset($this->gets[$key]) ? $this->gets[$key] : $default;
     }
@@ -206,7 +235,7 @@ class TXAction
      * @param bool $encode
      * @return TXJSONResponse
      */
-    public function json($data, $encode=true)
+    public function json($data, $encode=false)
     {
         $config = TXApp::$base->config->get('response');
         if ($config['jsonContentType']){
@@ -220,7 +249,7 @@ class TXAction
      * @param bool $encode
      * @return TXJSONResponse
      */
-    public function correct($ret=[], $encode=true)
+    public function correct($ret=[], $encode=false)
     {
         $data = ["flag" => true, "ret" => $ret];
         return $this->json($data, $encode);
@@ -228,11 +257,11 @@ class TXAction
 
     /**
      * @param string $msg
-     * @param bool $encode
      * @param bool $json 是否强制显示json
+     * @param bool $encode
      * @return TXJSONResponse|TXResponse
      */
-    public function error($msg="数据异常", $encode=true, $json=false)
+    public function error($msg="数据异常", $json=false, $encode=false)
     {
         TXEvent::trigger(onError, [$msg]);
         if (!$json && (TXApp::$base->request->isShowTpl() || !TXApp::$base->request->isAjax())){

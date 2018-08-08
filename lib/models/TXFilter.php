@@ -20,8 +20,10 @@ namespace biny\lib;
  * @method int avg($field)
  * @method array distinct($field)
  * @method array find($field='')
+ * @method array pluck($field)
+ * @method array paginate($size, $page=null, $fields='')
  * @method array query($field='', $key=null)
- * @method array cursor($field='')
+ * @method array cursor($field='', $instance=true)
  * @method array select($sql, $querys=array())
  * @method array command($sql, $querys=array())
  * @method array count($field='')
@@ -37,7 +39,8 @@ class TXFilter
      */
     protected $DAO;
     protected $conds = [];
-    protected $methods = ['distinct', 'find', 'cursor', 'query', 'count', 'group', 'limit', 'order', 'addition', 'having', 'select', 'command', 'update', 'addCount'];
+    protected $methods = ['distinct', 'find', 'cursor', 'query', 'pluck', 'paginate', 'count', 'group',
+        'limit', 'order', 'addition', 'having', 'select', 'command', 'update', 'addCount'];
     protected $calcs = ['max', 'min', 'sum', 'avg', 'count'];
 
     /**

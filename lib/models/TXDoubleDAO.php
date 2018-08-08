@@ -102,7 +102,7 @@ class TXDoubleDAO extends TXDAO
 
     /**
      * 链接表
-     * @param $dao
+     * @param $dao TXSingleDAO
      * @param $relateD
      * @param string $type
      * @return $this|TXDoubleDAO
@@ -110,9 +110,9 @@ class TXDoubleDAO extends TXDAO
      */
     protected function _join($dao, $relateD, $type='join')
     {
-        $daoClass = substr($dao->getCalledClass(), 0, -3);
-        if (isset($this->doubles[$daoClass])){
-            return $this;
+        $daoClass = $dao->getCalledClass();
+        if (in_array($daoClass, $this->doubles)){
+            $daoClass .= count($this->doubles);
         }
         if (!$this->checkConfig($dao)){
             throw new TXException(3002, "DAOs must be the same Host");
@@ -174,6 +174,8 @@ class TXDoubleDAO extends TXDAO
                         } else if (is_string($arrv)){
                             $arrv = $this->real_escape_string($arrv);
                             $where[] = "`{$table}`.`{$arrk}`{$key}'{$arrv}'";
+                        } else if ($arrv instanceof \stdClass){
+                            $where[] = "`{$table}`.`{$arrk}`{$key}{$arrv->scalar}";
                         } else if (is_array($arrv)){
                             foreach ($arrv as $av){
                                 $arrv = $this->real_escape_string($av);
@@ -212,6 +214,8 @@ class TXDoubleDAO extends TXDAO
                     }
                 } elseif (is_null($value)){
                     $where[] = "`{$table}`.`{$key}`is NULL";
+                } elseif ($value instanceof \stdClass) {
+                    $where[] = "`{$table}`.`{$key}`={$value->scalar}";
                 } elseif (is_string($value)) {
                     $value = $this->real_escape_string($value);
                     $where[] = "`{$table}`.`{$key}`='{$value}'";
@@ -256,13 +260,18 @@ class TXDoubleDAO extends TXDAO
                 }
                 if ($field === "*"){
                     $temps[] = "`{$table}`.*";
+                } elseif(is_string($field)){
+                    $temps[] = "`{$table}`.`{$field}`";
                 } else {
                     foreach ($field as $key => $column){
-                        $column = $this->real_escape_string($column);
                         if (is_string($key)){
+                            $column = $this->real_escape_string($column);
                             $key = $this->real_escape_string($key);
                             $temps[] = "`{$table}`.`".$key."` AS `$column`";
+                        } elseif ($column instanceof \stdClass) {
+                            $temps[] = $column->scalar;
                         } else {
+                            $column = $this->real_escape_string($column);
                             $temps[] = "`{$table}`.`".$column."`";
                         }
                     }
@@ -396,11 +405,18 @@ class TXDoubleDAO extends TXDAO
                 }
                 if (is_array($group)){
                     foreach ($group as $column){
-                        $column = $this->real_escape_string($column);
-                        $temps[] = $table.".`".$column."`";
+                        if ($column instanceof \stdClass){
+                            $temps[] = $column->scalar;
+                        } else {
+                            $column = $this->real_escape_string($column);
+                            $temps[] = $table.".`".$column."`";
+                        }
                     }
+                } elseif ($group instanceof \stdClass) {
+                    $temps[] = $group->scalar;
                 } else {
-                    $temps[] = $group;
+                    $column = $this->real_escape_string($group);
+                    $temps[] = $table.".`".$column."`";
                 }
             }
             $groupBy = join(',', $temps);
@@ -433,12 +449,15 @@ class TXDoubleDAO extends TXDAO
     /**
      * 拼装Limit
      * @param $limit
+     * @param bool $update
      * @return string
      */
-    protected function buildLimit($limit)
+    protected function buildLimit($limit, $update=false)
     {
         if (empty($limit)) {
             return '';
+        } else if ($update){
+            return sprintf(' LIMIT %d', $limit[1]);
         } else {
             return sprintf(' LIMIT %d,%d', $limit[0], $limit[1]);
         }
@@ -491,6 +510,8 @@ class TXDoubleDAO extends TXDAO
                 } else if (is_string($value)) {
                     $value = $this->real_escape_string($value);
                     $sets[] = "`{$table}`.`{$key}`='{$value}'";
+                } else if ($value instanceof \stdClass) {
+                    $sets[] = "`{$table}`.`{$key}`={$value->scalar}";
                 } else {
                     $sets[] = "`{$table}`.`{$key}`={$value}";
                 }
@@ -546,7 +567,13 @@ class TXDoubleDAO extends TXDAO
             foreach ($relate as $key => $value){
                 $key = "`{$this->real_escape_string($table)}`.`{$this->real_escape_string($key)}`";
                 if (is_array($value) && count($value)>=2 && in_array($value[0], $this->extracts)){
-                    $tmp[] = [$key, [$value[0], "'{$this->real_escape_string($value[1])}'"]];
+                    if ($value[1] instanceof \stdClass){
+                        $tmp[] = [$key, [$value[0], $value[1]->scalar]];
+                    } else {
+                        $tmp[] = [$key, [$value[0], "'{$this->real_escape_string($value[1])}'"]];
+                    }
+                } elseif ($value instanceof \stdClass) {
+                    $tmp[] = [$key, $value->scalar];
                 } else {
                     $tmp[] = [$key, "'{$this->real_escape_string($value)}'"];
                 }

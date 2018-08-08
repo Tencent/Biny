@@ -118,9 +118,10 @@ class TXDAO
      * 执行sql
      * @param $sql
      * @param bool $id
-     * @return bool|int|mysqli_result|string
+     * @return bool|int|\mysqli_result|string
      */
     protected function execute($sql, $id=false) {
+        TXEvent::trigger(onSql, [$sql]);
         $dns = is_array($this->dbConfig) ? $this->dbConfig[0] : $this->dbConfig;
         return TXDatabase::instance($dns)->execute($sql, $id);
     }
@@ -130,11 +131,13 @@ class TXDAO
      * @param $sql
      * @param $key
      * @param int $mode
+     * @param bool $instance
      * @return array
      */
-    private function sql($sql, $key=null, $mode=TXDatabase::FETCH_TYPE_ALL) {
+    private function sql($sql, $key=null, $mode=TXDatabase::FETCH_TYPE_ALL, $instance=true) {
+        TXEvent::trigger(onSql, [$sql]);
         $dns = is_array($this->dbConfig) ? $this->dbConfig[1] : $this->dbConfig;
-        return TXDatabase::instance($dns)->sql($sql, $key, $mode);
+        return TXDatabase::instance($dns, $instance)->sql($sql, $key, $mode);
     }
 
     /**
@@ -151,7 +154,6 @@ class TXDAO
 
         List($keys, $values) = $this->buildQuery($querys, $cond);
         $sql = str_replace($keys, $values, $sql);
-        TXEvent::trigger(onSql, [$sql]);
         return $this->sql($sql, null, $mode);
     }
 
@@ -159,7 +161,7 @@ class TXDAO
      * 语句执行
      * @param $sql
      * @param $querys
-     * @return bool|int|mysqli_result|string
+     * @return bool|int|\mysqli_result|string
      */
     public function command($sql, $querys=[])
     {
@@ -168,7 +170,6 @@ class TXDAO
 
         List($keys, $values) = $this->buildQuery($querys, $cond);
         $sql = str_replace($keys, $values, $sql);
-        TXEvent::trigger(onSql, [$sql]);
         return $this->execute($sql);
     }
 
@@ -259,8 +260,8 @@ class TXDAO
         $params = func_get_args();
         $where = isset($params[1]) && $params[1]->get('where') ? " WHERE ".$params[1]->get('where') : "";
         $fields = $this->buildFields($fields, isset($params[1]) ? $params[1]->get('additions') : []);
-        $sql = sprintf("SELECT %s FROM %s%s", $fields, $this->getTable(), $where);
-        TXEvent::trigger(onSql, [$sql]);
+        $orderBy = $this->buildOrderBy(isset($params[1]) ? $params[1]->get('orderby') : []);
+        $sql = sprintf("SELECT %s FROM %s%s%s", $fields, $this->getTable(), $where, $orderBy);
         $result = $this->sql($sql, null, TXDatabase::FETCH_TYPE_ONE);
         return $result;
     }
@@ -280,28 +281,89 @@ class TXDAO
         $fields = $this->buildFields($fields, isset($params[2]) ? $params[2]->get('additions') : []);
         $groupBy = $this->buildGroupBy(isset($params[2]) ? $params[2]->get('groupby') : [], isset($params[2]) ? $params[2]->get('having') : []);
         $sql = sprintf("SELECT %s FROM %s%s%s%s%s", $fields, $this->getTable(), $where, $groupBy, $orderBy, $limit);
-        TXEvent::trigger(onSql, [$sql]);
 
         return $this->sql($sql, $key);
     }
 
     /**
-     * 返回数据游标
+     * 返回字段列表 ['name1', 'name2']
+     * @param $field
+     * @return array
+     */
+    public function pluck($field)
+    {
+        $params = func_get_args();
+        $key = $field;
+        if (is_array($field)){
+            foreach ($field as $f){
+                if (!$f){
+                    continue;
+                }
+                $key = $f[0];
+                break;
+            }
+        }
+        $cond = isset($params[1]) ? $params[1] : null;
+        $result = [];
+        $this->cursor($field, function($data) use($key, &$result){
+            isset($data[$key]) && $result[] = $data[$key];
+        }, $cond);
+        return $result;
+    }
+
+    /**
+     * @param string $fields
+     * @param bool|mixed $instance
+     * @return array
+     */
+    public function cursor($fields='', $instance=true)
+    {
+        $params = func_get_args();
+        $where = isset($params[2]) && $params[2]->get('where') ? " WHERE ".$params[2]->get('where') : "";
+        $limit = $this->buildLimit(isset($params[2]) ? $params[2]->get('limit') : []);
+        $orderBy = $this->buildOrderBy(isset($params[2]) ? $params[2]->get('orderby') : []);
+        $fields = $this->buildFields($fields, isset($params[2]) ? $params[2]->get('additions') : []);
+        $groupBy = $this->buildGroupBy(isset($params[2]) ? $params[2]->get('groupby') : [], isset($params[2]) ? $params[2]->get('having') : []);
+        $sql = sprintf("SELECT %s FROM %s%s%s%s%s", $fields, $this->getTable(), $where, $groupBy, $orderBy, $limit);
+        if ($instance && is_callable($instance)){
+            $rs = $this->sql($sql, null, TXDatabase::FETCH_TYPE_CURSOR, false);
+            $i = 0;
+            while ($data = TXDatabase::step($rs)){
+                $instance($data, $i++);
+            }
+        } else {
+            return $this->sql($sql, null, TXDatabase::FETCH_TYPE_CURSOR, $instance);
+        }
+    }
+
+    /**
+     * 返回分页逻辑
+     * @param $size
+     * @param null $page
      * @param string $fields
      * @return array
      */
-    public function cursor($fields='')
+    public function paginate($size, $page=null, $fields='')
     {
+        if ($size === 0){
+            TXLogger::addError('param size in function paginate can not be zero', 'Division by zero', WARNING);
+            return [];
+        }
         $params = func_get_args();
-        $where = isset($params[1]) && $params[1]->get('where') ? " WHERE ".$params[1]->get('where') : "";
-        $limit = $this->buildLimit(isset($params[1]) ? $params[1]->get('limit') : []);
-        $orderBy = $this->buildOrderBy(isset($params[1]) ? $params[1]->get('orderby') : []);
-        $fields = $this->buildFields($fields, isset($params[1]) ? $params[1]->get('additions') : []);
-        $groupBy = $this->buildGroupBy(isset($params[1]) ? $params[1]->get('groupby') : [], isset($params[1]) ? $params[1]->get('having') : []);
-        $sql = sprintf("SELECT %s FROM %s%s%s%s%s", $fields, $this->getTable(), $where, $groupBy, $orderBy, $limit);
-        TXEvent::trigger(onSql, [$sql]);
-
-        return $this->sql($sql, null, TXDatabase::FETCH_TYPE_CURSOR);
+        /**
+         * @var $cond TXSingleCond|TXDoubleCond
+         */
+        $cond = isset($params[3]) ? $params[3] : null;
+        if (null === $page){
+            $result = [];
+            $this->cursor($fields, function($data, $i) use(&$result, $size){
+                $result[floor($i/$size)][] = $data;
+            }, $cond);
+            return $result;
+        } else{
+            $cond = $cond instanceof TXCond ? $cond->limit($size, $page*$size) : $this->limit($size, $page*$size);
+            return $this->query($fields, null, $cond);
+        }
     }
 
     /**
@@ -318,7 +380,6 @@ class TXDAO
         $fields = $this->buildFields($fields, isset($params[1]) ? $params[1]->get('additions') : []);
         $groupBy = $this->buildGroupBy(isset($params[1]) ? $params[1]->get('groupby') : [], isset($params[1]) ? $params[1]->get('having') : []);
         $sql = sprintf("SELECT DISTINCT %s FROM %s%s%s%s%s", $fields, $this->getTable(), $where, $groupBy, $orderBy, $limit);
-        TXEvent::trigger(onSql, [$sql]);
 
         return $this->sql($sql);
     }
@@ -335,7 +396,6 @@ class TXDAO
         $field = $field ? 'DISTINCT '.$this->buildFields($field) : '0';
         $groupBy = $this->buildGroupBy(isset($params[1]) ? $params[1]->get('groupby') : [], isset($params[1]) ? $params[1]->get('having') : []);
         $sql = sprintf("SELECT COUNT(%s) as count FROM %s%s%s", $field, $this->getTable(), $where, $groupBy);
-        TXEvent::trigger(onSql, [$sql]);
 
         $ret = $this->sql($sql);
         return $ret[0]['count'] ?: 0;
@@ -349,10 +409,11 @@ class TXDAO
     public function update($sets)
     {
         $params = func_get_args();
+        $limit = $this->buildLimit(isset($params[1]) ? $params[1]->get('limit') : [], true);
+        $orderBy = $this->buildOrderBy(isset($params[1]) ? $params[1]->get('orderby') : []);
         $where = isset($params[1]) && $params[1]->get('where') ? " WHERE ".$params[1]->get('where') : "";
         $set = $this->buildSets($sets);
-        $sql = sprintf("UPDATE %s SET %s%s", $this->getTable(), $set, $where);
-        TXEvent::trigger(onSql, [$sql]);
+        $sql = sprintf("UPDATE %s SET %s%s%s%s", $this->getTable(), $set, $where, $orderBy, $limit);
 
         return $this->execute($sql);
     }
@@ -369,7 +430,6 @@ class TXDAO
         $where = isset($params[1]) && $params[1]->get('where') ? " WHERE ".$params[1]->get('where') : "";
         $set = $this->buildCount($sets);
         $sql = sprintf("UPDATE %s SET %s%s", $this->getTable(), $set, $where);
-        TXEvent::trigger(onSql, [$sql]);
         return $this->execute($sql);
     }
 
@@ -392,7 +452,6 @@ class TXDAO
         } else if (in_array($method, $this->calcs)){
             $where = isset($args[1]) && $args[1]->get('where') ? " WHERE ".$args[1]->get('where') : "";
             $sql = sprintf("SELECT %s(`%s`) as `%s` FROM %s%s", $method, $args[0], $method, $this->getTable(), $where);
-            TXEvent::trigger(onSql, [$sql]);
 
             $ret = $this->sql($sql, null, TXDatabase::FETCH_TYPE_ONE);
             return $ret[$method] ?: 0;
