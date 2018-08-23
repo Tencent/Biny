@@ -1016,7 +1016,7 @@ TXApp::<prm>$base</prm>-><prm>config</prm>-><func>get</func>(<str>'path'</str>, 
 <prm>$this</prm>-><prm>userDAO</prm> <note>//->filter(...)</note>
     -><func>addition</func>(<sys>array</sys>(<str>'avg'</str>=><sys>array</sys>(<str>'cash'</str>=><str>'a_c'</str>))
     -><func>group</func>(<sys>array</sys>(<str>'id'</str>, <str>'type'</str>))
-    -><func>having</func>(<sys>array</sys>(<str>'>='</str>=><sys>array</sys>(<str>'a_c'</str>, 1000)))
+    -><func>having</func>(<sys>array</sys>(<str>'>='</str>=><sys>array</sys>(<str>'a_c'</str>=> 1000)))
     -><func>order</func>(<sys>array</sys>(<str>'a_c'</str>=><str>'DESC'</str>, <str>'id'</str>=><str>'ASC'</str>))
     <note>// limit 第一个参数为取的条数，第二个参数为起始位置（默认为0）</note>
     -><func>limit</func>(10, 20)
@@ -1069,7 +1069,7 @@ TXApp::<prm>$base</prm>-><prm>config</prm>-><func>get</func>(<str>'path'</str>, 
 
 <note>// update `DATABASE`.`TABLE` `user` set name = 'test' WHERE `user`.`id` = 10 AND type = 2</note>
 <prm>$result</prm> = <prm>$this</prm>-><prm>userDAO</prm>-><func>filter</func>(<sys>array</sys>(<str>'id'</str>=>10))
-    -><func>command</func>(<str>'update :table set name = 'test' WHERE :where AND type = 2;'</str>)
+    -><func>command</func>(<str>"update :table set name = 'test' WHERE :where AND type = 2;"</str>);
 
 <note>// select id,sum(`cash`) as 'cash' from `DATABASE`.`TABLE` WHERE `id`>10
     GROUP BY `type` HAVING `cash`>=100 ORDER BY `id` desc;</note>
