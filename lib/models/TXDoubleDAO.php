@@ -572,6 +572,12 @@ class TXDoubleDAO extends TXDAO
                     } else {
                         $tmp[] = [$key, [$value[0], "'{$this->real_escape_string($value[1])}'"]];
                     }
+                } elseif (is_array($value)) {
+                    foreach ($value as &$v){
+                        $v = "'{$this->real_escape_string($v)}'";
+                    }
+                    unset($v);
+                    $tmp[] = array($key, array('in', "(".join(',', $value).')'));
                 } elseif ($value instanceof \stdClass) {
                     $tmp[] = [$key, $value->scalar];
                 } else {
