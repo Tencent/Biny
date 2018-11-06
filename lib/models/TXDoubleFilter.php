@@ -57,6 +57,9 @@ class TXDoubleFilter extends TXFilter
      */
     public function __call($method, $args)
     {
+        if (in_array($method, $this->joins)){
+            return call_user_func_array([$this->DAO, $method], $args)->setCond($this->conds);
+        }
         if (in_array($method, $this->methods) || in_array($method, $this->calcs)){
             $cond = new TXDoubleCond($this->DAO);
             $cond->setWhere($this->buildWhere($this->conds));

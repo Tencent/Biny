@@ -60,6 +60,25 @@ class TXSingleFilter extends TXFilter
     }
 
     /**
+     * 获取转换后的conds
+     * @return array
+     */
+    protected function getDoubleCond($conds)
+    {
+        $cond = [];
+        foreach ($conds as $key => $value){
+            if ($key === self::valueKey) {
+                $cond[$key] = [$value];
+            } else if (is_array($value)) {
+                $cond[$key] = $this->getDoubleCond($value);
+            } else {
+                $cond[$key] = $value;
+            }
+        }
+        return $cond;
+    }
+
+    /**
      * 查询条件
      * @param $method
      * @param $args
@@ -68,6 +87,10 @@ class TXSingleFilter extends TXFilter
      */
     public function __call($method, $args)
     {
+        if (in_array($method, $this->joins)){
+            $cond = $this->getDoubleCond($this->conds);
+            return call_user_func_array([$this->DAO, $method], $args)->setCond($cond);
+        }
         if (in_array($method, $this->methods) || in_array($method, $this->calcs)){
             $cond = new TXSingleCond($this->DAO);
             $cond->setWhere($this->buildWhere($this->conds));

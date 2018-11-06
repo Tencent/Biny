@@ -608,4 +608,14 @@ class TXDoubleDAO extends TXDAO
     {
         return $cond ? new TXDoubleFilter($this, $cond, "__or__") : $this;
     }
+
+    /**
+     * 条件预设
+     * @param $cond
+     * @return TXDoubleFilter
+     */
+    public function setCond($cond)
+    {
+        return new TXDoubleFilter($this, [], "__and__", $cond);
+    }
 }

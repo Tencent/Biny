@@ -29,6 +29,9 @@ namespace biny\lib;
  * @method array count($field='')
  * @method array update($sets)
  * @method array addCount($sets)
+ * @method TXDoubleFilter join($dao, $relate)
+ * @method TXDoubleFilter leftJoin($dao, $relate)
+ * @method TXDoubleFilter rightJoin($dao, $relate)
  */
 class TXFilter
 {
@@ -42,6 +45,7 @@ class TXFilter
     protected $methods = ['distinct', 'find', 'cursor', 'query', 'pluck', 'paginate', 'count', 'group',
         'limit', 'order', 'addition', 'having', 'select', 'command', 'update', 'addCount'];
     protected $calcs = ['max', 'min', 'sum', 'avg', 'count'];
+    protected $joins = ['join', 'leftJoin', 'rightJoin'];
 
     /**
      * 静态创建
@@ -77,7 +81,12 @@ class TXFilter
             throw new TXException(3003, gettype($DAO));
         }
         if (!$filter){
-            throw new TXException(3007);
+            if ($cond && count($cond) == 1 && array_keys($cond)[0] === 0){
+                // 条件传递
+                $this->conds = $cond;
+            } else {
+                throw new TXException(3007);
+            }
         } elseif (is_array($filter)){
             if ($cond){
                 $this->conds = [[$type => [[self::valueKey => $filter], $cond]]];
@@ -86,7 +95,7 @@ class TXFilter
             }
         } elseif (null === $cond) {
            throw new TXException(3006, gettype($filter));
-        } elseif (!$filter instanceof TXFilter) {
+        } elseif (!($filter instanceof TXFilter)) {
             throw new TXException(3004, gettype($filter));
         } elseif ($filter->getDAO() !== $DAO) {
             throw new TXException(3005);
