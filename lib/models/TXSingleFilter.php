@@ -63,7 +63,7 @@ class TXSingleFilter extends TXFilter
      * 获取转换后的conds
      * @return array
      */
-    protected function getDoubleCond($conds)
+    private function getDoubleCond($conds)
     {
         $cond = [];
         foreach ($conds as $key => $value){

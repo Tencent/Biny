@@ -897,6 +897,17 @@ TXApp::<prm>$base</prm>-><prm>config</prm>-><func>get</func>(<str>'path'</str>, 
 
         <p>具体选择器使用请参考选择器文档内容。</p>
 
+        <p>Biny 2.8.6之后<code>join/leftJoin/rightJoin</code>可以在第一张表添加选择器后再使用，使用方法如下：</p>
+        <pre class="code"><note>// ... where `user`.`type` = 10</note>
+<prm>$this</prm>-><prm>userDAO</prm>-><func>filter</func>(<sys>array</sys>(<str>'type'</str>=>10))
+    -><func>join</func>(<prm>$this</prm>-><prm>projectDAO</prm>, <sys>array</sys>(<str>'projectId'</str>=><str>'id'</str>))
+    -><func>query</func>();
+<note>// 等同于下方原来的写法，这样在第一张表中参数会自动带入到联表参数中</note>
+<prm>$this</prm>-><prm>userDAO</prm>-><func>join</func>(<prm>$this</prm>-><prm>projectDAO</prm>, <sys>array</sys>(<str>'projectId'</str>=><str>'id'</str>))
+    -><func>filter</func>(<sys>array</sys>(
+        <sys>array</sys>(<str>'type'</str>=>10),
+    ))-><func>query</func>();</pre>
+
 
         <h2 id="dao-filter">选择器</h2>
 

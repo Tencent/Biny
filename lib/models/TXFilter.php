@@ -125,7 +125,7 @@ class TXFilter
                     if ($sCond){
                         $wheres[] = $sCond;
                     }
-                } elseif ($key == self::valueKey){
+                } elseif ($key === self::valueKey){
                     $sCond = $this->DAO->buildWhere($cond, $type);
                     if ($sCond){
                         $wheres[] = $sCond;
