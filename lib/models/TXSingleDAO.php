@@ -484,6 +484,17 @@ class TXSingleDAO extends TXDAO
     }
 
     /**
+     * 添加数据 等同于add
+     * @param $sets
+     * @param bool $id
+     * @return int
+     */
+    public function insert($sets, $id=true)
+    {
+        return $this->add($sets, $id);
+    }
+
+    /**
      * 添加数据
      * @param $sets
      * @param bool $id
@@ -500,13 +511,15 @@ class TXSingleDAO extends TXDAO
      * 批量添加
      * @param $values
      * @param int $max
+     * @param bool $replace
      * @return bool|int|\mysqli_result|string
      */
-    public function addList($values, $max=100)
+    public function addList($values, $max=100, $replace=false)
     {
         if (count($values) == 0){
             return true;
         }
+        $command = $replace ? "REPLACE" : "INSERT";
         $value = $values[0];
         $fields = array_keys($value);
         foreach ($fields as &$field){
@@ -531,7 +544,7 @@ class TXSingleDAO extends TXDAO
             if (++$i == $max){
                 $values = join(',', $columns);
                 $columns = []; $i = 0;
-                $sql = sprintf("INSERT INTO %s %s VALUES  %s", $this->dbTable, $fields, $values);
+                $sql = sprintf("$command INTO %s %s VALUES  %s", $this->dbTable, $fields, $values);
                 if (!$this->execute($sql, false)){
                     $flag = false;
                 }
@@ -539,7 +552,7 @@ class TXSingleDAO extends TXDAO
         }
         if ($columns){
             $values = join(',', $columns);
-            $sql = sprintf("INSERT INTO %s %s VALUES  %s", $this->dbTable, $fields, $values);
+            $sql = sprintf("$command INTO %s %s VALUES  %s", $this->dbTable, $fields, $values);
             if (!$this->execute($sql, false)){
                 $flag = false;
             }

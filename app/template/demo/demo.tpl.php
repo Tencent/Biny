@@ -830,13 +830,22 @@ TXApp::<prm>$base</prm>-><prm>config</prm>-><func>get</func>(<str>'path'</str>, 
 <prm>$sets</prm> = <sys>array</sys>(<str>'name'</str>=><str>'test'</str>, <str>'type'</str>=>1);
 <prm>$result</prm> = <prm>$this</prm>-><prm>testDAO</prm>-><func>createOrUpdate</func>(<prm>$sets</prm>);</pre>
 
-        <p><code>addList</code>方法 为批量添加数据，返回成功（<code>true</code>）或者失败（<code>false</code>）</p>
+        <p><code>addList</code>方法为批量添加数据，第二个参数为批量执行的个数，默认一次执行100行<br />返回成功（<code>true</code>）或者失败（<code>false</code>）</p>
 <pre class="code"><note>// 参数为批量数据值（二维数组），键值必须统一</note>
 <prm>$sets</prm> = <sys>array</sys>(
     <sys>array</sys>(<str>'name'</str>=><str>'test1'</str>, <str>'type'</str>=>1),
     <sys>array</sys>(<str>'name'</str>=><str>'test2'</str>, <str>'type'</str>=>2),
 );
 <prm>$result</prm> = <prm>$this</prm>-><prm>testDAO</prm>-><func>addList</func>(<prm>$sets</prm>);</pre>
+
+        <p>Biny 2.8.7之后，支持<code>insert</code>方法，作用等同于<code>add</code></p>
+        <p><code>addList</code>支持replace into逻辑，第三个参数为<code>true</code>时，会以replace into 逻辑执行</p>
+<pre class="code"><note>// REPLACE INTO TABLE ...</note>
+<prm>$sets</prm> = <sys>array</sys>(
+    <sys>array</sys>(<str>'name'</str>=><str>'test1'</str>, <str>'type'</str>=>1),
+    <sys>array</sys>(<str>'name'</str>=><str>'test2'</str>, <str>'type'</str>=>2),
+);
+<prm>$result</prm> = <prm>$this</prm>-><prm>testDAO</prm>-><func>addList</func>(<prm>$sets</prm>, 100, <sys>true</sys>);</pre>
 
         <h2 id="dao-join">多联表</h2>
         <p>框架支持多连表模型，DAO类都有<code>join</code>（全联接），<code>leftJoin</code>（左联接），<code>rightJoin</code>（右联接）方法</p>
