@@ -63,7 +63,8 @@ class TXModel
         if (is_callable([$class, 'init'])){
             return call_user_func_array([$class, 'init'], $params);
         } else {
-            throw new TXException(7000, $class);
+            $class = new \ReflectionClass($class);
+            return $class->newInstanceArgs($params);
         }
     }
 
