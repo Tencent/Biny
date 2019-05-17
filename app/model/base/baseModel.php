@@ -7,8 +7,8 @@
  */
 
 namespace app\model;
-use biny\lib\TXFactory;
-use biny\lib\TXString;
+use biny\lib\Factory;
+use biny\lib\BinyString;
 
 /**
  * Class baseModel
@@ -45,10 +45,10 @@ class baseModel
     public function __get($key)
     {
         if (substr($key, -7) == 'Service' || substr($key, -3) == 'DAO') {
-            return TXFactory::create($key);
+            return Factory::create($key);
         }
         $data = array_merge($this->_data, $this->_cache);
-        return isset($data[$key]) ? TXString::encode($data[$key]) : null;
+        return isset($data[$key]) ? BinyString::encode($data[$key]) : null;
     }
 
     public function _get($key)

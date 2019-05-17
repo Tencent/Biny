@@ -1,7 +1,7 @@
 <?php
 
 namespace app\model;
-use TXApp;
+use App;
 
 /**
  * Created by PhpStorm.
@@ -22,7 +22,7 @@ class person extends baseModel
      */
     public static function init($id=null)
     {
-        $id = $id ?: TXApp::$base->session->userId;
+        $id = $id ?: App::$base->session->userId;
         if (!isset(self::$_instance[$id])){
             self::$_instance[$id] = new self($id);
         }
@@ -62,7 +62,7 @@ class person extends baseModel
     public function login()
     {
         $this->DAO->updateByPk($this->_pk, ['loginTime'=>time(), 'count'=>['+'=>1]]);
-        TXApp::$base->session->userId = $this->_pk;
+        App::$base->session->userId = $this->_pk;
     }
 
     /**
@@ -70,6 +70,6 @@ class person extends baseModel
      */
     public function loginOut()
     {
-        unset(TXApp::$base->session->userId);
+        unset(App::$base->session->userId);
     }
 }

@@ -1,5 +1,5 @@
-<?php include TXApp::$view_root . "/base/common.tpl.php" ?>
-<?php include TXApp::$view_root . "/base/header.tpl.php" ?>
+<?php include App::$view_root . "/base/common.tpl.php" ?>
+<?php include App::$view_root . "/base/header.tpl.php" ?>
 <link href="<?=$webRoot?>/static/css/demo.css" rel="stylesheet" type="text/css"/>
 <style type="text/css">.bs-docs-section > p{word-break: normal}</style>
 <!-- Docs master nav -->
@@ -16,7 +16,7 @@
 <div class="container bs-docs-container">
 
 <div class="row">
-<div <?php if (TXApp::$base->request->isMobile()){?>class="col-md-12"<?php } else {?> class="col-md-9" <?php } ?> role="main">
+<div <?php if (App::$base->request->isMobile()){?>class="col-md-12"<?php } else {?> class="col-md-9" <?php } ?> role="main">
     <div class="bs-docs-section">
         <h1 id="overview" class="page-header">Overview</h1>
         <p>Biny is a high performance lightweight PHP framework. </p>
@@ -59,19 +59,19 @@
         <h2 id="overview-level">Call relation</h2>
         <p><code>Action</code> is the general routing entry, and <code>Action</code> can call the private object <code>Service</code> business layer and the <code>DAO</code> database layer</p>
         <p><code>Service</code> business layer can call private object <code>DAO</code> database layer</p>
-        <p>The program can call the system method under the Lib library, such as <code>TXLogger</code> (debug component)</p>
-        <p><code>TXApp::$base</code>is a global singleton class, which can be called globally</p>
-        <p><code>TXApp::$base->request</code> is the current request, access to the current address, client IP, etc.</p>
-        <p><code>TXApp::$base->session</code> is the system session, can be directly obtained and copied, set the expiration time</p>
-        <p><code>TXApp::$base->memcache</code> is the system Memcache, can be directly obtained and copied, set the expiration time</p>
-        <p><code>TXApp::$base->redis</code>  is the system redis, can be directly obtained and copied, set the expiration time</p>
+        <p>The program can call the system method under the Lib library, such as <code>Logger</code> (debug component)</p>
+        <p><code>App::$base</code>is a global singleton class, which can be called globally</p>
+        <p><code>App::$base->request</code> is the current request, access to the current address, client IP, etc.</p>
+        <p><code>App::$base->session</code> is the system session, can be directly obtained and copied, set the expiration time</p>
+        <p><code>App::$base->memcache</code> is the system Memcache, can be directly obtained and copied, set the expiration time</p>
+        <p><code>App::$base->redis</code>  is the system redis, can be directly obtained and copied, set the expiration time</p>
 
-        <p>Users can customize the model data class under <code>/app/model/</code>, and get them through <code>TXApp::$model</code>, for example:</p>
-        <p><code>TXApp::$model->person</code> is the current user,It can be defined in <code>/app/model/person.php</code></p>
+        <p>Users can customize the model data class under <code>/app/model/</code>, and get them through <code>App::$model</code>, for example:</p>
+        <p><code>App::$model->person</code> is the current user,It can be defined in <code>/app/model/person.php</code></p>
 
         <p>Simple example</p>
         <pre class="code"><sys>namespace</sys> app\controller;
-<sys>use</sys> TXApp;
+<sys>use</sys> App;
 <span class="nc">/**
 * main Action
 * @property \app\service\projectService $projectService
@@ -83,8 +83,8 @@
     <sys>public function</sys> <act>init</act>()
     {
         <note>// Login page adjustment when not logged in</note>
-        <sys>if</sys>(!TXApp::<prm>$model</prm>-><prm>person</prm>-><func>exist</func>()){
-            <sys>return</sys> TXApp::<prm>$base</prm>-><prm>request</prm>-><func>redirect</func>(<str>'/auth/login/'</str>);
+        <sys>if</sys>(!App::<prm>$model</prm>-><prm>person</prm>-><func>exist</func>()){
+            <sys>return</sys> App::<prm>$base</prm>-><prm>request</prm>-><func>redirect</func>(<str>'/auth/login/'</str>);
         }
     }
 
@@ -92,13 +92,13 @@
     <sys>public function</sys> <act>action_index</act>()
     {
         <note>//  Get current user</note>
-        <prm>$person</prm> = TXApp::<prm>$model</prm>-><prm>person</prm>;
-        <prm>$members</prm> = TXApp::<prm>$base</prm>-><prm>memcache</prm>-><func>get</func>(<str>'cache_'</str><sys>.</sys><prm>$person</prm>-><prm>project_id</prm>);
+        <prm>$person</prm> = App::<prm>$model</prm>-><prm>person</prm>;
+        <prm>$members</prm> = App::<prm>$base</prm>-><prm>memcache</prm>-><func>get</func>(<str>'cache_'</str><sys>.</sys><prm>$person</prm>-><prm>project_id</prm>);
         <sys>if</sys> (!<prm>$members</prm>){
             <note>// Get the members of the user's project</note>
             <prm>$project</prm> = <prm>$this</prm>-><prm>projectDAO</prm>-><func>find</func>(<sys>array</sys>(<str>'id'</str>=><prm>$person</prm>-><prm>project_id</prm>));
             <prm>$members</prm> = <prm>$this</prm>-><prm>projectService</prm>-><func>getMembers</func>(<prm>$project</prm>[<str>'id'</str>]);
-            TXApp::<prm>$base</prm>-><prm>memcache</prm>-><func>set</func>(<str>'cache_'</str><sys>.</sys><prm>$person</prm>-><prm>project_id</prm>, <prm>$members</prm>);
+            App::<prm>$base</prm>-><prm>memcache</prm>-><func>set</func>(<str>'cache_'</str><sys>.</sys><prm>$person</prm>-><prm>project_id</prm>, <prm>$members</prm>);
         }
         <note>// return project/members.tpl.php</note>
         <sys>return</sys> <prm>$this</prm>-><func>display</func>(<str>'project/members'</str>, <sys>array</sys>(<str>'members'</str>=><prm>$members</prm>));
@@ -146,7 +146,7 @@
 <sys>defined</sys>(<str>'isMaintenance'</str>) <sys>or</sys> <sys>define</sys>(<str>'isMaintenance'</str>, <sys>false</sys>);</pre>
 
         <p>The <code>SYS_ENV</code> values in the environment also has bool, convenient use of judgment</p>
-        <pre class="code"><note>// \lib\TXApp.php </note>
+        <pre class="code"><note>// \lib\App.php </note>
 <note>// Devnet</note>
 <sys>defined</sys>(<str>'ENV_DEV'</str>) <sys>or define</sys>(<str>'ENV_DEV'</str>, <const>SYS_ENV</const> === 'dev');
 <note>// Pre release</note>
@@ -413,8 +413,8 @@
             <str>'privilege_required'</str> => <sys>array</sys>(
                 <note>// The corresponding operation permissions are introduced according to different routes</note>
                 <str>'requires'</str> => [
-                    [<str>'actions'</str>=>[<str>'index'</str>, <str>'view'</str>], <str>'params'</str>=>[TXPrivilege::<prm>user</prm>]],
-                    [<str>'actions'</str>=>[<str>'edit'</str>, <str>'delete'</str>], <str>'params'</str>=>[TXPrivilege::<prm>admin</prm>]],
+                    [<str>'actions'</str>=>[<str>'index'</str>, <str>'view'</str>], <str>'params'</str>=>[Privilege::<prm>user</prm>]],
+                    [<str>'actions'</str>=>[<str>'edit'</str>, <str>'delete'</str>], <str>'params'</str>=>[Privilege::<prm>admin</prm>]],
                 ],
                 <str>'callBack'</str> => [<prm>$this</prm>, <str>'test'</str>], <note>// called $this->test() when check failed</note>
             ),
@@ -424,7 +424,7 @@
 <note>// privilegeService</note>
 <sys>public function</sys> <act>privilege_required</act>(<prm>$action</prm>, <prm>$privilege</prm>)
 {
-    <sys>if</sys>(TXApp::<prm>$model</prm>-><prm>person</prm>-><func>hasPrivilege</func>(<prm>$privilege</prm>)){
+    <sys>if</sys>(App::<prm>$model</prm>-><prm>person</prm>-><func>hasPrivilege</func>(<prm>$privilege</prm>)){
         <note>// the user has the privilege</note>
         <sys>return</sys> <prm>$this</prm>-><func>correct</func>();
     } <sys>else</sys> {
@@ -502,9 +502,9 @@
         <note>// enabled write file</note>
         <str>'files'</str> => <sys>true</sys>,
         <note>// custom message log
-//        'sendLog' => array('TXCommon', 'sendLog'),
+//        'sendLog' => array('Common', 'sendLog'),
         // custom error log callback function
-//        'sendError' => array('TXCommon', 'sendError'),
+//        'sendError' => array('Common', 'sendError'),
         // error level, will trigger above NOTICE</note>
         <str>'errorLevel'</str> => <const>NOTICE</const>,
         <note>// SQL slow query threshold(ms)</note>
@@ -549,7 +549,7 @@
         <p><code>/config/http.php</code> HTTP code</p>
         <p><code>/config/database.php</code> DAO mapping configuration</p>
 
-        <p>User can get by the method <code>TXApp:: $base->config->get</code></p>
+        <p>User can get by the method <code>App:: $base->config->get</code></p>
         <p>for example：</p>
         <pre class="code"><note>/config/config.php</note>
 <sys>return array</sys>(
@@ -557,7 +557,7 @@
 }
 
 <note>// The second parameter is the file name (default is config), the third parameter is whether to use alias (default is true)</note>
-TXApp::<prm>$base</prm>-><prm>config</prm>-><func>get</func>(<str>'session_name'</str>, <str>'config'</str>, <sys>true</sys>);</pre>
+App::<prm>$base</prm>-><prm>config</prm>-><func>get</func>(<str>'session_name'</str>, <str>'config'</str>, <sys>true</sys>);</pre>
 
         <h2 id="config-app">App config</h2>
         <p>Application configuration directory is <code>/app/config/</code></p>
@@ -572,7 +572,7 @@ TXApp::<prm>$base</prm>-><prm>config</prm>-><func>get</func>(<str>'session_name'
 }
 
 <note>// The second parameter is the file name (default is config), the third parameter is whether to use alias (default is true)</note>
-TXApp::<prm>$base</prm>-><prm>app_config</prm>-><func>get</func>(<str>'memcache'</str>, <str>'dns'</str>);</pre>
+App::<prm>$base</prm>-><prm>app_config</prm>-><func>get</func>(<str>'memcache'</str>, <str>'dns'</str>);</pre>
 
         <h2 id="config-env">Environmental allocation</h2>
         <p>The system of different environment configuration can be distinguished</p>
@@ -580,12 +580,12 @@ TXApp::<prm>$base</prm>-><prm>app_config</prm>-><func>get</func>(<str>'memcache'
         <pre class="code"><note>// dev pre pub </note>
 <sys>defined</sys>(<str>'SYS_ENV'</str>) <sys>or</sys> <sys>define</sys>(<str>'SYS_ENV'</str>, <str>'dev'</str>);</pre>
 
-        <p>When you use <code>TXApp::$base->config->get</code>, system will automatically find the corresponding configuration file</p>
+        <p>When you use <code>App::$base->config->get</code>, system will automatically find the corresponding configuration file</p>
         <pre class="code"><note>// when 'dev' will find file /config/config_dev.php</note>
-TXApp::<prm>$base</prm>-><prm>config</prm>-><func>get</func>(<str>'test'</str>, <str>'config'</str>);
+App::<prm>$base</prm>-><prm>config</prm>-><func>get</func>(<str>'test'</str>, <str>'config'</str>);
 
 <note>// when 'pub' will find file  /config/dns_pub.php文件</note>
-TXApp::<prm>$base</prm>-><prm>config</prm>-><func>get</func>(<str>'test2'</str>, <str>'dns'</str>);</pre>
+App::<prm>$base</prm>-><prm>config</prm>-><func>get</func>(<str>'test2'</str>, <str>'dns'</str>);</pre>
 
         <p>Public configuration files can be placed in files that do not add environment names like <code>/config/config.php</code></p>
         <p>When coexist <code>config.php</code> and <code>config_dev.php</code>, The contents of the file with the environment configuration will cover the general configuration</p>
@@ -601,10 +601,10 @@ TXApp::<prm>$base</prm>-><prm>config</prm>-><func>get</func>(<str>'test2'</str>,
 }
 
 <note>// return 'dns_dev' </note>
-TXApp::<prm>$base</prm>-><prm>app_config</prm>-><func>get</func>(<str>'test'</str>, <str>'dns'</str>);
+App::<prm>$base</prm>-><prm>app_config</prm>-><func>get</func>(<str>'test'</str>, <str>'dns'</str>);
 
 <note>// return 'dns' </note>
-TXApp::<prm>$base</prm>-><prm>app_config</prm>-><func>get</func>(<str>'demo'</str>, <str>'dns'</str>);</pre>
+App::<prm>$base</prm>-><prm>app_config</prm>-><func>get</func>(<str>'demo'</str>, <str>'dns'</str>);</pre>
         <p>System configuration and Application configuration are used in the same way</p>
 
         <h2 id="config-alias">Alias</h2>
@@ -616,11 +616,11 @@ TXApp::<prm>$base</prm>-><prm>app_config</prm>-><func>get</func>(<str>'demo'</st
 }
 
 <note>// return '/biny/my-path/' </note>
-TXApp::<prm>$base</prm>-><prm>config</prm>-><func>get</func>(<str>'path'</str>);</pre>
+App::<prm>$base</prm>-><prm>config</prm>-><func>get</func>(<str>'path'</str>);</pre>
 
         <p>Users can also customize define alias, for example:</p>
         <pre class="code"><note>// before method config->get </note>
-TXApp::<prm>$base</prm>-><prm>config</prm>-><func>setAlias</func>(<str>'time'</str>, <sys>time</sys>());
+App::<prm>$base</prm>-><prm>config</prm>-><func>setAlias</func>(<str>'time'</str>, <sys>time</sys>());
 
 <note>// config.php</note>
 <sys>return array</sys>(
@@ -628,12 +628,12 @@ TXApp::<prm>$base</prm>-><prm>config</prm>-><func>setAlias</func>(<str>'time'</s
 }
 
 <note>// return '/biny/my-path/?time=1461141347'</note>
-TXApp::<prm>$base</prm>-><prm>config</prm>-><func>get</func>(<str>'path'</str>);
+App::<prm>$base</prm>-><prm>config</prm>-><func>get</func>(<str>'path'</str>);
 
 <note>// return '@web@/my-path/?time=@time@'</note>
-TXApp::<prm>$base</prm>-><prm>config</prm>-><func>get</func>(<str>'path'</str>, <str>'config'</str>, <sys>false</sys>);</pre>
+App::<prm>$base</prm>-><prm>config</prm>-><func>get</func>(<str>'path'</str>, <str>'config'</str>, <sys>false</sys>);</pre>
 
-        <p>Of course, if you want to avoid alias escape, you can send <code>false</code> as third parameters in method <code>TXApp::$base->config->get</code>.</p>
+        <p>Of course, if you want to avoid alias escape, you can send <code>false</code> as third parameters in method <code>App::$base->config->get</code>.</p>
     </div>
 
     <div class="bs-docs-section">
@@ -705,7 +705,7 @@ TXApp::<prm>$base</prm>-><prm>config</prm>-><func>get</func>(<str>'path'</str>, 
 <sys>namespace</sys> app\controller;
 /**
 * use property to make IDE know the $testDAO meaning
-* @property \biny\lib\TXSingleDAO $testDAO
+* @property \biny\lib\SingleDAO $testDAO
 */</note>
 <sys>class</sys> testAction <sys>extends</sys> baseAction
 {
@@ -1043,48 +1043,48 @@ TXApp::<prm>$base</prm>-><prm>config</prm>-><func>get</func>(<str>'path'</str>, 
         <p>The cursor can take out the data of the complex condition one by one and batch processing in the program, so as to reduce the memory bottleneck caused by the big data</p>
         <pre class="code"><note>// Selector, the conditional class schema is exactly the same, using the cursor method when the data is acquired</note>
 <prm>$rs</prm> = <prm>$this</prm>-><prm>testDAO</prm>-><func>filter</func>(<sys>array</sys>(<str>'type'</str>=>1))-><func>cursor</func>(<sys>array</sys>(<str>'id'</str>, <str>'name'</str>));
-<note>//Take out data one by one by TXDatabase::step ,e.g: ['id'=>2, 'name'=>'test']</note>
-<sys>while</sys> (<prm>$data</prm>=TXDatabase::<func>step</func>(<prm>$rs</prm>)){
+<note>//Take out data one by one by Database::step ,e.g: ['id'=>2, 'name'=>'test']</note>
+<sys>while</sys> (<prm>$data</prm>=Database::<func>step</func>(<prm>$rs</prm>)){
     <note>do something...</note>
 }</pre>
 
-        <p>If you use the SQL template, you can also pass the third parameter <code>TXDatabase::FETCH_TYPE_CURSOR</code> to achieve the use of cursors</p>
+        <p>If you use the SQL template, you can also pass the third parameter <code>Database::FETCH_TYPE_CURSOR</code> to achieve the use of cursors</p>
         <pre class="code"><note>// the same to above</note>
 <prm>$rs</prm> = <prm>$this</prm>-><prm>testDAO</prm>-><func>filter</func>(<sys>array</sys>(<str>'type'</str>=>1))
-  -><func>select</func>(<str>'SELECT * FROM :table WHERE :where AND status=:status'</str>, <sys>array</sys>(<str>'status'</str>=>2), TXDatabase::<prm>FETCH_TYPE_CURSOR</prm>);
-<note>// Take out data one by one by TXDatabase::step, e.g: ['id'=>2, 'name'=>'test', 'type'=>1, 'status'=>2]</note>
-<sys>while</sys> (<prm>$data</prm>=TXDatabase::<func>step</func>(<prm>$rs</prm>)){
+  -><func>select</func>(<str>'SELECT * FROM :table WHERE :where AND status=:status'</str>, <sys>array</sys>(<str>'status'</str>=>2), Database::<prm>FETCH_TYPE_CURSOR</prm>);
+<note>// Take out data one by one by Database::step, e.g: ['id'=>2, 'name'=>'test', 'type'=>1, 'status'=>2]</note>
+<sys>while</sys> (<prm>$data</prm>=Database::<func>step</func>(<prm>$rs</prm>)){
     <note>do something...</note>
 }</pre>
 
         <h2 id="dao-transaction">SQL transaction</h2>
-        <p>The framework provides a simple transaction processing mechanism for DAO, which is closed by default and can be opened by <code>TXDatebase::start()</code> method</p>
+        <p>The framework provides a simple transaction processing mechanism for DAO, which is closed by default and can be opened by <code>Datebase::start()</code> method</p>
         <p><code>Note</code>: make sure that the linked data table is the storage engine of <code>innodb</code>, and that the transaction does not work.</p>
 
-        <p>After <code>TXDatebase::start()</code>, you can commit and save the entire transaction by <code>TXDatebase::commit()</code>, but it doesn't affect the operation before <code>start</code></p>
-        <p>Similarly, you can roll back the entire transaction through <code>TXDatebase::rollback()</code> and rollback all the uncommitted transactions</p>
-        <p>When the program calls <code>TXDatebase::end()</code> method, the transaction will all terminate, the uncommitted transaction will be automatically rolled back; in addition, when the program is structured, it will automatically roll back the uncommitted transaction</p>
+        <p>After <code>Datebase::start()</code>, you can commit and save the entire transaction by <code>Datebase::commit()</code>, but it doesn't affect the operation before <code>start</code></p>
+        <p>Similarly, you can roll back the entire transaction through <code>Datebase::rollback()</code> and rollback all the uncommitted transactions</p>
+        <p>When the program calls <code>Datebase::end()</code> method, the transaction will all terminate, the uncommitted transaction will be automatically rolled back; in addition, when the program is structured, it will automatically roll back the uncommitted transaction</p>
 
         <pre class="code"><note>// before the start of transaction will be submitted, num:0</note>
 <prm>$this</prm>-><prm>testDAO</prm>-><func>filter</func>([<str>'id'</str>=>1])-><func>update</func>([<str>'num'</str>=>0]);
 <note>// start transaction</note>
-TXDatabase::<func>start</func>();
+Database::<func>start</func>();
 <note>// set num = num+2</note>
 <prm>$this</prm>-><prm>testDAO</prm>-><func>filter</func>([<str>'id'</str>=>1])-><func>update</func>([<str>'num'</str>=>[<str>'+'</str>=>1]]);
 <prm>$this</prm>-><prm>testDAO</prm>-><func>filter</func>([<str>'id'</str>=>1])-><func>update</func>([<str>'num'</str>=>[<str>'+'</str>=>1]]);
 <note>// rollback transaction</note>
-TXDatabase::<func>rollback</func>();
+Database::<func>rollback</func>();
 <note>// the num is still 0</note>
 <prm>$num</prm> = <prm>$this</prm>-><prm>testDAO</prm>-><func>filter</func>([<str>'id'</str>=>1])-><func>find</func>()[<str>'num'</str>];
 <note>// set num = num+2</note>
 <prm>$this</prm>-><prm>testDAO</prm>-><func>filter</func>([<str>'id'</str>=>1])-><func>update</func>([<str>'num'</str>=>[<str>'+'</str>=>1]]);
 <prm>$this</prm>-><prm>testDAO</prm>-><func>filter</func>([<str>'id'</str>=>1])-><func>update</func>([<str>'num'</str>=>[<str>'+'</str>=>1]]);
 <note>// commit transaction</note>
-TXDatabase::<func>commit</func>();
+Database::<func>commit</func>();
 <note>// num = 2</note>
 <prm>$num</prm> = <prm>$this</prm>-><prm>testDAO</prm>-><func>filter</func>([<str>'id'</str>=>1])-><func>find</func>()[<str>'num'</str>];
 <note>// close transaction</note>
-TXDatabase::<func>end</func>();</pre>
+Database::<func>end</func>();</pre>
 
         <p>In addition, transaction opening does not affect the <code>select</code> operation, only to increase, delete, modify operations have an impact</p>
 
@@ -1132,17 +1132,17 @@ TXDatabase::<func>end</func>();</pre>
 
         <h2 id="dao-log">SQL debugging</h2>
         <p>SQL debugging method has been integrated in the framework event,
-            only need to debug the statement before the method called <code>TXEvent::on(onSql)</code>, you can output the SQL statement in the <code>page console</code></p>
+            only need to debug the statement before the method called <code>Event::on(onSql)</code>, you can output the SQL statement in the <code>page console</code></p>
         <pre class="code"><note>// The one method is bound to an incident, automatic release after one output</note>
-TXEvent::<func>one</func>(<const>onSql</const>);
+Event::<func>one</func>(<const>onSql</const>);
 <prm>$data</prm> = <prm>$this</prm>-><prm>testDAO</prm>-><func>query</func>();
 
 <note>// The on method binds the event until the off method is called</note>
-TXEvent::<func>on</func>(<const>onSql</const>);
+Event::<func>on</func>(<const>onSql</const>);
 <prm>$data</prm> = <prm>$this</prm>-><prm>testDAO</prm>-><func>query</func>();
 <prm>$data</prm> = <prm>$this</prm>-><prm>testDAO</prm>-><func>query</func>();
 <prm>$data</prm> = <prm>$this</prm>-><prm>testDAO</prm>-><func>query</func>();
-TXEvent::<func>off</func>(<const>onSql</const>);</pre>
+Event::<func>off</func>(<const>onSql</const>);</pre>
 
         <p>The SQL event function can also be bound by itself, and the specific usage will be expanded in detail later in the <code>event</code></p>
     </div>
@@ -1176,7 +1176,7 @@ return:
 
         <h2 id="view-tkd">Custom TDK</h2>
         <p>The page TKD is generally defined by default in <code>common.tpl.php</code>. If the page needs to modify the corresponding <code>title,keywords,description</code>,
-            it can be assigned after the <code>TXResponse</code> is generated</p>
+            it can be assigned after the <code>Response</code> is generated</p>
         <pre class="code"><prm>$view</prm> = <prm>$this</prm>-><func>display</func>(<str>'main/test'</str>, <prm>$params</prm>);
 <prm>$view</prm>-><prm>title</prm> = <str>'Biny'</str>;
 <prm>$view</prm>-><prm>keywords</prm> = <str>'biny,php,framework'</str>;
@@ -1230,9 +1230,9 @@ return:
     <note>// do something</note>
 }<sys>?&gt;</sys></pre>
 
-        <p>Other parameter methods can be defined by themselves in <code>/lib/data/TXArray.php</code></p>
+        <p>Other parameter methods can be defined by themselves in <code>/lib/data/Array.php</code></p>
         <p>For example, define a <code>len</code> method and return the length of the array</p>
-        <pre class="code"><note>/lib/data/TXArray.php</note>
+        <pre class="code"><note>/lib/data/BinyArray.php</note>
 <sys>public function</sys> <act>len</act>()
 {
     <sys>return count</sys>(<prm>$this</prm>-><prm>storage</prm>);
@@ -1251,11 +1251,11 @@ return:
         <p><code>afterAction</code> executed after the execution of Action (triggered before rendering page)</p>
         <p><code>onException</code>When the system throws an exception, it is triggered, and the error code is passed, and code is defined in <code>/config/exception.php</code></p>
         <p><code>onError</code>When the program calls the <code>$this->error($data)</code> method, it is triggered to pass the <code>$data</code> parameter</p>
-        <p><code>onSql</code>The execution of the statement is triggered, and the <code>TXEvent::on(onSql)</code> in the above example uses this event</p>
+        <p><code>onSql</code>The execution of the statement is triggered, and the <code>Event::on(onSql)</code> in the above example uses this event</p>
 
         <h2 id="event-init">Defining events</h2>
-        <p>The system provides two ways to define events, one is to define long events <code>$fd = TXEvent::on($event, [$class, $method])</code>, and that it will take effect until off.</p>
-        <p>Parameters are <code>event names</code>, <code>methods[class, method name]</code> method can not pass, default is <code>TXLogger::event()</code> method, will print in page console</p>
+        <p>The system provides two ways to define events, one is to define long events <code>$fd = Event::on($event, [$class, $method])</code>, and that it will take effect until off.</p>
+        <p>Parameters are <code>event names</code>, <code>methods[class, method name]</code> method can not pass, default is <code>Logger::event()</code> method, will print in page console</p>
         <p><code>$fd</code> returns the operator of the event. When invoking the off method, the event can be bound by passing the operator.</p>
 
         <pre class="code"><sys>namespace</sys> app\controller;
@@ -1269,23 +1269,23 @@ return:
     <sys>public function</sys> <act>init</act>()
     {
         <note>// To trigger the beforeAction event, it can be defined in init and will be triggered after init</note>
-        TXEvent::<func>on</func>(<const>beforeAction</const>, <sys>array</sys>(<prm>$this</prm>, <str>'test_event'</str>));
+        Event::<func>on</func>(<const>beforeAction</const>, <sys>array</sys>(<prm>$this</prm>, <str>'test_event'</str>));
     }
 
     <note>// default route index</note>
     <sys>public function</sys> <act>action_index</act>()
     {
         <note>// Binding the my_event1 method and the my_event2 method in testService to the myEvent event, the two methods are executed and executed in the order of binding</note>
-        <prm>$fd1</prm> = TXEvent::<func>on</func>(<str>'myEvent'</str>, <sys>array</sys>(<prm>$this</prm>-><prm>testService</prm>, <str>'my_event1'</str>));
-        <prm>$fd2</prm> = TXEvent::<func>on</func>(<str>'myEvent'</str>, <sys>array</sys>(<prm>$this</prm>-><prm>testService</prm>, <str>'my_event2'</str>));
+        <prm>$fd1</prm> = Event::<func>on</func>(<str>'myEvent'</str>, <sys>array</sys>(<prm>$this</prm>-><prm>testService</prm>, <str>'my_event1'</str>));
+        <prm>$fd2</prm> = Event::<func>on</func>(<str>'myEvent'</str>, <sys>array</sys>(<prm>$this</prm>-><prm>testService</prm>, <str>'my_event2'</str>));
 
         <note>// do something ..... </note>
 
         <note>// unbind method my_event1 in event myEvent</note>
-        TXEvent::<func>off</func>(<str>'myEvent'</str>, <prm>$fd1</prm>);
+        Event::<func>off</func>(<str>'myEvent'</str>, <prm>$fd1</prm>);
 
         <note>// unbind all events myEvent, all the myEvent events will not executed again</note>
-        TXEvent::<func>off</func>(<str>'myEvent'</str>);
+        Event::<func>off</func>(<str>'myEvent'</str>);
 
         <sys>return</sys> <prm>$this</prm>-><func>error</func>(<str>'for test'</str>);
     }
@@ -1294,24 +1294,24 @@ return:
     <sys>public function</sys> <act>test_event</act>(<prm>$event</prm>)
     {
         <note>// addLog is the method to write log</note>
-        TXLogger::<func>addLog</func>(<str>'trigger beforeAction event'</str>);
+        Logger::<func>addLog</func>(<str>'trigger beforeAction event'</str>);
     }
 }</pre>
 
-        <p>Another binding is a single binding event <code>TXEvent::one()</code>, which calls the same parameter and returns the <code>$fd</code> operator,
+        <p>Another binding is a single binding event <code>Event::one()</code>, which calls the same parameter and returns the <code>$fd</code> operator,
             which is automatically bound when the event is triggered once</p>
-        <pre><prm>$fd</prm> = TXEvent::<func>one</func>(<str>'myEvent'</str>, <sys>array</sys>(<prm>$this</prm>, <str>'my_event'</str>));</pre>
+        <pre><prm>$fd</prm> = Event::<func>one</func>(<str>'myEvent'</str>, <sys>array</sys>(<prm>$this</prm>, <str>'my_event'</str>));</pre>
 
         <p>Of course, if you want to bind multiple but not long term bindings, the system also provides a <code>bind</code> method with similar parameter usage.</p>
         <pre><note>// The first parameter binding method, the second is the event name, the third is the number of bindings,
     and the trigger number is automatically released after the full number of times.</note>
-<prm>$fd</prm> = TXEvent::<func>bind</func>(<sys>array</sys>(<prm>$this</prm>, <str>'my_event'</str>), <str>'myEvent'</str>, <prm>$times</prm>);</pre>
+<prm>$fd</prm> = Event::<func>bind</func>(<sys>array</sys>(<prm>$this</prm>, <str>'my_event'</str>), <str>'myEvent'</str>, <prm>$times</prm>);</pre>
 
         <h2 id="event-trigger">Trigger events</h2>
-        <p>Users can customize events and trigger selectively, and can directly use <code>TXEvent::trigger($event, $params)</code> method</p>
+        <p>Users can customize events and trigger selectively, and can directly use <code>Event::trigger($event, $params)</code> method</p>
         <p>There are two parameters, the first is the trigger event name, and the second is the trigger transfer parameter, which will be passed to the trigger method</p>
         <pre class="code"><note>// trigger myEvent event</note>
-TXEvent::<func>trigger</func>(<str>'myEvent'</str>, <sys>array</sys>(<func>get_class</func>(<prm>$this</prm>), <str>'test'</str>))
+Event::<func>trigger</func>(<str>'myEvent'</str>, <sys>array</sys>(<func>get_class</func>(<prm>$this</prm>), <str>'test'</str>))
 
 <note>// the method defined in bind event</note>
 <sys>public function</sys> my_event(<prm>$event</prm>, <prm>$params</prm>)
@@ -1329,12 +1329,12 @@ TXEvent::<func>trigger</func>(<str>'myEvent'</str>, <sys>array</sys>(<func>get_c
         <p>for example:</p>
         <pre class="code">
 <sys>namespace</sys> app\form;
-<sys>use</sys> biny\lib\TXForm;
+<sys>use</sys> biny\lib\Form;
 <note>/**
  * @property \app\service\testService $testService
- * A custom form validation class extends TXForm
+ * A custom form validation class extends Form
  */</note>
-<sys>class</sys> testForm <sys>extends</sys> TXForm
+<sys>class</sys> testForm <sys>extends</sys> Form
 {
     <note>// Define form parameters, types, and default values (default null)</note>
     <sys>protected</sys> <prm>$_rules</prm> = [
@@ -1419,29 +1419,29 @@ TXEvent::<func>trigger</func>(<str>'myEvent'</str>, <sys>array</sys>(<func>get_c
         <p>Synchronous and asynchronous can also debug, but asynchronous debugging is the need to refer to the <code>/static/js/main.js</code> file,
             so asynchronous Ajax request will also debug information output in the console.</p>
 
-        <p>Debugging method is very simple, the global can call <code>TXLogger::info($message, $key)</code>, in addition to warn, error, log and so on</p>
+        <p>Debugging method is very simple, the global can call <code>Logger::info($message, $key)</code>, in addition to warn, error, log and so on</p>
         <p>The first parameter is the content that you want to debug, and also supports the array, the output of the Object class. The second parameter is debugging key, default is <code>phpLogs</code></p>
-        <p><code>TXLogger::info()</code> info debug</p>
-        <p><code>TXLogger::warn()</code> warning debug</p>
-        <p><code>TXLogger::error()</code> error debug</p>
-        <p><code>TXLogger::log()</code> log debug</p>
+        <p><code>Logger::info()</code> info debug</p>
+        <p><code>Logger::warn()</code> warning debug</p>
+        <p><code>Logger::error()</code> error debug</p>
+        <p><code>Logger::log()</code> log debug</p>
         <p>Here's a simple example, and the output of the console. The results will be different because browsers are different, and the effect is the same.</p>
 
         <pre class="code"><note>// can use anywhere in framework</note>
-TXLogger::<func>log</func>(<sys>array</sys>(<str>'cc'</str>=><str>'dd'</str>));
-TXLogger::<func>error</func>(<str>'this is a error'</str>);
-TXLogger::<func>info</func>(<sys>array</sys>(1,2,3,4,5));
-TXLogger::<func>warn</func>(<str>"ss"</str>, <str>"warnKey"</str>);</pre>
+Logger::<func>log</func>(<sys>array</sys>(<str>'cc'</str>=><str>'dd'</str>));
+Logger::<func>error</func>(<str>'this is a error'</str>);
+Logger::<func>info</func>(<sys>array</sys>(1,2,3,4,5));
+Logger::<func>warn</func>(<str>"ss"</str>, <str>"warnKey"</str>);</pre>
 
         <p><img src="//f.wetest.qq.com/gqop/10000/20000/GuideImage_c5f68a0251b7f55efbbe0c47df9e757c.png"></p>
 
-        <p>In addition, the <code>TXLogger</code> debug class also supports the output of time and memory, which can be used to optimize the performance of the code.</p>
+        <p>In addition, the <code>Logger</code> debug class also supports the output of time and memory, which can be used to optimize the performance of the code.</p>
         <pre class="code"><note>// At the beginning of the end, with time and memory, you can get the performance of the intermediate program</note>
-TXLogger::<func>time</func>(<str>'start-time'</str>);
-TXLogger::<func>memory</func>(<str>'start-memory'</str>);
-TXLogger::<func>log</func>(<str>'do something'</str>);
-TXLogger::<func>time</func>(<str>'end-time'</str>);
-TXLogger::<func>memory</func>(<str>'end-memory'</str>);</pre>
+Logger::<func>time</func>(<str>'start-time'</str>);
+Logger::<func>memory</func>(<str>'start-memory'</str>);
+Logger::<func>log</func>(<str>'do something'</str>);
+Logger::<func>time</func>(<str>'end-time'</str>);
+Logger::<func>memory</func>(<str>'end-memory'</str>);</pre>
 
         <p><img src="http://f.wetest.qq.com/gqop/10000/20000/GuideImage_c2d7aac054bd9f9cd6069445e294e826.png"></p>
 
@@ -1451,7 +1451,7 @@ TXLogger::<func>memory</func>(<str>'end-memory'</str>);</pre>
         <p>The exception record will be generated in the <code>error_{date}.log</code> file, such as: <code>error_2016-05-05.log</code></p>
         <p>Debug records will be generated in the <code>log_{date}.log</code> file, such as: <code>log_2016-05-05.log</code></p>
 
-        <p>In the program, you can add a log by calling <code>TXLogger::addLog($log, INFO)</code>, and <code>TXLogger::addError($log, ERROR)</code> adds the exception</p>
+        <p>In the program, you can add a log by calling <code>Logger::addLog($log, INFO)</code>, and <code>Logger::addError($log, ERROR)</code> adds the exception</p>
         <p><code>$log</code> parameter supports the array and automatically prints the array</p>
         <p><code>$LEVEL</code> can use constants (<code>INFO</code>、<code>DEBUG</code>、<code>NOTICE</code>、<code>WARNING</code>、<code>ERROR</code>) default is level programe given.</p>
         <p>The system program errors will also be displayed in the error log. If the page appears 500, you can see the location in the error log</p>
@@ -1489,8 +1489,8 @@ TXLogger::<func>memory</func>(<str>'end-memory'</str>);</pre>
 )
 <note>// /app/shell/indexShell.php</note>
 <sys>namespace</sys> app\shell;
-<sys>use</sys> biny\lib\TXShell;
-<sys>class</sys> testShell <sys>extends</sys> TXShell
+<sys>use</sys> biny\lib\Shell;
+<sys>class</sys> testShell <sys>extends</sys> Shell
 {
     <note>// Like HTTP, the init method is executed first</note>
     <sys>public function</sys> <act>init</act>()
@@ -1516,8 +1516,8 @@ TXLogger::<func>memory</func>(<str>'end-memory'</str>);</pre>
         <p>For example, the terminal executes <code>php shell.php test/demo 1 2 aaa</code>, and the results are as follows:</p>
         <pre class="code"><note>// php shell.php test/demo 1 2 aaa</note>
 <sys>namespace</sys> app\shell;
-<sys>use</sys> biny\lib\TXShell;
-<sys>class</sys> testShell <sys>extends</sys> TXShell
+<sys>use</sys> biny\lib\Shell;
+<sys>class</sys> testShell <sys>extends</sys> Shell
 {
     <note>test/demo => testShell/action_demo</note>
     <sys>public function</sys> <act>action_demo</act>(<prm>$prm1</prm>, <prm>$prm2</prm>, <prm>$prm3</prm>, <prm>$prm4</prm>=<str>'default'</str>)
@@ -1539,8 +1539,8 @@ TXLogger::<func>memory</func>(<str>'end-memory'</str>);</pre>
         <p>For example, the terminal executes the <code>php shell.php test/demo --name="test" --id=23 demo</code>, and the results are as follows:</p>
         <pre class="code"><note>// php shell.php test/demo --name="test" --id=23 demo</note>
 <sys>namespace</sys> app\shell;
-<sys>use</sys> biny\lib\TXShell;
-<sys>class</sys> testShell <sys>extends</sys> TXShell
+<sys>use</sys> biny\lib\Shell;
+<sys>class</sys> testShell <sys>extends</sys> Shell
 {
     <note>test/demo => testShell/action_demo</note>
     <sys>public function</sys> <act>action_demo</act>(<prm>$id</prm>, <prm>$name</prm>=<str>'demo'</str>, <prm>$prm</prm>=<str>'default'</str>)
@@ -1564,105 +1564,105 @@ TXLogger::<func>memory</func>(<str>'end-memory'</str>);</pre>
 
         <h2 id="shell-log">Shell log</h2>
         <p>Script execution no longer has other functions of HTTP mode, such as <code>form validation</code>, <code>page rendering</code>, <code>browser console debugging</code>.
-            So in <code>TXLogger</code> debugging class, <code>info/error/debug/warning</code> these methods will be changed to the terminal output</p>
-        <p>And can also call <code>TXLogger::addLog</code> and <code>TXLogger::addError</code> to write log operations</p>
+            So in <code>Logger</code> debugging class, <code>info/error/debug/warning</code> these methods will be changed to the terminal output</p>
+        <p>And can also call <code>Logger::addLog</code> and <code>Logger::addError</code> to write log operations</p>
         <p>The log directory is saved in the <code>/logs/shell/</code> directory. Please ensure that the directory has <code>write permissions</code>. The format is consistent with the HTTP pattern</p>
-        <p><code>Note</code>: when the program returns to <code>$this->error($msg)</code>, the system will default to call <code>TXLogger::addError($msg)</code>, please do not repeat the call.</p>
+        <p><code>Note</code>: when the program returns to <code>$this->error($msg)</code>, the system will default to call <code>Logger::addError($msg)</code>, please do not repeat the call.</p>
     </div>
 
     <div class="bs-docs-section">
         <h1 id="other" class="page-header">Others</h1>
-        <p>Many single instances of the system can be directly obtained by <code>TXApp::$base</code></p>
-        <p><code>TXApp::$base->request</code> is the current request, access to the current address, client IP, etc.</p>
-        <p><code>TXApp::$base->cache</code> is request static cache, valid only in the current request</p>
-        <p><code>TXApp::$base->session</code> is system session, can be directly obtained and copied, set the expiration time</p>
-        <p><code>TXApp::$base->memcache</code> is system Memcache, can be directly obtained and copied, set the expiration time</p>
-        <p><code>TXApp::$base->redis</code> is system redis, can be directly obtained and copied, set the expiration time</p>
+        <p>Many single instances of the system can be directly obtained by <code>App::$base</code></p>
+        <p><code>App::$base->request</code> is the current request, access to the current address, client IP, etc.</p>
+        <p><code>App::$base->cache</code> is request static cache, valid only in the current request</p>
+        <p><code>App::$base->session</code> is system session, can be directly obtained and copied, set the expiration time</p>
+        <p><code>App::$base->memcache</code> is system Memcache, can be directly obtained and copied, set the expiration time</p>
+        <p><code>App::$base->redis</code> is system redis, can be directly obtained and copied, set the expiration time</p>
 
         <h2 id="other-request">Request</h2>
         <p>After entering the <code>Controller</code> layer, <code>Request</code> can be called. Here are a few common operations</p>
         <pre class="code"><note>// for example with /test/demo/?id=10 </note>
 
 <note>// Get Action name, return test</note>
-TXApp::<prm>$base</prm>-><prm>request</prm>-><func>getModule</func>();
+App::<prm>$base</prm>-><prm>request</prm>-><func>getModule</func>();
 
 <note>// Get Action class, return testAction</note>
-TXApp::<prm>$base</prm>-><prm>request</prm>-><func>getModule</func>(<sys>true</sys>);
+App::<prm>$base</prm>-><prm>request</prm>-><func>getModule</func>(<sys>true</sys>);
 
 <note>// Get Method name return action_demo</note>
-TXApp::<prm>$base</prm>-><prm>request</prm>-><func>getMethod</func>();
+App::<prm>$base</prm>-><prm>request</prm>-><func>getMethod</func>();
 
 <note>// Get Method name without 'action' return demo</note>
-TXApp::<prm>$base</prm>-><prm>request</prm>-><func>getMethod</func>(<sys>true</sys>);
+App::<prm>$base</prm>-><prm>request</prm>-><func>getMethod</func>(<sys>true</sys>);
 
 <note>// Is asynchronous request or not returnfalse</note>
-TXApp::<prm>$base</prm>-><prm>request</prm>-><func>isAjax</func>();
+App::<prm>$base</prm>-><prm>request</prm>-><func>isAjax</func>();
 
 <note>// Return relative path,  /test/demo/</note>
-TXApp::<prm>$base</prm>-><prm>request</prm>-><func>getBaseUrl</func>();
+App::<prm>$base</prm>-><prm>request</prm>-><func>getBaseUrl</func>();
 
 <note>// Return absolute path, http://www.billge.cc/test/demo/</note>
-TXApp::<prm>$base</prm>-><prm>request</prm>-><func>getBaseUrl</func>(<sys>true</sys>);
+App::<prm>$base</prm>-><prm>request</prm>-><func>getBaseUrl</func>(<sys>true</sys>);
 
 <note>// Return url with querys,  /test/demo/?id=10</note>
-TXApp::<prm>$base</prm>-><prm>request</prm>-><func>getUrl</func>();
+App::<prm>$base</prm>-><prm>request</prm>-><func>getUrl</func>();
 
 <note>// Return url refer (last page url)</note>
-TXApp::<prm>$base</prm>-><prm>request</prm>-><func>getReferrer</func>();
+App::<prm>$base</prm>-><prm>request</prm>-><func>getReferrer</func>();
 
 <note>// Get page user agent</note>
-TXApp::<prm>$base</prm>-><prm>request</prm>-><func>getUserAgent</func>();
+App::<prm>$base</prm>-><prm>request</prm>-><func>getUserAgent</func>();
 
 <note>// Get client ip</note>
-TXApp::<prm>$base</prm>-><prm>request</prm>-><func>getUserIP</func>();</pre>
+App::<prm>$base</prm>-><prm>request</prm>-><func>getUserIP</func>();</pre>
 
         <h2 id="other-cache">Cache</h2>
         <p>Biny provides a global cache in the <code>lifetime of the program</code>, which is very simple to use</p>
         <pre class="code"><note>// Only need to assign, can realize the cache setting</note>
-TXApp::<prm>$base</prm>-><prm>cache</prm>-><prm>testkey</prm> = <str>'test'</str>;
+App::<prm>$base</prm>-><prm>cache</prm>-><prm>testkey</prm> = <str>'test'</str>;
 <note>// The acquisition takes the element directly, and null returns if it does not exist</note>
-<prm>$testKey</prm> = TXApp::<prm>$base</prm>-><prm>cache</prm>-><prm>testkey</prm>;</pre>
+<prm>$testKey</prm> = App::<prm>$base</prm>-><prm>cache</prm>-><prm>testkey</prm>;</pre>
 
         <p>At the same time, Cache also supports <code>isset</code> judgment and <code>unset</code> operation</p>
         <pre class="code"><note>// return true/false</note>
-<prm>$bool</prm> = <sys>isset</sys>(TXApp::<prm>$base</prm>-><prm>cache</prm>-><prm>testKey</prm>);
+<prm>$bool</prm> = <sys>isset</sys>(App::<prm>$base</prm>-><prm>cache</prm>-><prm>testKey</prm>);
 <note>// delete cache</note>
-<sys>unset</sys>(TXApp::<prm>$base</prm>-><prm>cache</prm>-><prm>testKey</prm>);
+<sys>unset</sys>(App::<prm>$base</prm>-><prm>cache</prm>-><prm>testKey</prm>);
         </pre>
 
         <h2 id="other-session">Session</h2>
         <p>The setting and acquisition of session are relatively simple (same as cache). The object will not be created without calling the session to avoid the loss of performance.</p>
         <pre class="code"><note>// Only need to assign, can realize the session setting</note>
-TXApp::<prm>$base</prm>-><prm>session</prm>-><prm>testkey</prm> = <str>'test'</str>;
+App::<prm>$base</prm>-><prm>session</prm>-><prm>testkey</prm> = <str>'test'</str>;
 <note>// The acquisition takes the element directly, and null returns if it does not exist</note>
-<prm>$testKey</prm> = TXApp::<prm>$base</prm>-><prm>session</prm>-><prm>testkey</prm>;</pre>
+<prm>$testKey</prm> = App::<prm>$base</prm>-><prm>session</prm>-><prm>testkey</prm>;</pre>
 
         <p>At the same time, the session can be closed by the method <code>close()</code> to avoid the deadlock problem of session</p>
         <pre class="code"><note>// Will reopen session to getting data again after close</note>
-TXApp::<prm>$base</prm>-><prm>session</prm>-><func>close</func>();</pre>
+App::<prm>$base</prm>-><prm>session</prm>-><func>close</func>();</pre>
         <p>The <code>clear()</code> method empties the contents of the current session</p>
         <pre class="code"><note>// After clear, it is null </note>
-TXApp::<prm>$base</prm>-><prm>session</prm>-><func>clear</func>();</pre>
+App::<prm>$base</prm>-><prm>session</prm>-><func>clear</func>();</pre>
 
         <p>At the same time, session also supports <code>isset</code> judgment</p>
         <pre class="code"><note>// return true/false</note>
-<prm>$bool</prm> = <sys>isset</sys>(TXApp::<prm>$base</prm>-><prm>session</prm>-><prm>testKey</prm>);</pre>
+<prm>$bool</prm> = <sys>isset</sys>(App::<prm>$base</prm>-><prm>session</prm>-><prm>testKey</prm>);</pre>
 
         <h2 id="other-cookie">Cookie</h2>
-        <p>The acquisition and setting of cookie are completed in <code>TXApp::$base->request</code>, respectively, providing <code>getCookie</code> and <code>setCookie</code> methods</p>
+        <p>The acquisition and setting of cookie are completed in <code>App::$base->request</code>, respectively, providing <code>getCookie</code> and <code>setCookie</code> methods</p>
 
         <p><code>getCookie</code> parameter is the cookie key value that needs, if not passed, then return all cookie, return with array structure</p>
-        <pre class="code"><prm>$param</prm> = TXApp::<prm>$base</prm>-><prm>request</prm>-><func>getCookie</func>(<str>'param'</str>);</pre>
+        <pre class="code"><prm>$param</prm> = App::<prm>$base</prm>-><prm>request</prm>-><func>getCookie</func>(<str>'param'</str>);</pre>
         <p><code>setCookie</code>There are 4 parameters, which are key, value, expiration time (unit seconds),
             path belonging to the cookie, the expiration date default is 1 days, the path default is <code>'/'</code></p>
-        <pre class="code">TXApp::<prm>$base</prm>-><prm>request</prm>-><func>setCookie</func>(<str>'param'</str>, <str>'test'</str>, 86400, <str>'/'</str>);</pre>
+        <pre class="code">App::<prm>$base</prm>-><prm>request</prm>-><func>setCookie</func>(<str>'param'</str>, <str>'test'</str>, 86400, <str>'/'</str>);</pre>
 
 
         <div style="height: 200px"></div>
     </div>
 
 </div>
-<?php if (!TXApp::$base->request->isMobile()){?>
+<?php if (!App::$base->request->isMobile()){?>
 <div class="col-md-3" role="complementary">
     <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm">
         <ul class="nav bs-docs-sidenav">
@@ -1773,5 +1773,5 @@ TXApp::<prm>$base</prm>-><prm>session</prm>-><func>clear</func>();</pre>
 </div>
 </div>
 
-<?php include TXApp::$view_root . "/base/footer.tpl.php" ?>
+<?php include App::$view_root . "/base/footer.tpl.php" ?>
 <script type="text/javascript" src="<?=$webRoot?>/static/js/demo.js"></script>

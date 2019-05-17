@@ -1,8 +1,8 @@
 <?php
 
 namespace app\dao;
-use biny\lib\TXSingleDAO;
-use TXApp;
+use biny\lib\SingleDAO;
+use App;
 
 /**
  * Created by PhpStorm.
@@ -11,7 +11,7 @@ use TXApp;
  * Time: 下午7:55
  */
 
-class baseDAO extends TXSingleDAO
+class baseDAO extends SingleDAO
 {
     protected $_pk;
     protected $_pkCache = false;
@@ -21,7 +21,7 @@ class baseDAO extends TXSingleDAO
     {
         parent::__construct();
         if ($this->_pkCache){
-            $config = TXApp::$base->config->get('cache');
+            $config = App::$base->config->get('cache');
             $this->cacheKey = sprintf($config['pkCache'], substr(get_called_class(), 0, -3));
         }
     }
@@ -121,7 +121,7 @@ class baseDAO extends TXSingleDAO
     {
         if ($this->_pkCache){
             $hash = $this->getHash($pk);
-            return TXApp::$base->redis->hget($this->cacheKey, $hash);
+            return App::$base->redis->hget($this->cacheKey, $hash);
         } else {
             return false;
         }
@@ -138,7 +138,7 @@ class baseDAO extends TXSingleDAO
     {
         if ($this->_pkCache){
             $hash = $this->getHash($pk);
-            return TXApp::$base->redis->hset($this->cacheKey, $hash, $value);
+            return App::$base->redis->hset($this->cacheKey, $hash, $value);
         }
     }
 
@@ -151,7 +151,7 @@ class baseDAO extends TXSingleDAO
     {
         if ($this->_pkCache){
             $hash = $this->getHash($pk);
-            return TXApp::$base->redis->hdel($this->cacheKey, $hash);
+            return App::$base->redis->hdel($this->cacheKey, $hash);
         }
     }
 
@@ -162,7 +162,7 @@ class baseDAO extends TXSingleDAO
     public function clearCache()
     {
         if ($this->_pkCache){
-            return TXApp::$base->redis->del($this->cacheKey);
+            return App::$base->redis->del($this->cacheKey);
         }
     }
 

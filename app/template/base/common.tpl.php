@@ -1,5 +1,5 @@
 <?php
-/* @var $this TXResponse */
+/* @var $this Response */
 ?>
 <!DOCTYPE html>
 <html lang="en">

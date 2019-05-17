@@ -15,7 +15,7 @@ defined('SYS_ENV') or define('SYS_ENV', 'dev');
 ini_set('display_errors','On');
 error_reporting(E_ALL);
 
-include __DIR__ . '/lib/TXApp.php';
+include __DIR__ . '/lib/App.php';
 
-TXApp::registry(__DIR__. '/app');
-TXApp::shell();
+App::registry(__DIR__. '/app');
+App::shell();

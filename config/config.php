@@ -54,9 +54,9 @@ return array(
         // 是否记录日志文件
         'files' => true,
         // 自定义日志记录方法
-//        'sendLog' => array('TXCommon', 'sendLog'),
+//        'sendLog' => array('Common', 'sendLog'),
         // 自定义日志错误方法
-//        'sendError' => array('TXCommon', 'sendError'),
+//        'sendError' => array('Common', 'sendError'),
         //错误级别
         'errorLevel' => NOTICE,
         //慢查询阀值

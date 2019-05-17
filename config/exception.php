@@ -7,7 +7,7 @@ return array(
     1003 => 'Autoload file[%s] is fails',
     1004 => 'Autoload registry handler is fail',
     1005 => 'Permission Error: AutoLoad File[%s] can not write',
-    1006 => 'TXAPP has no property [%s]',
+    1006 => 'APP has no property [%s]',
     1007 => 'logs list [%s] not exist or has no permission to write',
 
     /* controller error */
@@ -21,7 +21,7 @@ return array(
     /* DAO error */
     3001 => 'Connect mysql[%s] is fail',
     3002 => 'DoubleDAO load Error: %s',
-    3003 => 'Filter DAO must be TXDAO or TXDoubleDAO; %s given',
+    3003 => 'Filter DAO must be DAO or DoubleDAO; %s given',
     3004 => 'param Filter Error; %s given',
     3005 => 'Filter / Merge must be the same DAO',
     3006 => 'First Filter must be Array; %s given',

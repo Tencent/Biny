@@ -1,17 +1,17 @@
 <?php
-/* @var $this TXResponse */
-/* @var $PRM TXArray */
+/* @var $this Response */
+/* @var $PRM BinyArray */
 ?>
 
-<?php if (!TXApp::$base->request->isAjax()){?>
-<?php include TXApp::$view_root . "/base/common.tpl.php" ?>
-<?php include TXApp::$view_root . "/base/header.tpl.php" ?>
+<?php if (!App::$base->request->isAjax()){?>
+<?php include App::$view_root . "/base/common.tpl.php" ?>
+<?php include App::$view_root . "/base/header.tpl.php" ?>
 
 <div class="container">
 <?php } ?>
 
 <div class="messageImage">
-    <img src="<?=TXApp::$base->config->get('webRoot')?>/static/images/source/error.gif" />
+    <img src="<?=App::$base->config->get('webRoot')?>/static/images/source/error.gif" />
 </div>
 <div class="messageInfo"><?=$PRM['msg']?></div>
 <div class="messageUrl">
@@ -20,7 +20,7 @@
     <a href="/" class='mlink'>[返回首页]</a>
 </div>
 
-<?php if (!TXApp::$base->request->isAjax()){?>
+<?php if (!App::$base->request->isAjax()){?>
 </div>
-<?php include TXApp::$view_root . "/base/footer.tpl.php" ?>
+<?php include App::$view_root . "/base/footer.tpl.php" ?>
 <?php } ?>

@@ -1,18 +1,18 @@
 <?php
 namespace app\shell;
-use biny\lib\TXShell;
-use biny\lib\TXLogger;
+use biny\lib\Shell;
+use biny\lib\Logger;
 /**
  * Created by PhpStorm.
  * User: billge
  * Date: 16-10-1
  * Time: 上午11:00
  */
-class testShell extends TXShell
+class testShell extends Shell
 {
     public function init()
     {
-        TXLogger::addLog('init');
+        Logger::addLog('init');
         return 0;
     }
 

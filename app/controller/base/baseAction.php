@@ -1,23 +1,23 @@
 <?php
 namespace app\controller;
-use biny\lib\TXAction;
-use biny\lib\TXResponse;
-use TXApp;
+use biny\lib\Action;
+use biny\lib\Response;
+use App;
 /**
  * Base action
  */
-class baseAction extends TXAction
+class baseAction extends Action
 {
     /**
      * @param $view
      * @param array $array
      * @param array $objects 直接使用参数
-     * @return TXResponse
+     * @return Response
      */
     public function display($view, $array=array(), $objects=array())
     {
         $objects = array_merge(array(
-            'webRoot' => TXApp::$base->app_config->get('webRoot'),
+            'webRoot' => App::$base->app_config->get('webRoot'),
         ), $objects);
         return parent::display($view, $array, $objects);
     }

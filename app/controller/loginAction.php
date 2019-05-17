@@ -1,7 +1,7 @@
 <?php
 
 namespace app\controller;
-use TXApp;
+use App;
 
 /**
  * Created by PhpStorm.
@@ -17,24 +17,24 @@ class loginAction extends baseAction
      */
     public function action_index()
     {
-        if (TXApp::$model->person->exist()){
-            TXApp::$base->request->redirect('/');
+        if (App::$model->person->exist()){
+            App::$base->request->redirect('/');
         }
         $username = $this->param('username');
         if (!$username){
             return $this->display('main/login');
         }
         if ($user = $this->userDAO->filter(['name'=>$username])->find()){
-            TXApp::$model->person($user['id'])->login();
+            App::$model->person($user['id'])->login();
         } else {
             $id = $this->userDAO->add(['name'=>$username, 'registerTime'=>time()]);
-            TXApp::$model->person($id)->login();
+            App::$model->person($id)->login();
         }
-        if ($lastUrl = TXApp::$base->session->lastUrl){
-            unset(TXApp::$base->session->lastUrl);
-            TXApp::$base->request->redirect($lastUrl);
+        if ($lastUrl = App::$base->session->lastUrl){
+            unset(App::$base->session->lastUrl);
+            App::$base->request->redirect($lastUrl);
         } else {
-            TXApp::$base->request->redirect('/');
+            App::$base->request->redirect('/');
         }
     }
 

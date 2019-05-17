@@ -1,5 +1,5 @@
-<?php include TXApp::$view_root . "/base/common.tpl.php" ?>
-<?php include TXApp::$view_root . "/base/header.tpl.php" ?>
+<?php include App::$view_root . "/base/common.tpl.php" ?>
+<?php include App::$view_root . "/base/header.tpl.php" ?>
 
 <div class="container">
     <div class="onworking">
@@ -9,4 +9,4 @@
     </div>
 </div>
 
-<?php include TXApp::$view_root . "/base/footer.tpl.php" ?>
+<?php include App::$view_root . "/base/footer.tpl.php" ?>
