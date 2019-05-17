@@ -193,7 +193,6 @@ class App
      */
     public function __get($name)
     {
-        // todo namescpce
         switch ($name){
             case 'config':
             case 'app_config':
