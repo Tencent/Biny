@@ -13,12 +13,15 @@
 
 namespace biny\lib;
 use App;
+use app\model\person;
+use ReflectionClass;
+use ReflectionException;
 
 /**
  * Class Model
  * @package biny\lib
- * @property \app\model\person $person
- * @method \app\model\person person($id)
+ * @property person $person
+ * @method person person($id)
  */
 class Model
 {
@@ -27,6 +30,7 @@ class Model
      * @param $name
      * @return mixed
      * @throws BinyException
+     * @throws ReflectionException
      */
     public function __get($name)
     {
@@ -39,6 +43,7 @@ class Model
      * @param $params
      * @return mixed
      * @throws BinyException
+     * @throws ReflectionException
      */
     public function __call($name, $params)
     {
@@ -51,6 +56,7 @@ class Model
      * @param array $params
      * @return mixed
      * @throws BinyException
+     * @throws ReflectionException
      */
     private function create($class, $params=[])
     {
@@ -63,7 +69,7 @@ class Model
         if (is_callable([$class, 'init'])){
             return call_user_func_array([$class, 'init'], $params);
         } else {
-            $class = new \ReflectionClass($class);
+            $class = new ReflectionClass($class);
             return $class->newInstanceArgs($params);
         }
     }
