@@ -7,17 +7,22 @@ defined('SYS_CONSOLE') or define('SYS_CONSOLE', true);
 defined('SYS_ENV') or define('SYS_ENV', 'dev');
 defined('isMaintenance') or define('isMaintenance', false);
 
-if (SYS_DEBUG){
-    ini_set('display_errors','On');
+if (SYS_DEBUG) {
+    ini_set('display_errors', 'On');
 }
 error_reporting(E_ALL ^ E_NOTICE);
 
-include __DIR__.'/../lib/App.php';
+$loader = realpath(__DIR__ . '/../vendor/autoload.php');
+if (file_exists($loader)) {
+    include $loader;
+}
+
+include __DIR__ . '/../lib/App.php';
 
 //include __DIR__.'/../lib/XHProf.php';
 //XHProf::start();
 
-App::registry(realpath(__DIR__. '/../app'));
+App::registry(realpath(__DIR__ . '/../app'));
 App::run();
 
 //$data = XHProf::end();

@@ -42,6 +42,7 @@ class Autoload
 
     /**
      * 加载
+     * @throws BinyException
      */
     public static function loading()
     {

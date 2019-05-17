@@ -67,10 +67,10 @@ class App
 
     /**
      * App注册运行
-     * @param $apppath
+     * @param $appPath
      * @throws BinyException
      */
-    public static function registry($apppath)
+    public static function registry($appPath)
     {
         self::define();
         self::$base = new self();
@@ -82,10 +82,10 @@ class App
             self::$log_root .= '/shell';
         }
 
-        if (is_readable($apppath)) {
-            self::$app_root = $apppath;
+        if (is_readable($appPath)) {
+            self::$app_root = $appPath;
         } else {
-            throw new BinyException(1001, [$apppath]);
+            throw new BinyException(1001, [$appPath]);
         }
         self::$view_root = self::$app_root.DS."template";
         if (!is_writable(self::$log_root) && !mkdir(self::$log_root)){

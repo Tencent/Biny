@@ -31,5 +31,7 @@ return array(
         'host' => '127.0.0.1',
         'port' => 6379,
         'keep-alive' => true,
+//        'client' => 'predis', // predis
+//        'persistent' => true, // predis
     ),
 );
