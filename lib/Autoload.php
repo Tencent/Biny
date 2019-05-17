@@ -34,6 +34,11 @@ class Autoload
         } else {
             self::loading();
         }
+        //  支持composer autoload
+        $loader = App::$base_root.DS.'vendor'.DS.'autoload.php';
+        if (file_exists($loader) && is_readable($loader)) {
+            include $loader;
+        }
 
         if (false === spl_autoload_register(['biny\lib\Autoload', 'load'])) {
             throw new BinyException(1004);

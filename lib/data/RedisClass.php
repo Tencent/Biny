@@ -9,7 +9,6 @@
 
 namespace biny\lib;
 use App;
-use Predis\Client;
 use Redis;
 
 /**
@@ -67,9 +66,9 @@ class RedisClass
     {
         $config = $this->connect;
         $client = isset($config['client']) ? $config['client'] : null;
-        if ($client == 'predis') {
+        if ($client == 'predis' && class_exists(\Predis\Client)) {
             try {
-                $this->handler = new Client($config);
+                $this->handler = new \Predis\Client($config);
                 $fd = true;
             } catch (\Predis\Connection\ConnectionException $e) {
                 $fd = false;

@@ -2,7 +2,6 @@
 namespace app\controller;
 use App;
 use app\dao\baseDAO;
-use app\dao\teamDAO;
 use app\dao\userDAO;
 use biny\lib\Event;
 use biny\lib\Logger;
@@ -12,7 +11,6 @@ use Constant;
 /**
  * 演示Action
  * @property userDAO $userDAO
- * @property teamDAO $teamDAO
  * @property baseDAO $testDAO
  */
 class demoAction extends baseAction
@@ -40,6 +38,7 @@ class demoAction extends baseAction
     public function action_test()
     {
         Event::on(onSql);
+        App::$base->redis->set('nnn', 10);
         $tables = $this->userDAO->tables();
         $columns = $this->userDAO->columns();
         return $this->correct(App::$base->redis->get('nnn'));

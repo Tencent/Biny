@@ -12,11 +12,6 @@ if (SYS_DEBUG) {
 }
 error_reporting(E_ALL ^ E_NOTICE);
 
-$loader = realpath(__DIR__ . '/../vendor/autoload.php');
-if (file_exists($loader)) {
-    include $loader;
-}
-
 include __DIR__ . '/../lib/App.php';
 
 //include __DIR__.'/../lib/XHProf.php';
