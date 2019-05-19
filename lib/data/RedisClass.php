@@ -66,7 +66,7 @@ class RedisClass
     {
         $config = $this->connect;
         $client = isset($config['client']) ? $config['client'] : null;
-        if ($client == 'predis' && class_exists(\Predis\Client::class)) {
+        if ($client == 'predis' && class_exists('\Predis\Client')) {
             $this->handler = new \Predis\Client($config);
             $fd = true;
         } else {

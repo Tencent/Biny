@@ -12,12 +12,10 @@ defined('RUN_SHELL') or define('RUN_SHELL', true);
 //dev pre pub
 defined('SYS_ENV') or define('SYS_ENV', 'dev');
 
-defined('APP_DIR') or define('APP_DIR', 'app');
-
 ini_set('display_errors','On');
 error_reporting(E_ALL);
 
 include __DIR__ . '/lib/App.php';
 
-App::registry(__DIR__ . '/' . APP_DIR);
+App::registry(realpath(__DIR__ . '/../app'));
 App::shell();

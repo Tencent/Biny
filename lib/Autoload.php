@@ -41,8 +41,8 @@ class Autoload
              * @var \Composer\Autoload\ClassLoader $loader
              */
             $loader = include $loaderFile;
-            $loader->addPsr4(APP_DIR . '\\', APP_DIR);
-            $loader->addPsr4('biny\\lib\\', 'lib');
+            $loader->addPsr4('app\\', realpath(App::$app_root));
+            $loader->addPsr4('biny\\lib\\', realpath(App::$app_root.'/lib'));
         }
 
         if (false === spl_autoload_register(['biny\lib\Autoload', 'load'])) {
