@@ -1,5 +1,11 @@
 {
-    "require": {
-        "predis/predis": "^1.1"
-    }
+  "require": {
+    "php": "^5.4||^7.0",
+    "predis/predis": "^1.1",
+    "illuminate/database": "5.*"
+  },
+  "require-dev": {
+    "doctrine/dbal": "^2.9",
+    "illuminate/events": "^5.8"
+  }
 }

@@ -1,11 +1,14 @@
 <?php
+
 namespace app\controller;
+
 use App;
 use app\dao\baseDAO;
 use app\dao\userDAO;
+use app\dao\DemoModel;
 use biny\lib\Event;
-use biny\lib\Logger;
 use biny\lib\Language;
+use biny\lib\Logger;
 use Constant;
 
 /**
@@ -29,8 +32,8 @@ class demoAction extends baseAction
     {
         $lang = $this->get('lang');
         $lang && Language::setLanguage($lang, Constant::month);
-        Logger::info('you can print some information in console like time: '.date('Y-m-d H:i:s'), 'info');
-        $view = $this->display('demo/demo', ['lan'=>Language::getLanguage('cn')]);
+        Logger::info('you can print some information in console like time: ' . date('Y-m-d H:i:s'), 'info');
+        $view = $this->display('demo/demo', ['lan' => Language::getLanguage('cn')]);
         $view->title = "Biny Framework Wiki";
         return $view;
     }
@@ -42,5 +45,10 @@ class demoAction extends baseAction
         $tables = $this->userDAO->tables();
         $columns = $this->userDAO->columns();
         return $this->correct(App::$base->redis->get('nnn'));
+    }
+
+    public function action_test2()
+    {
+        return $this->correct(DemoModel::getInstance()->test());
     }
 }
