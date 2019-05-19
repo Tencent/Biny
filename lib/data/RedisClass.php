@@ -66,13 +66,9 @@ class RedisClass
     {
         $config = $this->connect;
         $client = isset($config['client']) ? $config['client'] : null;
-        if ($client == 'predis' && class_exists(\Predis\Client)) {
-            try {
-                $this->handler = new \Predis\Client($config);
-                $fd = true;
-            } catch (\Predis\Connection\ConnectionException $e) {
-                $fd = false;
-            }
+        if ($client == 'predis' && class_exists(\Predis\Client::class)) {
+            $this->handler = new \Predis\Client($config);
+            $fd = true;
         } else {
             $this->handler = new Redis();
             if (isset($config['keep-alive']) && $config['keep-alive']) {

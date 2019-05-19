@@ -35,9 +35,14 @@ class Autoload
             self::loading();
         }
         //  支持composer autoload
-        $loader = App::$base_root.DS.'vendor'.DS.'autoload.php';
-        if (file_exists($loader) && is_readable($loader)) {
-            include $loader;
+        $loaderFile = App::$base_root.DS.'vendor'.DS.'autoload.php';
+        if (file_exists($loaderFile) && is_readable($loaderFile)) {
+            /**
+             * @var \Composer\Autoload\ClassLoader $loader
+             */
+            $loader = include $loaderFile;
+            $loader->addPsr4(APP_DIR . '\\', APP_DIR);
+            $loader->addPsr4('biny\\lib\\', 'lib');
         }
 
         if (false === spl_autoload_register(['biny\lib\Autoload', 'load'])) {
