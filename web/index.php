@@ -7,6 +7,8 @@ defined('SYS_CONSOLE') or define('SYS_CONSOLE', true);
 defined('SYS_ENV') or define('SYS_ENV', 'dev');
 defined('isMaintenance') or define('isMaintenance', false);
 
+defined('APP_DIR') or define('APP_DIR', 'app');
+
 if (SYS_DEBUG) {
     ini_set('display_errors', 'On');
 }
@@ -17,7 +19,7 @@ include __DIR__ . '/../lib/App.php';
 //include __DIR__.'/../lib/XHProf.php';
 //XHProf::start();
 
-App::registry(realpath(__DIR__ . '/../app'));
+App::registry(realpath(__DIR__ . '/../' . APP_DIR));
 App::run();
 
 //$data = XHProf::end();
