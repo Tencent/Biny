@@ -38,9 +38,8 @@ class demoAction extends baseAction
     public function action_test()
     {
         Event::on(onSql);
-        App::$base->redis->set('nnn', 10);
-        $tables = $this->userDAO->tables();
-        $columns = $this->userDAO->columns();
-        return $this->correct(App::$base->redis->get('nnn'));
+        $ret = $this->userDAO->join($this->testDAO, ['id'=>'user_id'])
+            ->order([[],['type'=>['a','b','c','d','e']]])->order([['id'=>'desc']])->limit(2)->query();
+        return $this->correct($ret);
     }
 }

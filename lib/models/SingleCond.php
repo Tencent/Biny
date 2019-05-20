@@ -48,22 +48,7 @@ class SingleCond extends Cond
      */
     public function order($orderby)
     {
-        foreach ($orderby as $key => $val){
-            if (is_array($val)){
-                if (!isset($this->orderby[$key])){
-                    $this->orderby[$key] = [];
-                }
-                if (is_string($this->orderby[$key])){
-                    $this->orderby[$key] = $val;
-                } else {
-                    foreach ($val as $k => $v){
-                        $this->orderby[$key][$k] = $v;
-                    }
-                }
-            } else {
-                $this->orderby[$key] = $val;
-            }
-        }
+        $this->orderby[] = $orderby;
         return $this;
     }
 

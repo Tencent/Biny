@@ -451,29 +451,35 @@ class SingleDAO extends DAO
     }
 
     /**
-     * 拼装orderby ['id'=>'ASC', 'name'=>['DESC', 'gbk']]
-     * @param $orderBy
+     * 拼装orderby ['id'=>'ASC', 'name'=>[1,2,3,4], 'rand']
+     * @param $orderBys
      * @return string
      */
-    protected function buildOrderBy($orderBy)
+    protected function buildOrderBy($orderBys)
     {
         $orders = [];
-        foreach ($orderBy as $key => $val){
-            $key = $this->real_escape_string($key);
-            if (is_array($val)){
-                $asc = isset($val[0]) ? $val[0] : 'ASC';
-                $code = isset($val[1]) ? $val[1] : 'gbk';
-                if (!in_array(strtoupper($asc), ['ASC', 'DESC'])){
-                    Logger::error("order must be ASC/DESC, {$asc} given", 'sql Error');
+        foreach ($orderBys as $orderBy){
+            foreach ($orderBy as $key => $val){
+                if (is_int($key) && strtoupper($val) == 'RAND'){
+                    $orders[] = 'RAND()';
                     continue;
                 }
-                $orders[] = "CONVERT(`{$key}` USING {$code}) $asc";
-            } else {
-                if (!in_array(strtoupper($val), ['ASC', 'DESC'])){
-                    Logger::error("order must be ASC/DESC, {$val} given", 'sql Error');
-                    continue;
+                $key = $this->real_escape_string($key);
+                if (is_array($val)){
+                    // order by field()
+                    foreach ($val as &$v){
+                        $v = $this->real_escape_string($v);
+                    }
+                    unset($v);
+                    $val = join("','", $val);
+                    $orders[] = "FIELD(`$key`,'$val')";
+                } else {
+                    if (!in_array(strtoupper($val), ['ASC', 'DESC'])){
+                        Logger::error("order must be ASC/DESC, {$val} given", 'sql Error');
+                        continue;
+                    }
+                    $orders[] = '`'.$key."` ".$val;
                 }
-                $orders[] = '`'.$key."` ".$val;
             }
         }
         if ($orders){

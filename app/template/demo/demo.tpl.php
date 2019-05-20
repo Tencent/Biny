@@ -1052,6 +1052,12 @@ App::<prm>$base</prm>-><prm>config</prm>-><func>get</func>(<str>'path'</str>, <s
     -><func>limit</func>(10, 20)
     -><func>query</func>(<sys>array</sys>(<str>'id'</str>));</pre>
 
+        <p>Biny v2.9.2之后支持自定义排序（order by field），随机排序（order by rand）逻辑，同时也支持了order方法多次调用</p>
+        <pre class="code"><note>// ... ORDER BY `type` asc,FIELD(`status`,'1','9','3','6'),RAND()</note>
+<prm>$this</prm>-><prm>userDAO</prm>-><func>order</func>([<str>'type'</str>=><str>'asc'</str>, <str>'status'</str>=>[1,9,3,6]])
+    -><func>order</func>(<str>'rand'</str>)-><func>query</func>();
+</pre>
+
         <p><code>addition</code>是对数据做计算处理的方法，提供了<code>max</code>，<code>count</code>，<code>sum</code>，<code>min</code>，<code>avg</code>等计算方法</p>
         <p>多联表时同样需要用到<code>二维数组</code></p>
         <pre class="code"><note>// SELECT avg(`user`.`cash`) AS 'a_c', avg(`user`.`time`) AS 'time',

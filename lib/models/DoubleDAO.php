@@ -323,55 +323,61 @@ class DoubleDAO extends DAO
 
     /**
      * 拼装Doubleorderby
-     * @param $orderBys
+     * @param $orderByss
      * @return string
      */
-    protected function buildOrderBy($orderBys){
+    protected function buildOrderBy($orderByss){
         $orders = [];
-        foreach ($orderBys as $k => $orderBy){
-            if (is_string($k) && in_array($k, $this->doubles)){
-                $table = $k;
-            } else if (isset($this->doubles[$k])){
-                $table = $this->doubles[$k];
-            } else if (is_string($k)) {
-                $k = $this->real_escape_string($k);
-                //外层循环
-                if (is_array($orderBy)){
-                    $asc = isset($orderBy[0]) ? $orderBy[0] : 'ASC';
-                    $code = isset($orderBy[1]) ? $orderBy[1] : 'gbk';
-                    if (!in_array(strtoupper($asc), ['ASC', 'DESC'])){
-                        Logger::error("order must be ASC/DESC, {$asc} given", 'sql Error');
-                        continue;
-                    }
-                    $orders[] = "CONVERT(`{$k}` USING {$code}) $asc";
-                } else {
-                    if (!in_array(strtoupper($orderBy), ['ASC', 'DESC'])){
-                        Logger::error("order must be ASC/DESC, {$orderBy} given", 'sql Error');
-                        continue;
-                    }
-                    $orders[] = '`'.$k."` ".$orderBy;
+        foreach ($orderByss as $orderBys) {
+            foreach ($orderBys as $k => $orderBy){
+                if (is_int($k) && strtoupper($orderBy) == 'RAND'){
+                    $orders[] = 'RAND()';
+                    continue;
                 }
-                continue;
-            } else {
-                continue;
-            }
-            foreach ($orderBy as $key => $val){
-                $key = $this->real_escape_string($key);
-                if (is_array($val)){
-                    $field = $table.".`".$key.'`';
-                    $asc = isset($val[0]) ? $val[0] : 'ASC';
-                    $code = isset($val[1]) ? $val[1] : 'gbk';
-                    if (!in_array(strtoupper($asc), ['ASC', 'DESC'])){
-                        Logger::error("order must be ASC/DESC, {$asc} given", 'sql Error');
-                        continue;
+                if (is_string($k) && in_array($k, $this->doubles)){
+                    $table = $k;
+                } else if (isset($this->doubles[$k])){
+                    $table = $this->doubles[$k];
+                } else if (is_string($k)) {
+                    $k = $this->real_escape_string($k);
+                    //外层循环
+                    if (is_array($orderBy)){
+                        // order by field()
+                        foreach ($orderBy as &$v){
+                            $v = $this->real_escape_string($v);
+                        }
+                        unset($v);
+                        $val = join("','", $orderBy);
+                        $orders[] = "FIELD(`$k`,'$val')";
+                    } else {
+                        if (!in_array(strtoupper($orderBy), ['ASC', 'DESC'])){
+                            Logger::error("order must be ASC/DESC, {$orderBy} given", 'sql Error');
+                            continue;
+                        }
+                        $orders[] = '`'.$k."` ".$orderBy;
                     }
-                    $orders[] = "CONVERT({$field} USING {$code}) $asc";
+                    continue;
                 } else {
-                    if (!in_array(strtoupper($val), ['ASC', 'DESC'])){
-                        Logger::error("order must be ASC/DESC, {$val} given", 'sql Error');
-                        continue;
+                    continue;
+                }
+                foreach ($orderBy as $key => $val){
+                    $key = $this->real_escape_string($key);
+                    if (is_array($val)){
+                        $field = $table.".`".$key.'`';
+                        // order by field()
+                        foreach ($val as &$v){
+                            $v = $this->real_escape_string($v);
+                        }
+                        unset($v);
+                        $val = join("','", $val);
+                        $orders[] = "FIELD($field,'$val')";
+                    } else {
+                        if (!in_array(strtoupper($val), ['ASC', 'DESC'])){
+                            Logger::error("order must be ASC/DESC, {$val} given", 'sql Error');
+                            continue;
+                        }
+                        $orders[] = $table.".`".$key."` ".$val;
                     }
-                    $orders[] = $table.".`".$key."` ".$val;
                 }
             }
         }
