@@ -34,19 +34,13 @@ class Autoload
         } else {
             self::loading();
         }
+        if (false === spl_autoload_register(['biny\lib\Autoload', 'load'])) {
+            throw new BinyException(1004);
+        }
         //  支持composer autoload
         $loaderFile = App::$base_root.DS.'vendor'.DS.'autoload.php';
         if (file_exists($loaderFile) && is_readable($loaderFile)) {
-            /**
-             * @var \Composer\Autoload\ClassLoader $loader
-             */
-            $loader = include $loaderFile;
-            $loader->addPsr4('app\\', realpath(App::$app_root));
-            $loader->addPsr4('biny\\lib\\', realpath(App::$app_root.'/lib'));
-        }
-
-        if (false === spl_autoload_register(['biny\lib\Autoload', 'load'])) {
-            throw new BinyException(1004);
+            include_once $loaderFile;
         }
     }
 

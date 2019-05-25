@@ -17,7 +17,7 @@ return array(
         'autoPath' => 'config/autoload.php',
         //重新构建间隔时间s
         'autoSkipLoad' => 5,
-        'autoThrow' => true, //使用外部autoload机制(如composer) 需设置为false
+        'autoThrow' => false, //使用外部autoload机制(如composer) 需设置为false
     ),
 
     //请求配置
