@@ -25,7 +25,7 @@ Biny is high performance. Framework comes default with response time of less tha
 
 支持跨库连表，条件复合筛选，查询PK缓存等
 
-同步异步请求分离，类的自动化加载管理
+支持RESTful，类的自动化加载管理
 
 支持Form表单验证，支持事件触发机制
 
@@ -36,7 +36,7 @@ Biny is high performance. Framework comes default with response time of less tha
 
 Support cross library join table, conditional compound filter, query PK cache, etc.
 
-Synchronous asynchronous request separation, automatic loading management of classes
+Supports RESTful, automatic loading management of classes
 
 Supports Form validation and supports event triggering mechanisms
 
