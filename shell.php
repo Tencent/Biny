@@ -18,4 +18,5 @@ error_reporting(E_ALL);
 include __DIR__ . '/lib/App.php';
 
 App::registry(realpath(__DIR__ . '/app'));
+
 App::shell();
