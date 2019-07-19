@@ -959,13 +959,20 @@ App::<prm>$base</prm>-><prm>config</prm>-><func>get</func>(<str>'path'</str>, <s
 
         <p>无论是<code>与选择器</code>还是<code>或选择器</code>，条件本身作为参数时，条件自身的<code>DAO</code>必须和被选择对象的<code>DAO</code>保持一致，否者会抛出<code>异常</code></p>
 
-        <p>值得注意的是<code>filter</code>和<code>merge</code>的先后顺序对条件筛选是有影响的</p>
+        <p>值得注意的是<code>filter</code>和<code>merge</code>的先后顺序对条件筛选是有影响的 (<code>Biny v2.9.5之后支持自定义连接符</code>)</p>
         <p>可以参考下面这个例子</p>
         <pre class="code"><note>// WHERE (`user`.`id`=1 AND `user`.`type`='admin') OR `user`.`id`=2</note>
-<prm>$this</prm>-><prm>userDAO</prm>-><func>filter</func>(<sys>array</sys>(<str>'id'</str>=>1, <str>'type'</str>=><str>'admin'</str>)-><func>merge</func>(<sys>array</sys>(<str>'id'</str>=>2));
+<prm>$this</prm>-><prm>userDAO</prm>-><func>filter</func>(<sys>array</sys>(<str>'id'</str>=>1, <str>'type'</str>=><str>'admin'</str>))-><func>merge</func>(<sys>array</sys>(<str>'id'</str>=>2));
 
 <note>// WHERE `user`.`id`=2 AND (`user`.`id`=1 AND `user`.`type`='admin')</note>
-<prm>$this</prm>-><prm>userDAO</prm>-><func>merge</func>(<sys>array</sys>(<str>'id'</str>=>2))-><func>filter</func>(<sys>array</sys>(<str>'id'</str>=>1, <str>'type'</str>=><str>'admin'</str>);</pre>
+<prm>$this</prm>-><prm>userDAO</prm>-><func>merge</func>(<sys>array</sys>(<str>'id'</str>=>2))-><func>filter</func>(<sys>array</sys>(<str>'id'</str>=>1, <str>'type'</str>=><str>'admin'</str>));
+
+<note>// Biny v2.9.5之后支持自定义连接符</note>
+<note>// WHERE `user`.`id`=2 AND (`user`.`id`=1 OR `user`.`type`='admin')</note>
+<prm>$this</prm>-><prm>userDAO</prm>-><func>filter</func>(<sys>array</sys>(<str>'id'</str>=>2))-><func>filter</func>(<sys>array</sys>(<str>'id'</str>=>1, <str>'type'</str>=><str>'admin'</str>), <str>'or'</str>);
+
+<note>// WHERE `user`.`id`=2 OR (`user`.`id`=1 AND `user`.`type`='admin')</note>
+<prm>$this</prm>-><prm>userDAO</prm>-><func>filter</func>(<sys>array</sys>(<str>'id'</str>=>2))-><func>merge</func>(<sys>array</sys>(<str>'id'</str>=>1, <str>'type'</str>=><str>'admin'</str>), <str>'and'</str>);</pre>
 
         <p>由上述例子可知，添加之间关联符是跟<code>后面</code>的选择器表达式<code>保持一致</code></p>
 
