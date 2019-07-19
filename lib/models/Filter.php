@@ -75,7 +75,7 @@ class Filter
      * @param null $cond
      * @throws BinyException
      */
-    public function __construct($DAO, $filter, $type="__and__", $cond=null)
+    public function __construct($DAO, $filter, $type="__and__", $cond=null, $link="__and__")
     {
         if (!($DAO instanceof SingleDAO || $DAO instanceof DoubleDAO)){
             throw new BinyException(3003, gettype($DAO));
@@ -89,7 +89,7 @@ class Filter
             }
         } elseif (is_array($filter)){
             if ($cond){
-                $this->conds = [[$type => [[self::valueKey => $filter], $cond]]];
+                $this->conds = [[$type => [$cond, [$link=>[[self::valueKey => $filter]]]]]];
             } else {
                 $this->conds = [[$type => [[self::valueKey => $filter]]]];
             }
@@ -100,7 +100,7 @@ class Filter
         } elseif ($filter->getDAO() !== $DAO) {
             throw new BinyException(3005);
         } elseif ($cond) {
-            $this->conds = [[$type => [$filter->getConds()[0], $cond]]];
+            $this->conds = [[$type => [$cond, $filter->getConds()[0]]]];
         } else {
             $this->conds = [[$type => [$filter->getConds()[0]]]];
         }

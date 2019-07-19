@@ -30,22 +30,26 @@ class DoubleFilter extends Filter
 
     /**
      * and 操作
-     * @param $cond
+     * @param array $cond
+     * @param string $link
      * @return DoubleFilter
      */
-    public function filter($cond=[])
+    public function filter($cond=[], $link='and')
     {
-        return $cond ? new self($this->DAO, $cond, "__and__", $this->conds[0]) : $this;
+        $link = (strtolower($link) == 'or') ? '__or__' : '__and__';
+        return $cond ? new self($this->DAO, $cond, "__and__", $this->conds[0], $link) : $this;
     }
 
     /**
      * or 操作
      * @param $cond
+     * @param string $link
      * @return DoubleFilter
      */
-    public function merge($cond)
+    public function merge($cond, $link='or')
     {
-        return $cond ? new self($this->DAO, $cond, "__or__", $this->conds[0]) : $this;
+        $link = (strtolower($link) == 'and') ? '__and__' : '__or__';
+        return $cond ? new self($this->DAO, $cond, "__or__", $this->conds[0], $link) : $this;
     }
 
     /**
