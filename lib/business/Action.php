@@ -21,19 +21,19 @@ class Action
      * 请求参数
      * @var array
      */
-    private $params;
+    protected $params;
 
     /**
      * POST参数
      * @var array
      */
-    private $posts;
+    protected $posts;
 
     /**
      * GET参数
      * @var array
      */
-    private $gets;
+    protected $gets;
 
     /**
      * JSON参数
