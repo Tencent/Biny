@@ -69,7 +69,7 @@ class Model
         if (is_callable([$class, 'init'])){
             return call_user_func_array([$class, 'init'], $params);
         } else {
-            $class = new ReflectionClass($class);
+            $class = new \ReflectionClass($class);
             return $class->newInstanceArgs($params);
         }
     }
