@@ -65,20 +65,14 @@ class RedisClass
     private function connect()
     {
         $config = $this->connect;
-        $client = isset($config['client']) ? $config['client'] : null;
-        if ($client == 'predis' && class_exists('\Predis\Client')) {
-            $this->handler = new \Predis\Client($config);
-            $fd = true;
+        $this->handler = new Redis();
+        if (isset($config['keep-alive']) && $config['keep-alive']) {
+            $fd = $this->handler->pconnect($config['host'], $config['port'], 1800);
         } else {
-            $this->handler = new Redis();
-            if (isset($config['keep-alive']) && $config['keep-alive']) {
-                $fd = $this->handler->pconnect($config['host'], $config['port'], 1800);
-            } else {
-                $fd = $this->handler->connect($config['host'], $config['port']);
-            }
-            if ($config["password"]) {
-                $this->handler->auth($config["password"]);
-            }
+            $fd = $this->handler->connect($config['host'], $config['port']);
+        }
+        if ($config["password"]) {
+            $this->handler->auth($config["password"]);
         }
         if (!$fd) {
             throw new BinyException(4005, [$config['host'], $config['port']]);
