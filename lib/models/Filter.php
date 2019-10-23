@@ -91,7 +91,7 @@ class Filter
             if ($cond){
                 $this->conds = [[$type => [$cond, [$link=>[[self::valueKey => $filter]]]]]];
             } else {
-                $this->conds = [[$link => [[self::valueKey => $filter]]]];
+                $this->conds = [[$type => [[self::valueKey => $filter]]]];
             }
         } elseif (null === $cond) {
            throw new BinyException(3006, gettype($filter));
