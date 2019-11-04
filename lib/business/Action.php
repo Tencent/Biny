@@ -18,30 +18,6 @@ use App;
 class Action
 {
     /**
-     * 请求参数
-     * @var array
-     */
-    private $params;
-
-    /**
-     * POST参数
-     * @var array
-     */
-    private $posts;
-
-    /**
-     * GET参数
-     * @var array
-     */
-    private $gets;
-
-    /**
-     * JSON参数
-     * @var array
-     */
-    private $jsons = NULL;
-
-    /**
      * csrf验证
      * @var bool
      */
@@ -53,33 +29,32 @@ class Action
      */
     protected $restApi = false;
 
+    protected $request;
+    protected $response;
+
     /**
      * 构造函数
      */
     public function __construct()
     {
+        $this->request = App::$base->request;
+        $this->response = App::$base->response;
         if ($this->restApi){
-            parse_str(file_get_contents('php://input'), $this->params);
-            $this->params = array_merge($this->params, $_GET);
-        } else {
-            $this->params = array_merge($_REQUEST, Router::$ARGS);
+            $this->request->setRestApi();
         }
-        $this->posts = $_POST;
-        $this->gets = $_GET;
         //判断是否维护中
         if (isMaintenance){
-            echo $this->display('Main/maintenance');
-            exit;
+            $this->response->display('Main/maintenance', [], ['webRoot' => App::$base->app_config->get('webRoot')], false);
         }
-        if ($this->csrfValidate && !App::$base->request->validateCsrfToken()){
+        if ($this->csrfValidate && !$this->request->validateCsrfToken()){
             header(App::$base->config->get(401, 'http'));
             echo $this->error("Unauthorized");
             exit;
         }
         // 权限验证
         $this->valid_privilege();
-        App::$base->request->createCsrfToken();
-        App::$base->request->setContentType();
+        $this->request->createCsrfToken();
+        $this->response->setContentType();
     }
 
     /**
@@ -105,7 +80,6 @@ class Action
     private function valid_privilege()
     {
         if (method_exists($this, 'privilege') && $privileges = $this->privilege()){
-            $request = App::$base->request;
             foreach ($privileges as $method => $privilege){
                 if (is_callable([$this->privilegeService, $method])){
                     if (!isset($privilege['requires']) || empty($privilege['requires'])){
@@ -114,7 +88,7 @@ class Action
                     }
                     foreach ($privilege['requires'] as $require){
                         $actions = $require['actions'];
-                        if ($actions === '*' || (is_array($actions) && in_array($request->getMethod(true), $actions))){
+                        if ($actions === '*' || (is_array($actions) && in_array($this->request->getMethod(true), $actions))){
                             $params = isset($require['params']) ? $require['params'] : [];
                             array_unshift($params, $this);
                             if (!call_user_func_array([$this->privilegeService, $method], $params)){
@@ -139,7 +113,7 @@ class Action
      */
     public function display($view, $params=[], $objects=[])
     {
-        return new Response($view, $params, $objects);
+        return $this->response->display($view, $params, $objects);
     }
 
 
@@ -156,18 +130,11 @@ class Action
          * @var Form $form
          */
         $form = Factory::create($name);
-        $form->init($this->params, $method);
+        $form->init($this->request->params(), $method);
         return $form;
     }
 
-    /**
-     * 获取原始Post数据
-     * @return string
-     */
-    public function getRowPost()
-    {
-        return file_get_contents('php://input');
-    }
+    /*********************************以下api都已废弃，将在后续版本删除********************************/
 
     /**
      * 兼容原有api
@@ -187,11 +154,8 @@ class Action
      */
     public function param($key, $default=null)
     {
-        if (App::$base->request->getContentType() == 'application/json' || App::$base->request->getContentType() == 'text/json'){
-            return $this->getJson($key, $default);
-        } else {
-            return isset($this->params[$key]) ? $this->params[$key] : $default;
-        }
+        Logger::warn('please use $this->request->param() instead');
+        return $this->request->param($key, $default);
     }
 
     /**
@@ -202,7 +166,8 @@ class Action
      */
     public function post($key, $default=null)
     {
-        return isset($this->posts[$key]) ? $this->posts[$key] : $default;
+        Logger::warn('please use $this->request->post() instead');
+        return $this->request->post($key, $default);
     }
 
     /**
@@ -213,7 +178,8 @@ class Action
      */
     public function get($key, $default=null)
     {
-        return isset($this->gets[$key]) ? $this->gets[$key] : $default;
+        Logger::warn('please use $this->request->get() instead');
+        return $this->request->get($key, $default);
     }
 
     /**
@@ -222,11 +188,10 @@ class Action
      * @param null $default
      * @return float|int|mixed|null
      */
-    public function getJson($key, $default=null){
-        if ($this->jsons === NULL){
-            $this->jsons = json_decode($this->getRowPost(), true) ?: [];
-        }
-        return isset($this->jsons[$key]) ? $this->jsons[$key] : $default;
+    public function getJson($key, $default=null)
+    {
+        Logger::warn('please use $this->request->json() instead');
+        return $this->request->json($key, $default);
     }
 
     /**
@@ -237,11 +202,8 @@ class Action
      */
     public function json($data, $encode=false)
     {
-        $config = App::$base->config->get('response');
-        if ($config['jsonContentType']){
-            App::$base->request->setContentType($config['jsonContentType']);
-        }
-        return new JSONResponse($data, $encode);
+        Logger::warn('please use $this->response->json() instead');
+        return $this->response->json($data, $encode);
     }
 
     /**
@@ -251,8 +213,8 @@ class Action
      */
     public function correct($ret=[], $encode=false)
     {
-        $data = ["flag" => true, "ret" => $ret];
-        return $this->json($data, $encode);
+        Logger::warn('please use $this->response->correct() instead');
+        return $this->response->correct($ret, $encode);
     }
 
     /**
@@ -263,13 +225,7 @@ class Action
      */
     public function error($msg="数据异常", $json=false, $encode=false)
     {
-        Event::trigger(onError, [$msg]);
-        if (!$json && (App::$base->request->isShowTpl() || !App::$base->request->isAjax())){
-            $config = App::$base->config->get('exception');
-            return $this->display($config['errorTpl'], ['msg'=> $msg]);
-        } else {
-            $data = ["flag" => false, "error" => $msg];
-            return $this->json($data, $encode);
-        }
+        Logger::warn('please use $this->response->error() instead');
+        return $this->response->error($msg, $json, $encode);
     }
 }

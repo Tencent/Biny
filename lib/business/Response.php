@@ -26,16 +26,59 @@ class Response {
     private $config;
 
     /**
+     * @var null|Request
+     */
+    private static $_instance = null;
+
+    /**
+     * @return null|Request
+     */
+    public static function getInstance()
+    {
+        if (NULL === self::$_instance){
+            return new self();
+        }
+        return self::$_instance;
+    }
+
+    private function __construct()
+    {
+
+    }
+
+    /**
      * @param $view
      * @param array $params
-     * @param array $objects 直接引用对象
+     * @param array $objects
+     * @param bool $return
+     * @return $this
+     * @throws BinyException
      */
-    public function __construct($view, $params=[], $objects=[])
+    public function display($view, $params=[], $objects=[], $return=true)
     {
         $this->view = $view;
         $this->params = $params;
         $this->objects = $objects;
         $this->config = App::$base->config->get('response');
+        if ($return) {
+            return $this;
+        } else {
+            echo $this->getContent();
+            exit;
+        }
+    }
+
+    /**
+     * 设置cookie
+     * @param $key
+     * @param $value
+     * @param int $expire
+     * @param string $path
+     * @param null $domain
+     */
+    public function setCookie($key, $value, $expire=86400, $path='/', $domain=null)
+    {
+        setcookie($key, $value, time()+$expire, $path, $domain);
     }
 
     /**
@@ -118,6 +161,79 @@ class Response {
     public function __toString()
     {
         return $this->getContent();
+    }
+
+    /**
+     * display to json
+     * @param $data
+     * @param bool $encode
+     * @return JSONResponse
+     */
+    public function json($data, $encode=false)
+    {
+        $config = App::$base->config->get('response');
+        if ($config['jsonContentType']){
+            $this->setContentType($config['jsonContentType']);
+        }
+        echo new JSONResponse($data, $encode);
+        exit;
+    }
+
+    /**
+     * @param array $ret
+     * @param bool $encode
+     * @return JSONResponse
+     */
+    public function correct($ret=[], $encode=false)
+    {
+        if (RUN_SHELL) {
+            Logger::addLog($ret);
+            if (is_array($ret) || is_object($ret)){
+                $ret = var_export($ret, true);
+            }
+            echo "$ret\n";exit;
+        } else {
+            $data = ["flag" => true, "ret" => $ret];
+            return $this->json($data, $encode);
+        }
+    }
+
+    /**
+     * @param string $msg
+     * @param bool $json 是否强制显示json
+     * @param bool $encode
+     * @return JSONResponse|Response
+     */
+    public function error($msg="数据异常", $json=false, $encode=false)
+    {
+        Event::trigger(onError, [$msg]);
+        if (RUN_SHELL) {
+            Logger::addError($msg);
+            if (is_array($msg) || is_object($msg)){
+                $msg = var_export($msg, true);
+            }
+            echo "$msg\n";exit;
+        } else {
+            if (!$json && (App::$base->request->isShowTpl() || !App::$base->request->isAjax())){
+                $config = App::$base->config->get('exception');
+                return $this->display($config['errorTpl'], ['msg'=> $msg]);
+            } else {
+                $data = ["flag" => false, "error" => $msg];
+                return $this->json($data, $encode);
+            }
+        }
+    }
+
+    //设置默认编码
+    public function setContentType($contentType='text/html', $charset='utf-8')
+    {
+        header('Content-type: ' . $contentType.'; charset='.$charset);
+    }
+
+    public function redirect($url)
+    {
+        header("Location:$url");
+        exit();
     }
 }
 

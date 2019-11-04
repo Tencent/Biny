@@ -25,6 +25,12 @@ class Request {
     private $_isSecure = null;
     private $config;
 
+    private $params;
+    private $posts;
+    private $gets;
+    private $args;
+    private $jsons;
+
     /**
      * @var null|Request
      */
@@ -55,12 +61,38 @@ class Request {
         return self::$_instance;
     }
 
+    /**
+     * 构建函数
+     * Request constructor.
+     * @param $module
+     * @param null $method
+     */
     private function __construct($module, $method=null)
     {
         $this->config = App::$base->config->get('request');
         $this->module = $module;
         $this->method = $method ?: 'index';
         $this->csrfToken = $this->getCookie($this->config['csrfToken']);
+
+        if (RUN_SHELL) {
+            $params = App::$base->router->getArgs();
+            $this->args = $params['args'];
+            $this->params = $params['params'];
+        } else {
+            $this->params = array_merge($_REQUEST, Router::$ARGS);
+            $this->posts = $_POST;
+            $this->gets = $_GET;
+        }
+    }
+
+
+    /**
+     * 将request设置为restApi
+     */
+    public function setRestApi()
+    {
+        parse_str(file_get_contents('php://input'), $this->params);
+        $this->params = array_merge($this->params, $this->gets);
     }
 
     /**
@@ -77,19 +109,6 @@ class Request {
     }
 
     /**
-     * 设置cookie
-     * @param $key
-     * @param $value
-     * @param int $expire
-     * @param string $path
-     * @param null $domain
-     */
-    public function setCookie($key, $value, $expire=86400, $path='/', $domain=null)
-    {
-        setcookie($key, $value, time()+$expire, $path, $domain);
-    }
-
-    /**
      * 获取对应csrfToken
      * @return null|string
      */
@@ -100,8 +119,8 @@ class Request {
             $this->csrfToken = $this->createCsrfCookie($trueToken);
             $trueKey = $this->config['trueToken'];
             $csrfKey = $this->config['csrfToken'];
-            $this->setCookie($trueKey, $this->hashData(serialize([$trueKey, $trueToken]), 'platformtest'));
-            $this->setCookie($csrfKey, $this->csrfToken);
+            App::$base->response->setCookie($trueKey, $this->hashData(serialize([$trueKey, $trueToken]), 'platformtest'));
+            App::$base->response->setCookie($csrfKey, $this->csrfToken);
         }
         return $this->csrfToken;
     }
@@ -479,15 +498,81 @@ class Request {
         return $_SERVER['CONTENT_TYPE'];
     }
 
-    //设置默认编码
-    public function setContentType($contentType='text/html', $charset='utf-8')
+    /*****************************获取参数迁移****************************/
+    /**
+     * 获取请求参数
+     * @param $key
+     * @param null $default
+     * @return float|int|mixed|null
+     */
+    public function param($key, $default=null)
     {
-        header('Content-type: ' . $contentType.'; charset='.$charset);
+        if (RUN_SHELL) {
+            if (is_int($key)){
+                return isset($this->args[$key]) ? $this->args[$key] : $default;
+            } else {
+                return isset($this->params[$key]) ? $this->params[$key] : $default;
+            }
+        } else {
+            if ($this->getContentType() == 'application/json' || $this == 'text/json'){
+                return $this->json($key, $default);
+            } else {
+                return isset($this->params[$key]) ? $this->params[$key] : $default;
+            }
+        }
     }
 
-    public function redirect($url)
+    /**
+     * 参数列表
+     * @param array $keys
+     * @return array
+     */
+    public function params($keys=[])
     {
-        header("Location:$url");
-        exit();
+        if ($keys) {
+            $results = [];
+            foreach ($keys as $key) {
+                $results[$key] = $this->param($key);
+            }
+            return $results;
+        } else {
+            return $this->params;
+        }
+    }
+
+    /**
+     * 获取POST参数
+     * @param $key
+     * @param null $default
+     * @return float|int|mixed|null
+     */
+    public function post($key, $default=null)
+    {
+        return isset($this->posts[$key]) ? $this->posts[$key] : $default;
+    }
+
+    /**
+     * 获取GET参数
+     * @param $key
+     * @param null $default
+     * @return float|int|mixed|null
+     */
+    public function get($key, $default=null)
+    {
+        return isset($this->gets[$key]) ? $this->gets[$key] : $default;
+    }
+
+    /**
+     * 获取json数据
+     * @param $key
+     * @param null $default
+     * @return float|int|mixed|null
+     */
+    public function json($key, $default=null)
+    {
+        if ($this->jsons === NULL){
+            $this->jsons = json_decode($this->getRowPost(), true) ?: [];
+        }
+        return isset($this->jsons[$key]) ? $this->jsons[$key] : $default;
     }
 }

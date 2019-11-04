@@ -84,7 +84,7 @@
     {
         <note>// Login page adjustment when not logged in</note>
         <sys>if</sys>(!App::<prm>$model</prm>-><prm>person</prm>-><func>exist</func>()){
-            <sys>return</sys> App::<prm>$base</prm>-><prm>request</prm>-><func>redirect</func>(<str>'/auth/login/'</str>);
+            <sys>return</sys> App::<prm>$base</prm>-><prm>response</prm>-><func>redirect</func>(<str>'/auth/login/'</str>);
         }
     }
 
@@ -1655,7 +1655,7 @@ App::<prm>$base</prm>-><prm>session</prm>-><func>clear</func>();</pre>
         <pre class="code"><prm>$param</prm> = App::<prm>$base</prm>-><prm>request</prm>-><func>getCookie</func>(<str>'param'</str>);</pre>
         <p><code>setCookie</code>There are 4 parameters, which are key, value, expiration time (unit seconds),
             path belonging to the cookie, the expiration date default is 1 days, the path default is <code>'/'</code></p>
-        <pre class="code">App::<prm>$base</prm>-><prm>request</prm>-><func>setCookie</func>(<str>'param'</str>, <str>'test'</str>, 86400, <str>'/'</str>);</pre>
+        <pre class="code">App::<prm>$base</prm>-><prm>response</prm>-><func>setCookie</func>(<str>'param'</str>, <str>'test'</str>, 86400, <str>'/'</str>);</pre>
 
 
         <div style="height: 200px"></div>

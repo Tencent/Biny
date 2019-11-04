@@ -17,6 +17,7 @@ include __DIR__.'/models/Model.php';
 
 use biny\lib\Config;
 use biny\lib\Request;
+use biny\lib\Response;
 use biny\lib\Session;
 use biny\lib\Router;
 use biny\lib\Cache;
@@ -36,6 +37,7 @@ use biny\lib\Model;
  * @property Config $config
  * @property Config $app_config
  * @property Request $request
+ * @property Response $response
  * @property Session $session
  * @property Router $router
  * @property Cache $cache
@@ -78,9 +80,6 @@ class App
         self::$base_root = dirname(__DIR__);
         self::$extends_root = self::$base_root.DS."extends";
         self::$log_root = self::$base_root.DS."logs";
-        if (RUN_SHELL){
-            self::$log_root .= '/shell';
-        }
 
         if (is_readable($appPath)) {
             self::$app_root = $appPath;
@@ -200,6 +199,8 @@ class App
                 return Config::instance($name);
             case 'request':
                 return Request::getInstance();
+            case 'response':
+                return Response::getInstance();
             case 'redis':
                 return RedisClass::instance();
             case 'memcache':

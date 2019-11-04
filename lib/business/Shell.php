@@ -13,26 +13,16 @@ use App;
 
 class Shell
 {
-    /**
-     * 请求参数
-     * @var array
-     */
-    private $params;
-
-    /**
-     * 顺序参数
-     * @var array
-     */
-    private $args;
+    protected $request;
+    protected $response;
 
     /**
      * 构造函数
      */
     public function __construct()
     {
-        $params = App::$base->router->getArgs();
-        $this->args = $params['args'];
-        $this->params = $params['params'];
+        $this->request = App::$base->request;
+        $this->response = App::$base->response;
     }
 
     /**
@@ -47,6 +37,8 @@ class Shell
         }
     }
 
+    /*********************************以下api都已废弃，将在后续版本删除********************************/
+
     /**
      * 获取请求参数
      * @param $key
@@ -55,11 +47,8 @@ class Shell
      */
     public function param($key, $default=null)
     {
-        if (is_int($key)){
-            return isset($this->args[$key]) ? $this->args[$key] : $default;
-        } else {
-            return isset($this->params[$key]) ? $this->params[$key] : $default;
-        }
+        Logger::warn('please use $this->request->param() instead');
+        return $this->request->param($key, $default);
     }
 
     /**
@@ -68,8 +57,8 @@ class Shell
      */
     public function correct($ret='success')
     {
-        Logger::addLog($ret);
-        return $ret;
+        Logger::warn('please use $this->response->correct() instead');
+        return $this->response->correct($ret);
     }
 
     /**
@@ -78,8 +67,7 @@ class Shell
      */
     public function error($msg="error")
     {
-        Event::trigger(onError, [$msg]);
-        Logger::addError($msg);
-        return $msg;
+        Logger::warn('please use $this->response->error() instead');
+        return $this->response->error($msg);
     }
 }

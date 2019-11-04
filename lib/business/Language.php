@@ -43,7 +43,7 @@ class Language
     {
         $requestConfig = App::$base->config->get('request');
         $key = $requestConfig['languageCookie'];
-        App::$base->request->setCookie($key, $lang, $expire);
+        App::$base->response->setCookie($key, $lang, $expire);
         self::$language = $lang;
     }
 

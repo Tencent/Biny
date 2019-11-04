@@ -23,7 +23,7 @@ class privilegeService extends Service
         if (!$this->checkUser()){
 //            return $this->error();
             App::$base->session->lastUrl = $_SERVER['REQUEST_URI'];
-            App::$base->request->redirect('/login/');
+            App::$base->response->redirect('/login/');
 //            echo $action->display('main/login');
 //            exit;
         }

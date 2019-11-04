@@ -62,6 +62,7 @@
         <p>程序全局可调用lib库下系统方法，例如：<code>Logger</code>（调试组件）</p>
         <p><code>App::$base</code>为全局单例类，可全局调用</p>
         <p><code>App::$base->request</code> 为当前请求，可获取当前地址，客户端ip等</p>
+        <p><code>App::$base->response</code> 为返回对象，可设置返回content-type，json内容等</p>
         <p><code>App::$base->session</code> 为系统session，可直接获取和复制，设置过期时间</p>
         <p><code>App::$base->memcache</code> 为系统memcache，可直接获取和复制，设置过期时间</p>
         <p><code>App::$base->redis</code> 为系统redis，可直接获取和复制，设置过期时间</p>
@@ -84,7 +85,7 @@
     {
         <note>// 未登录时调整登录页面</note>
         <sys>if</sys>(!App::<prm>$model</prm>-><prm>person</prm>-><func>exist</func>()){
-            <sys>return</sys> App::<prm>$base</prm>-><prm>request</prm>-><func>redirect</func>(<str>'/auth/login/'</str>);
+            <sys>return</sys> App::<prm>$base</prm>-><prm>response</prm>-><func>redirect</func>(<str>'/auth/login/'</str>);
         }
     }
 
@@ -101,7 +102,7 @@
             App::<prm>$base</prm>-><prm>memcache</prm>-><func>set</func>(<str>'cache_'</str><sys>.</sys><prm>$person</prm>-><prm>project_id</prm>, <prm>$members</prm>);
         }
         <note>//返回 project/members.tpl.php</note>
-        <sys>return</sys> <prm>$this</prm>-><func>display</func>(<str>'project/members'</str>, <sys>array</sys>(<str>'members'</str>=><prm>$members</prm>));
+        <prm>$this</prm>-><prm>response</prm>-><func>display</func>(<str>'project/members'</str>, <sys>array</sys>(<str>'members'</str>=><prm>$members</prm>));
     }
 }</pre>
         <p>P.S: 示例中的用法会在下面具体展开介绍</p>
@@ -173,7 +174,7 @@
     <sys>public function</sys> <act>action_index</act>()
     {
         <note>//返回 test/test.tpl.php</note>
-        <sys>return</sys> <prm>$this</prm>-><func>display</func>(<str>'test/test'</str>);
+        <prm>$this</prm>-><prm>response</prm>-><func>display</func>(<str>'test/test'</str>);
     }
 }</pre>
         <p>同时也能在同一文件内配置多个子路由</p>
@@ -182,14 +183,14 @@
 <sys>public function</sys> <act>action_demo1</act>()
 {
     <note>//返回 test/demo1.tpl.php</note>
-    <sys>return</sys> <prm>$this</prm>-><func>display</func>(<str>'test/demo1'</str>);
+    <prm>$this</prm>-><prm>response</prm>-><func>display</func>(<str>'test/demo1'</str>);
 }
 
 <note>// http://www.billge.cc/test/demo2</note>
 <sys>public function</sys> <act>action_demo2</act>()
 {
     <note>//返回 test/demo2.tpl.php</note>
-    <sys>return</sys> <prm>$this</prm>-><func>display</func>(<str>'test/demo2'</str>);
+    <prm>$this</prm>-><prm>response</prm>-><func>display</func>(<str>'test/demo2'</str>);
 }</pre>
 
         <h2 id="router-custom">自定义路由</h2>
@@ -220,16 +221,17 @@
 
         <h2 id="router-ajax">异步请求</h2>
         <p>异步请求包含POST，ajax等多种请求方式，系统会自动进行<code>异步验证（csrf）</code>及处理</p>
-        <p>程序中响应方法和同步请求保持一致，返回<code>$this->error()</code>会自动和同步请求作区分，返回<code>json数据</code></p>
+        <p>程序中响应方法和同步请求保持一致，返回<code>App::$base->response->error()</code>会自动和同步请求作区分，返回<code>json数据</code></p>
+        <p>Action中<code>$this->response</code>等同于全局对象<code>App::$base->response</code></p>
         <pre class="code"><note>// http://www.billge.cc/test/demo3</note>
 <sys>public function</sys> <act>action_demo3</act>()
 {
     <prm>$ret</prm> = <sys>array</sys>(<str>'result'</str>=>1);
     <note>//返回 json {"flag": true, "ret": {"result": 1}}</note>
-    <sys>return</sys> <prm>$this</prm>-><func>correct</func>(<prm>$ret</prm>);
+    <prm>$this</prm>-><prm>response</prm>-><func>correct</func>(<prm>$ret</prm>);
 
     <note>//返回 json {"flag": false, "error": {"result": 1}}</note>
-    <sys>return</sys> <prm>$this</prm>-><func>error</func>(<prm>$ret</prm>);
+    <prm>$this</prm>-><prm>response</prm>-><func>error</func>(<prm>$ret</prm>);
 }</pre>
         <p>框架提供了一整套<code>csrf验证</code>机制，默认<code>开启</code>，可通过在Action中将<code>$csrfValidate = false</code>关闭。</p>
         <pre class="code"><note>// http://www.billge.cc/test/</note>
@@ -242,7 +244,7 @@
     <sys>public function</sys> <act>action_index</act>()
     {
         <note>//返回 test/test.tpl.php</note>
-        <sys>return</sys> <prm>$this</prm>-><func>correct</func>();
+        <prm>$this</prm>-><prm>response</prm>-><func>correct</func>();
     }
 }</pre>
 
@@ -271,38 +273,38 @@
     <sys>public function</sys> <act>GET_index</act>(<prm>$id</prm>)
     {
         <prm>$user</prm> = <prm>$this</prm>-><prm>userDAO</prm>-><func>filter</func>([<str>'id'</str>=><prm>$id</prm>])-><func>find</func>();
-        <sys>return</sys> <prm>$user</prm> ? <prm>$this</prm>-><func>correct</func>(<prm>$user</prm>) : <prm>$this</prm>-><func>error</func>(<str>'user not found'</str>);
+        <sys>return</sys> <prm>$user</prm> ? <prm>$this</prm>-><prm>response</prm>-><func>correct</func>(<prm>$user</prm>) : <prm>$this</prm>-><prm>response</prm>-><func>error</func>(<str>'user not found'</str>);
     }
 
     <note>// [POST] http://www.billge.cc/rest/test</note>
     <sys>public function</sys> <act>POST_test</act>()
     {
-        <prm>$user</prm> = <prm>$this</prm>-><func>param</func>(<str>'user'</str>);
+        <prm>$user</prm> = <prm>$this</prm>-><prm>request</prm>-><func>param</func>(<str>'user'</str>);
         <prm>$user_id</prm> = <prm>$this</prm>-><prm>userDAO</prm>-><func>add</func>(<prm>$user</prm>);
-        <sys>return</sys> <prm>$user_id</prm> ? <prm>$this</prm>-><func>correct</func>(<prm>$user</prm>) : <prm>$this</prm>-><func>error</func>(<str>'data error'</str>);
+        <sys>return</sys> <prm>$user_id</prm> ? <prm>$this</prm>-><prm>response</prm>-><func>correct</func>(<prm>$user</prm>) : <prm>$this</prm>-><prm>response</prm>-><func>error</func>(<str>'data error'</str>);
     }
 
     <note>// [PUT] http://www.billge.cc/rest/?id=xxx</note>
     <sys>public function</sys> <act>PUT_index</act>(<prm>$id</prm>)
     {
-        <prm>$user</prm> = <prm>$this</prm>-><func>param</func>(<str>'user'</str>);
+        <prm>$user</prm> = <prm>$this</prm>-><prm>request</prm>-><func>param</func>(<str>'user'</str>);
         <prm>$ret</prm> = <prm>$this</prm>-><prm>userDAO</prm>-><func>filter</func>([<str>'id'</str>=><prm>$id</prm>])-><func>update</func>(<prm>$user</prm>);
-        <sys>return</sys> <prm>$ret</prm> ? <prm>$this</prm>-><func>correct</func>() : <prm>$this</prm>-><func>error</func>(<str>'data error'</str>);
+        <sys>return</sys> <prm>$ret</prm> ? <prm>$this</prm>-><prm>response</prm>-><func>correct</func>() : <prm>$this</prm>-><prm>response</prm>-><func>error</func>(<str>'data error'</str>);
     }
 
     <note>// [PATCH] http://www.billge.cc/rest/test?id=xxx</note>
     <sys>public function</sys> <act>PATCH_test</act>(<prm>$id</prm>)
     {
-        <prm>$sets</prm> = <prm>$this</prm>-><func>param</func>(<str>'sets'</str>);
+        <prm>$sets</prm> = <prm>$this</prm>-><prm>request</prm>-><func>param</func>(<str>'sets'</str>);
         <prm>$ret</prm> = <prm>$this</prm>-><prm>userDAO</prm>-><func>filter</func>([<str>'id'</str>=><prm>$id</prm>])-><func>update</func>(<prm>$sets</prm>);
-        <sys>return</sys> <prm>$ret</prm> ? <prm>$this</prm>-><func>correct</func>() : <prm>$this</prm>-><func>error</func>(<str>'data error'</str>);
+        <sys>return</sys> <prm>$ret</prm> ? <prm>$this</prm>-><prm>response</prm>-><func>correct</func>() : <prm>$this</prm>-><prm>response</prm>-><func>error</func>(<str>'data error'</str>);
     }
 
     <note>// [DELETE] http://www.billge.cc/rest/test?id=xxx</note>
     <sys>public function</sys> <act>DELETE_test</act>(<prm>$id</prm>)
     {
         <prm>$ret</prm> = <prm>$this</prm>-><prm>userDAO</prm>-><func>filter</func>([<str>'id'</str>=><prm>$id</prm>])-><func>delete</func>();
-        <sys>return</sys> <prm>$ret</prm> ? <prm>$this</prm>-><func>correct</func>() : <prm>$this</prm>-><func>error</func>(<str>'data error'</str>);
+        <sys>return</sys> <prm>$ret</prm> ? <prm>$this</prm>-><prm>response</prm>-><func>correct</func>() : <prm>$this</prm>-><prm>response</prm>-><func>error</func>(<str>'data error'</str>);
     }
 }</pre>
 
@@ -342,20 +344,21 @@
     <sys>echo</sys>(<prm>$name</prm>);
 }</pre>
 
-        <p>同时也可以调用<code>param</code>，<code>get</code>，<code>post</code> 方法获取参数。</p>
+        <p>同时也可以调用<code>App::$base->request</code>对象中的<code>param</code>，<code>get</code>，<code>post</code> 方法获取参数。</p>
+        <p>在Action中可直接使用<code>$this->request</code>，效果一致</p>
         <p><code>param($key, $default)</code> 获取GET/POST/JSON参数{$key}, 默认值为{$default}</p>
         <p><code>get($key, $default)</code> 获取GET参数{$key}, 默认值为{$default}</p>
         <p><code>post($key, $default)</code> 获取POST参数{$key}, 默认值为{$default}</p>
-        <p><code>getJson($key, $default)</code> 如果传递过来的参数为完整json流可使用该方法获取</p>
+        <p><code>json($key, $default)</code> 如果传递过来的参数为完整json流可使用该方法获取</p>
         <pre class="code"><note>// http://www.billge.cc/test/demo5/?id=33</note>
 <sys>public function</sys> <act>action_demo5</act>()
 {
     <note>// NULL</note>
-    <sys>echo</sys>(<prm>$this</prm>-><func>param</func>(<str>'name'</str>));
+    <sys>echo</sys>(<prm>$this</prm>-><prm>request</prm>-><func>param</func>(<str>'name'</str>));
     <note>// 'install'</note>
-    <sys>echo</sys>(<prm>$this</prm>-><func>post</func>(<str>'type'</str>, <str>'install'</str>));
+    <sys>echo</sys>(<prm>$this</prm>-><prm>request</prm>-><func>post</func>(<str>'type'</str>, <str>'install'</str>));
     <note>// 33</note>
-    <sys>echo</sys>(<prm>$this</prm>-><func>get</func>(<str>'id'</str>, 1));
+    <sys>echo</sys>(<prm>$this</prm>-><prm>request</prm>-><func>get</func>(<str>'id'</str>, 1));
 }</pre>
         <p><code>注意：</code>旧版本的<code>getParam</code>/<code>getPost</code>/<code>getGet</code>效果与上面的一致，但已不建议使用</p>
 
@@ -514,6 +517,8 @@
         <str>'errorLevel'</str> => <const>NOTICE</const>,
         <note>// 慢查询阀值(ms)</note>
         <str>'slowQuery'</str> => 1000,
+        <note>// 日志归档</note>
+        <str>'reorganize'</str> => <sys>true</sys>,
     ),
 
     <note>// 数据库相关配置</note>
@@ -1031,13 +1036,13 @@ App::<prm>$base</prm>-><prm>config</prm>-><func>get</func>(<str>'path'</str>, <s
         <p>同时<code>filter/merge</code>也可以被迭代调用，以应对不确定筛选条件的复杂查询</p>
         <pre class="code"><note>// 某一个返回筛选数据的Action</note>
 <prm>$DAO</prm> = <prm>$this</prm>-><prm>userDAO</prm>;
-<sys>if </sys>(<prm>$status</prm>=<prm>$this</prm>-><func>param</func>(<str>'status'</str>)){
+<sys>if </sys>(<prm>$status</prm>=<prm>$this</prm>-><prm>request</prm>-><func>param</func>(<str>'status'</str>)){
     <prm>$DAO</prm> = <prm>$DAO</prm>-><func>filter</func>(<sys>array</sys>(<str>'status'</str>=><prm>$status</prm>));
 }
-<sys>if </sys>(<prm>$startTime</prm>=<prm>$this</prm>-><func>param</func>(<str>'start'</str>, 0)){
+<sys>if </sys>(<prm>$startTime</prm>=<prm>$this</prm>-><prm>request</prm>-><func>param</func>(<str>'start'</str>, 0)){
     <prm>$DAO</prm> = <prm>$DAO</prm>-><func>filter</func>(<sys>array</sys>(<str>'>='</str>=><sys>array</sys>(<str>'start'</str>=><prm>$startTime</prm>)));
 }
-<sys>if </sys>(<prm>$endTime</prm>=<prm>$this</prm>-><func>param</func>(<str>'end'</str>, <func>time</func>())){
+<sys>if </sys>(<prm>$endTime</prm>=<prm>$this</prm>-><prm>request</prm>-><func>param</func>(<str>'end'</str>, <func>time</func>())){
     <prm>$DAO</prm> = <prm>$DAO</prm>-><func>filter</func>(<sys>array</sys>(<str>'<'</str>=><sys>array</sys>(<str>'end'</str>=><prm>$endTime</prm>)));
 }
 <note>// 获取复合条件数量</note>
@@ -1257,13 +1262,14 @@ Event::<func>off</func>(<const>onSql</const>);</pre>
     <div class="bs-docs-section">
         <h1 id="view" class="page-header">页面渲染</h1>
         <p>请在<code>php.ini</code>配置中打开<code>short_open_tag</code>，使用简写模版，提高开发效率</p>
-        <p>页面view层目录在<code>/app/template/</code>下面，可以在<code>Action</code>层中通过<code>$this->display()</code>方法返回</p>
+        <p>页面view层目录在<code>/app/template/</code>下面，可以在<code>Action</code>层中通过<code>$this->response->display()</code>方法返回</p>
+        <p>非Action中，全局可使用<code>App::$base->response->display()</code>方法返回</p>
         <p>一般<code>Action</code>类都会继承<code>baseAction</code>类，在<code>baseAction</code>中可以将一些页面通用参数一起下发，减少开发，维护成本</p>
 
         <h2 id="view-param">渲染参数</h2>
         <p><code>display</code>方法有三个参数，第一个为指定<code>template</code>文件，第二个为页面参数数组，第三个为系统类数据(<code>没有可不传</code>)。</p>
         <pre class="code"><note>// 返回/app/template/main/test.tpl.php </note>
-<sys>return</sys> <prm>$this</prm>-><func>display</func>(<str>'main/test'</str>, <sys>array</sys>(<str>'test'</str>=>1), <sys>array</sys>(<str>'path'</str>=><str>'/test.png'</str>));
+<prm>$this</prm>-><prm>response</prm>-><func>display</func>(<str>'main/test'</str>, <sys>array</sys>(<str>'test'</str>=>1), <sys>array</sys>(<str>'path'</str>=><str>'/test.png'</str>));
 
 <note>/* /app/template/main/test.tpl.php
 返回:
@@ -1281,7 +1287,7 @@ Event::<func>off</func>(<const>onSql</const>);</pre>
         <h2 id="view-tkd">自定义TKD</h2>
         <p>页面TKD一般都默认在<code>common.tpl.php</code>定义好，如果页面单独需要修改对应的<code>title，keywords，description</code>的话，
             也可以在<code>Response</code>生成后对其赋值</p>
-        <pre class="code"><prm>$view</prm> = <prm>$this</prm>-><func>display</func>(<str>'main/test'</str>, <prm>$params</prm>);
+        <pre class="code"><prm>$view</prm> = <prm>$this</prm>-><prm>response</prm>-><func>display</func>(<str>'main/test'</str>, <prm>$params</prm>);
 <prm>$view</prm>-><prm>title</prm> = <str>'Biny'</str>;
 <prm>$view</prm>-><prm>keywords</prm> = <str>'biny,php,框架'</str>;
 <prm>$view</prm>-><prm>description</prm> = <str>'一款轻量级好用的框架'</str>;
@@ -1347,7 +1353,7 @@ Event::<func>off</func>(<const>onSql</const>);</pre>
         <h2 id="view-language">多语言</h2>
         <p>Biny中支持多语言的使用，可指定cookie中存储当前语言环境。在<code>/config/config.php</code>中对字段<p>languageCookie</p>进行配置。而多语言的渲染分为两种。</p>
         <p>1. 不同的tpl渲染文件</p>
-        <p><code>Action</code>文件中当调用<code>$this->display('xxx')</code>方法时，默认会查找<code>/app/template/main/xxx.tpl.php</code>模板文件</p>
+        <p><code>Action</code>文件中当调用<code>$this->response->display('xxx')</code>方法时，默认会查找<code>/app/template/main/xxx.tpl.php</code>模板文件</p>
         <p>而多语言环境下只需要在<code>/app/template/main/</code>目录下创建多个语言文件，如<code>xxx.en.tpl.php</code>，<code>xxx.jp.tpl.php</code>。</p>
         <p>框架会自动根据当前的语言环境，自动匹配对应的<code>xxx.{$lan}.tpl.php</code>文件做模板渲染。</p>
         <p><img src="http://r.photo.store.qq.com/psb?/V130E8h51JH2da/kBBsyiA42CgAEW9f19Y2lNfVxXZvWD0.xFqVmzfQvkc!/o/dMUAAAAAAAAA&bo=5ACYAOQAmAADEDU!"></p>
@@ -1371,7 +1377,7 @@ Event::<func>off</func>(<const>onSql</const>);</pre>
         <p><code>beforeAction</code>为Action执行前执行的事件（在<code>init()</code>方法之后被触发）</p>
         <p><code>afterAction</code>为Action执行后执行的事件（会在渲染页面之前触发）</p>
         <p><code>onException</code>系统抛出异常时被触发，会传递错误code，在<code>/config/exception.php</code>中定义code</p>
-        <p><code>onError</code>程序调用<code>$this->error($data)</code>方法时被触发，传递<code>$data</code>参数</p>
+        <p><code>onError</code>程序调用<code>App::$base->response->error($data)</code>方法时被触发，传递<code>$data</code>参数</p>
         <p><code>onSql</code>执行语句时被触发，上述例子中的<code>Event::on(onSql)</code>就是使用了该事件</p>
 
         <h2 id="event-init">定义事件</h2>
@@ -1408,7 +1414,7 @@ Event::<func>off</func>(<const>onSql</const>);</pre>
         <note>// 解绑myEvent事件，所有绑定在该事件上的方法都不会再被执行</note>
         Event::<func>off</func>(<str>'myEvent'</str>);
 
-        <sys>return</sys> <prm>$this</prm>-><func>error</func>(<str>'测试一下'</str>);
+        <prm>$this</prm>-><prm>response</prm>-><func>error</func>(<str>'测试一下'</str>);
     }
 
     <note>// 自定义的事件类</note>
@@ -1485,7 +1491,7 @@ Event::<func>trigger</func>(<str>'myEvent'</str>, <sys>array</sys>(<func>get_cla
 <sys>if</sys> (!<prm>$form</prm>-><func>check</func>()){
     <note>// 获取错误信息</note>
     <prm>$error</prm> = <prm>$form</prm>-><func>getError</func>();
-    <sys>return</sys> <prm>$this</prm>-><func>error</func>(<str>'参数错误'</str>);
+    <prm>$this</prm>-><prm>response</prm>-><func>error</func>(<str>'参数错误'</str>);
 }
 <note>// 获取对应字段</note>
 <prm>$status</prm> = <prm>$form</prm>-><prm>status</prm>;
@@ -1574,6 +1580,16 @@ Logger::<func>memory</func>(<str>'end-memory'</str>);</pre>
         <p><code>$LEVEL</code>可使用常量（<code>INFO</code>、<code>DEBUG</code>、<code>NOTICE</code>、<code>WARNING</code>、<code>ERROR</code>）不填即默认级别</p>
         <p>系统程序错误也都会在error日志中显示，如页面出现500时可在错误日志中查看定位</p>
 
+        <p><code>==============v2.10更新分割线==============</code></p>
+        <p>Biny v2.10之后加入日志自动归档功能，可在<code>/config/config.php</code>中开启</p>
+        <pre class="code"><note>// /config/config.php</note>
+<str>'logger'</str> => <sys>array</sys>(
+    <note>// 是否记录日志文件</note>
+    <str>'files'</str> => <sys>true</sys>,
+    <note>// 日志归档</note>
+    <str>'reorganize'</str> => <sys>true</sys>
+)</pre>
+        <p>开启之后，日志目录中log文件会在日期变更时触发归档操作，并将历史文件写入<code>{年}-{月}</code>目录中。外层log文件则一直会是最新的</p>
     </div>
 
     <div class="bs-docs-section">
@@ -1619,7 +1635,7 @@ Logger::<func>memory</func>(<str>'end-memory'</str>);</pre>
     <sys>public function</sys> <act>action_index</act>()
     {
         <note>//返回异常，会记录日志并输出在终端</note>
-        <sys>return</sys> <prm>$this</prm>-><func>error</func>(<str>'执行错误'</str>);
+        <prm>$this</prm>-><prm>response</prm>-><func>error</func>(<str>'执行错误'</str>);
     }
 }
 </pre>
@@ -1639,13 +1655,13 @@ Logger::<func>memory</func>(<str>'end-memory'</str>);</pre>
         <note>//1, 2, aaa, default</note>
         <sys>echo</sys> <str>"<prm>$prm1</prm>, <prm>$prm2</prm>, <prm>$prm3</prm>, <prm>$prm4</prm>"</str>;
         <note>//1</note>
-        <sys>echo</sys> <prm>$this</prm>-><func>param</func>(0);
+        <sys>echo</sys> <prm>$this</prm>-><prm>request</prm>-><func>param</func>(0);
         <note>//2</note>
-        <sys>echo</sys> <prm>$this</prm>-><func>param</func>(1);
+        <sys>echo</sys> <prm>$this</prm>-><prm>request</prm>-><func>param</func>(1);
         <note>//aaa</note>
-        <sys>echo</sys> <prm>$this</prm>-><func>param</func>(2);
+        <sys>echo</sys> <prm>$this</prm>-><prm>request</prm>-><func>param</func>(2);
         <note>//default</note>
-        <sys>echo</sys> <prm>$this</prm>-><func>param</func>(3, <str>'default'</str>);
+        <sys>echo</sys> <prm>$this</prm>-><prm>request</prm>-><func>param</func>(3, <str>'default'</str>);
     }
 }</pre>
 
@@ -1662,15 +1678,15 @@ Logger::<func>memory</func>(<str>'end-memory'</str>);</pre>
         <note>//23, test, default</note>
         <sys>echo</sys> <str>"<prm>$id</prm>, <prm>$name</prm>, <prm>$prm</prm></prm>"</str>;
         <note>//23</note>
-        <sys>echo</sys> <prm>$this</prm>-><func>param</func>(<str>'id'</str>);
+        <sys>echo</sys> <prm>$this</prm>-><prm>request</prm>-><func>param</func>(<str>'id'</str>);
         <note>//demo</note>
-        <sys>echo</sys> <prm>$this</prm>-><func>param</func>(<str>'name'</str>);
+        <sys>echo</sys> <prm>$this</prm>-><prm>request</prm>-><func>param</func>(<str>'name'</str>);
         <note>//default</note>
-        <sys>echo</sys> <prm>$this</prm>-><func>param</func>(<str>'prm'</str>, <str>'default'</str>);
+        <sys>echo</sys> <prm>$this</prm>-><prm>request</prm>-><func>param</func>(<str>'prm'</str>, <str>'default'</str>);
 
         <note>// 不带参数话模式的变量 将顺序从第0位开始</note>
         <note>// demo</note>
-        <sys>echo</sys> <prm>$this</prm>-><func>param</func>(0);
+        <sys>echo</sys> <prm>$this</prm>-><prm>request</prm>-><func>param</func>(0);
     }
 }</pre>
         <p><code>注意：</code>使用变量化传递后，方法中默认参数将不会捕获非变量化的参数，如上例的<code>demo</code>需要通过<code>param</code>方法获取</p>
@@ -1680,13 +1696,88 @@ Logger::<func>memory</func>(<str>'end-memory'</str>);</pre>
             所以在<code>Logger</code>调试类中，<code>info/error/debug/warning</code>这几个方法将改为在终端输出</p>
         <p>同时也可以继续调用<code>Logger::addLog</code>和<code>Logger::addError</code>方法来进行写日志的操作</p>
         <p>日志目录则保存在<code>/logs/shell/</code>目录下，请确保该目录有<code>写权限</code>。格式与http模式保持一致。</p>
-        <p><code>注意:</code>当程序返回<code>$this->error($msg)</code>的时候，系统会默认调用<code>Logger::addError($msg)</code>，请勿重复调用。</p>
+        <p><code>注意:</code>当程序返回<code>$this->response->error($msg)</code>的时候，系统会默认调用<code>Logger::addError($msg)</code>，请勿重复调用。</p>
+    </div>
+
+    <div class="bs-docs-section">
+        <h1 id="model" class="page-header">模型数据</h1>
+        <p>用户可以在<code>/app/model/</code>下自定义model数据类，通过<code>App::$model</code>获取，例如：</p>
+        <p><code>App::$model->person</code> 为当前用户，可在<code>/app/model/person.php</code>中定义</p>
+
+        <h2 id="model-demo">简单示例</h2>
+        <p>除了系统预设的<code>person</code>模型外，用户也可自定义模型，例如我们新建一个<code>team</code>模型</p>
+        <p>第一步，我们在<code>/app/model/</code>目录或者子目录/孙目录下新建一个文件<code>/app/model/team.php</code></p>
+        <pre class="code"><note>// team.php</note>
+<sys>namespace</sys> app\model;
+<sys>use</sys> App;
+<note>/**
+* @property \app\dao\teamDAO $teamDAO
+* @property \app\dao\userDAO $userDAO
+*/</note>
+<sys>class</sys> team <sys>extends</sys> baseModel
+{
+    <note>/**
+    * @var array 单例对象
+    */</note>
+    <sys>protected static</sys> <prm>$_instance</prm> = [];
+
+    <note>/**
+    * 构造函数
+    * @param $id
+    */</note>
+    <sys>protected function</sys> <func>__construct</func>(<prm>$id</prm>)
+    {
+        <prm>$this</prm>-><prm>DAO</prm> = <prm>$this</prm>-><prm>teamDAO</prm>;
+        <sys>if</sys> (<prm>$id</prm> !== <sys>NULL</sys>){
+            <prm>$this</prm>-><prm>_data</prm> = <prm>$this</prm>-><prm>DAO</prm>-><func>getByPk</func>(<prm>$id</prm>);
+            <prm>$this</prm>-><prm>_pk</prm> = <prm>$id</prm>;
+        }
+    }
+
+    <note>/**
+    * 自定义方法 返回用户人数
+    */</note>
+    <sys>public function</sys> <func>getTotal</func>()
+    {
+        <note>// 获取team_id标记为当前team的用户数</note>
+        <sys>return</sys> <prm>$this</prm>-><prm>userDAO</prm>-><func>filter</func>([<str>'team_id'</str>=><prm>$this</prm>-><prm>id</prm>])-><func>count</func>();
+    }
+}</pre>
+
+        <p>然后就可以在代码中调用了，例如一个标记团队vip等级的功能，如下：</p>
+        <pre class="code"><note>// 获取team数据模型</note>
+<prm>$team</prm> = App::<prm>$model</prm>-><func>team</func>(<prm>$id</prm>)
+<sys>if</sys> (<prm>$team</prm>-><func>getTotal</func>() > 100) {
+    <note>// 修改对应数据库字段并保存，以下方法为baseModel中公共方法，继承baseModel即可使用</note>
+    <prm>$team</prm>-><prm>vipLevel</prm> = 1;
+    <prm>$team</prm>-><func>save</func>();
+}</pre>
+        <p><code>注意</code>：类名，文件名，model变量名，三者需要保持一致，否者系统会找不到对应的模型。</p>
+
+        <p>数据模型也可以定义参数的调用方式，或者多参数模式的函数调用方式，都通过<code>init</code>方法来实现</p>
+        <p><code>App::$model->team</code> 相当于调用 <code>\app\model\team::init()</code></p>
+        <p><code>App::$model->team(10, false)</code> 相当于调用 <code>\app\model\team::init(10, false)</code></p>
+        <p>所以只需要覆盖掉<code>baseModel</code>中的<code>init</code>方法，即可自定义初始化模型了。</p>
+
+        <p>另外，可以在<code>/lib/Model.php</code>中添加 <code>@property</code> 和  <code>@method</code> 使得IDE能够认识变量并具有补全的功能。 </p>
+        <pre class="code"><note>/**
+* Class Model
+* @package biny\lib
+* @property \app\model\person $person
+* @method \app\model\person person($id)
+* @method \app\model\team team($id)
+*/</note></pre>
+
+        <h1 id="model-get" class="page-header">模型获取</h1>
+        <p>todo</p>
+
     </div>
 
     <div class="bs-docs-section">
         <h1 id="other" class="page-header">其他</h1>
         <p>系统有很多单例都可以直接通过<code>App::$base</code>直接获取</p>
         <p><code>App::$base->request</code> 为当前请求，可获取当前地址，客户端ip等</p>
+        <p><code>App::$base->response</code> 为返回对象，可设置返回content-type，json内容等</p>
         <p><code>App::$base->cache</code> 为请求静态缓存，只在当前请求中有效</p>
         <p><code>App::$base->session</code> 为系统session，可直接获取和复制，设置过期时间</p>
         <p><code>App::$base->memcache</code> 为系统memcache，可直接获取和复制，设置过期时间</p>
@@ -1767,73 +1858,9 @@ App::<prm>$base</prm>-><prm>session</prm>-><func>clear</func>();</pre>
         <p><code>getCookie</code>参数为需要的cookie键值，如果不传，则返回全部cookie，以数组结构返回</p>
         <pre class="code"><prm>$param</prm> = App::<prm>$base</prm>-><prm>request</prm>-><func>getCookie</func>(<str>'param'</str>);</pre>
         <p><code>setCookie</code>参数有4个，分别为键值，值，过期时间(单位秒)，cookie所属路径，过期时间不传默认1天，路径默认<code>'/'</code></p>
-        <pre class="code">App::<prm>$base</prm>-><prm>request</prm>-><func>setCookie</func>(<str>'param'</str>, <str>'test'</str>, 86400, <str>'/'</str>);</pre>
+        <pre class="code">App::<prm>$base</prm>-><prm>response</prm>-><func>setCookie</func>(<str>'param'</str>, <str>'test'</str>, 86400, <str>'/'</str>);</pre>
 
-        <h2 id="other-model">模型数据</h2>
-        <p>用户可以在<code>/app/model/</code>下自定义model数据类，通过<code>App::$model</code>获取，例如：</p>
-        <p><code>App::$model->person</code> 为当前用户，可在<code>/app/model/person.php</code>中定义</p>
-        <p>除了系统预设的<code>person</code>模型外，用户也可自定义模型，例如我们新建一个<code>team</code>模型</p>
-        <p>第一步，我们在<code>/app/model/</code>目录或者子目录/孙目录下新建一个文件<code>/app/model/team.php</code></p>
-        <pre class="code"><note>// team.php</note>
-<sys>namespace</sys> app\model;
-<sys>use</sys> App;
-<note>/**
-* @property \app\dao\teamDAO $teamDAO
-* @property \app\dao\userDAO $userDAO
-*/</note>
-<sys>class</sys> team <sys>extends</sys> baseModel
-{
-    <note>/**
-     * @var array 单例对象
-     */</note>
-    <sys>protected static</sys> <prm>$_instance</prm> = [];
 
-    <note>/**
-     * 构造函数
-     * @param $id
-     */</note>
-    <sys>protected function</sys> <func>__construct</func>(<prm>$id</prm>)
-    {
-        <prm>$this</prm>-><prm>DAO</prm> = <prm>$this</prm>-><prm>teamDAO</prm>;
-        <sys>if</sys> (<prm>$id</prm> !== <sys>NULL</sys>){
-            <prm>$this</prm>-><prm>_data</prm> = <prm>$this</prm>-><prm>DAO</prm>-><func>getByPk</func>(<prm>$id</prm>);
-            <prm>$this</prm>-><prm>_pk</prm> = <prm>$id</prm>;
-        }
-    }
-
-    <note>/**
-     * 自定义方法 返回用户人数
-     */</note>
-    <sys>public function</sys> <func>getTotal</func>()
-    {
-        <note>// 获取team_id标记为当前team的用户数</note>
-        <sys>return</sys> <prm>$this</prm>-><prm>userDAO</prm>-><func>filter</func>([<str>'team_id'</str>=><prm>$this</prm>-><prm>id</prm>])-><func>count</func>();
-    }
-}</pre>
-
-        <p>然后就可以在代码中调用了，例如一个标记团队vip等级的功能，如下：</p>
-        <pre class="code"><note>// 获取team数据模型</note>
-<prm>$team</prm> = App::<prm>$model</prm>-><func>team</func>(<prm>$id</prm>)
-<sys>if</sys> (<prm>$team</prm>-><func>getTotal</func>() > 100) {
-    <note>// 修改对应数据库字段并保存，以下方法为baseModel中公共方法，继承baseModel即可使用</note>
-    <prm>$team</prm>-><prm>vipLevel</prm> = 1;
-    <prm>$team</prm>-><func>save</func>();
-}</pre>
-        <p><code>注意</code>：类名，文件名，model变量名，三者需要保持一致，否者系统会找不到对应的模型。</p>
-
-        <p>数据模型也可以定义参数的调用方式，或者多参数模式的函数调用方式，都通过<code>init</code>方法来实现</p>
-        <p><code>App::$model->team</code> 相当于调用 <code>\app\model\team::init()</code></p>
-        <p><code>App::$model->team(10, false)</code> 相当于调用 <code>\app\model\team::init(10, false)</code></p>
-        <p>所以只需要覆盖掉<code>baseModel</code>中的<code>init</code>方法，即可自定义初始化模型了。</p>
-
-        <p>另外，可以在<code>/lib/Model.php</code>中添加 <code>@property</code> 和  <code>@method</code> 使得IDE能够认识变量并具有补全的功能。 </p>
-        <pre class="code"><note>/**
- * Class Model
- * @package biny\lib
- * @property \app\model\person $person
- * @method \app\model\person person($id)
- * @method \app\model\team team($id)
- */</note></pre>
 
         <div style="height: 200px"></div>
     </div>
@@ -1930,13 +1957,20 @@ App::<prm>$base</prm>-><prm>session</prm>-><func>clear</func>();</pre>
                 </ul>
             </li>
             <li>
+                <a href="#model">模型数据</a>
+                <ul class="nav">
+                    <li><a href="#model-demo">简单示例</a></li>
+                    <li><a href="#model-get">模型获取</a></li>
+                </ul>
+            </li>
+            <li>
                 <a href="#other">其他</a>
                 <ul class="nav">
                     <li><a href="#other-request">Request</a></li>
+                    <li><a href="#other-response">Response</a></li>
                     <li><a href="#other-cache">Cache</a></li>
                     <li><a href="#other-session">Session</a></li>
                     <li><a href="#other-cookie">Cookie</a></li>
-                    <li><a href="#other-model">模型数据</a></li>
                 </ul>
             </li>
 

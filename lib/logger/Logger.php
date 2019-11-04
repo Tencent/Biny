@@ -223,7 +223,12 @@ class Logger
                 date('Y-m-d H:i:s'), substr(microtime(), 2, 3), RUN_SHELL ? 'localhost' : App::$base->request->getUserIp(),
                 App::$base->request->getUrl(false), $key ? "$key => " : '');
             $message = "$header$message\n";
-            $filename = sprintf("%s/error_%s.log", App::$log_root, date('Y-m-d'));
+            if (self::$config['reorganize']) {
+                $filename = sprintf("%s/error.log", App::$log_root);
+                self::moveLog('error');
+            } else {
+                $filename = sprintf("%s/error_%s.log", App::$log_root, date('Y-m-d'));
+            }
             file_put_contents($filename, $message, FILE_APPEND | LOCK_EX);
         }
     }
@@ -249,8 +254,45 @@ class Logger
                 date('Y-m-d H:i:s'), substr(microtime(), 2, 3), RUN_SHELL ? App::$base->request->getBaseUrl() : App::$base->request->getUserIp(),
                 $key ? "$key => " : '');
             $message = "$header$message\n";
-            $filename = sprintf("%s/log_%s.log", App::$log_root, date('Y-m-d'));
+            $name = RUN_SHELL ? 'shell' : 'log';
+            if (self::$config['reorganize']) {
+                $filename = sprintf("%s/%s.log", App::$log_root, $name);
+                self::moveLog('error');
+            } else {
+                $filename = sprintf("%s/%s_%s.log", App::$log_root, $name, date('Y-m-d'));
+            }
             file_put_contents($filename, $message, FILE_APPEND | LOCK_EX);
+        }
+    }
+
+    /**
+     * 日志文件归档
+     */
+    private static function moveLog($name)
+    {
+        $file = App::$log_root.DS."$name.log";
+        if (file_exists($file)) {
+            $ctime = filectime($file);
+            if (date('Y-m-d', $ctime) === date('Y-m-d')) {
+                return;
+            }
+            if (filesize($file) > 0) {
+                $dir = App::$log_root.DS.date('Ym', $ctime);
+                if (!is_dir($dir)) {
+                    mkdir($dir);
+                }
+                $dict = $dir."/".$name."-".date('Y-m-d', $ctime).".log";
+                if (!file_exists($dict)) {
+                    rename($file, $dict);
+                }
+            } else {
+                unlink($file);
+                touch($file);
+                chmod($file, 0777);
+            }
+        } else {
+            touch($file);
+            chmod($file, 0777);
         }
     }
 }

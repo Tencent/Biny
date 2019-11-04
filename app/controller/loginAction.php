@@ -18,11 +18,11 @@ class loginAction extends baseAction
     public function action_index()
     {
         if (App::$model->person->exist()){
-            App::$base->request->redirect('/');
+            $this->response->redirect('/');
         }
         $username = $this->param('username');
         if (!$username){
-            return $this->display('main/login');
+            return $this->response->display('main/login');
         }
         if ($user = $this->userDAO->filter(['name'=>$username])->find()){
             App::$model->person($user['id'])->login();
@@ -32,9 +32,9 @@ class loginAction extends baseAction
         }
         if ($lastUrl = App::$base->session->lastUrl){
             unset(App::$base->session->lastUrl);
-            App::$base->request->redirect($lastUrl);
+            $this->response->redirect($lastUrl);
         } else {
-            App::$base->request->redirect('/');
+            $this->response->redirect('/');
         }
     }
 

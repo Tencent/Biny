@@ -7,7 +7,7 @@ return array(
 
         //静态化配置
         'routeRule' => array(
-//            '<method:\w+>/test/<id:\d+>.html' => 'test/<method>',
+//            '<method:\w+>/<id:\d+>.html' => 'demo/<method>',
 //            'rest/<rid:[\d]+>/<method:\w+>/<mid:\d+>' => 'rest/<method>',
         ),
     ),
@@ -61,6 +61,8 @@ return array(
         'errorLevel' => NOTICE,
         //慢查询阀值
         'slowQuery' => 1000,
+        // 日志归档
+        'reorganize' => true
     ),
 
     // 数据库相关配置
