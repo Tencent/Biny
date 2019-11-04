@@ -1711,10 +1711,6 @@ Logger::<func>memory</func>(<str>'end-memory'</str>);</pre>
 <sys>namespace</sys> app\model;
 <sys>use</sys> biny\lib\ModelArray;
 <note>/**
- * Created by PhpStorm.
- * User: billge
- * Date: 19-11-04
- * Time: 下午5:37
  * @method person creator()
  * @method person admin()
  *
