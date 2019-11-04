@@ -35,11 +35,10 @@ class demoAction extends baseAction
         return $view;
     }
 
-    public function action_test()
+    public function action_model()
     {
-        Event::on(onSql);
-        $ret = $this->userDAO->join($this->testDAO, ['id'=>'user_id'])
-            ->order([[],['type'=>['a','b','c','d','e']]])->order([['id'=>'desc']])->limit(2)->query();
-        return $this->correct($ret);
+        $team = App::$model->team(6);
+        $user = $team->admin();
+        $this->response->correct($user->exist() ? $user->values() : []);
     }
 }

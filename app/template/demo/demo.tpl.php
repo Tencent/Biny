@@ -1707,36 +1707,27 @@ Logger::<func>memory</func>(<str>'end-memory'</str>);</pre>
         <h2 id="model-demo">简单示例</h2>
         <p>除了系统预设的<code>person</code>模型外，用户也可自定义模型，例如我们新建一个<code>team</code>模型</p>
         <p>第一步，我们在<code>/app/model/</code>目录或者子目录/孙目录下新建一个文件<code>/app/model/team.php</code></p>
-        <pre class="code"><note>// team.php</note>
+        <pre class="code"><note>// /app/model/team.php</note>
 <sys>namespace</sys> app\model;
-<sys>use</sys> App;
+<sys>use</sys> biny\lib\ModelArray;
 <note>/**
-* @property \app\dao\teamDAO $teamDAO
-* @property \app\dao\userDAO $userDAO
-*/</note>
-<sys>class</sys> team <sys>extends</sys> baseModel
+ * Created by PhpStorm.
+ * User: billge
+ * Date: 19-11-04
+ * Time: 下午5:37
+ * @method person creator()
+ * @method person admin()
+ *
+ * @property $id int
+ * @property $name string
+ */</note>
+<sys>class</sys> team <sys>extends</sys> ModelArray
 {
-    <note>/**
-    * @var array 单例对象
-    */</note>
-    <sys>protected static</sys> <prm>$_instance</prm> = [];
+    <sys>protected</sys> <prm>$DAO</prm> = <str>'teamDAO'</str>;
 
     <note>/**
-    * 构造函数
-    * @param $id
-    */</note>
-    <sys>protected function</sys> <func>__construct</func>(<prm>$id</prm>)
-    {
-        <prm>$this</prm>-><prm>DAO</prm> = <prm>$this</prm>-><prm>teamDAO</prm>;
-        <sys>if</sys> (<prm>$id</prm> !== <sys>NULL</sys>){
-            <prm>$this</prm>-><prm>_data</prm> = <prm>$this</prm>-><prm>DAO</prm>-><func>getByPk</func>(<prm>$id</prm>);
-            <prm>$this</prm>-><prm>_pk</prm> = <prm>$id</prm>;
-        }
-    }
-
-    <note>/**
-    * 自定义方法 返回用户人数
-    */</note>
+     * 自定义方法 返回用户人数
+     */</note>
     <sys>public function</sys> <func>getTotal</func>()
     {
         <note>// 获取team_id标记为当前team的用户数</note>
@@ -1746,7 +1737,7 @@ Logger::<func>memory</func>(<str>'end-memory'</str>);</pre>
 
         <p>然后就可以在代码中调用了，例如一个标记团队vip等级的功能，如下：</p>
         <pre class="code"><note>// 获取team数据模型</note>
-<prm>$team</prm> = App::<prm>$model</prm>-><func>team</func>(<prm>$id</prm>)
+<prm>$team</prm> = App::<prm>$model</prm>-><func>team</func>(<prm>$id</prm>);
 <sys>if</sys> (<prm>$team</prm>-><func>getTotal</func>() > 100) {
     <note>// 修改对应数据库字段并保存，以下方法为baseModel中公共方法，继承baseModel即可使用</note>
     <prm>$team</prm>-><prm>vipLevel</prm> = 1;
@@ -1768,8 +1759,61 @@ Logger::<func>memory</func>(<str>'end-memory'</str>);</pre>
 * @method \app\model\team team($id)
 */</note></pre>
 
-        <h1 id="model-get" class="page-header">模型获取</h1>
-        <p>todo</p>
+        <h1 id="model-relate" class="page-header">模型关系</h1>
+        <p>模型和模型之间是可以通过配置传递获取的，比如团队<code>team</code>的创建者<code>person</code>就可以直接通过配置获取</p>
+        <p>首先确定两个模型之间的关系，比如<code>team.creator = person.id</code>，那么就如下配置：</p>
+        <pre class="code"><note>// /app/model/team.php</note>
+<note>/**
+* @var array 模型关系
+*/</note>
+<sys>protected</sys> <prm>$_relates</prm> = [
+<note>//    '方法名' => array('模型名', '对应参数名'),</note>
+    <str>'creator'</str> => [<str>'person'</str>, <str>'creator'</str>],
+];</pre>
+        <p>有了这层配置之后，我们即可在team模型中获取对应的creator模型了</p>
+        <pre class="code"><note>// 获取id=3的team模型</note>
+<prm>$team</prm> = App::<prm>$model</prm>-><func>team</func>(<prm>$id</prm>);
+<sys>if</sys> (<prm>$team</prm>-><func>exists</func>()) {
+    <prm>$user</prm> = <prm>$team</prm>-><func>creator</func>();
+    <note>// Logger可以直接打印该模型对象</note>
+    Logger::<func>info</func>(<prm>$user</prm>);
+    <prm>$this</prm>-><prm>response</prm>-><func>correct</func>(<prm>$user</prm>-><func>exist</func>() ? <prm>$user</prm>-><func>values</func>() : []);
+}</pre>
+
+        <p>在日常使用中，模型也可以嵌套使用，使代码更直观简洁</p>
+        <pre class="code"><note>// 获取一个活动实例</note>
+<prm>$act</prm> = App::<prm>$model</prm>-><func>act</func>(<prm>$actId</prm>);
+<note>// 获取活动开发人所在公司的公司名称</note>
+<prm>$corpName</prm> = <prm>$act</prm>-><func>creator</func>()-><func>corp</func>()-><prm>name</prm>;</pre>
+
+        <h1 id="model-reserve" class="page-header">反向关联</h1>
+        <p>上面的模型关联都是以当前模型的值去关联上另一个模型的PK键值，比如上例中的<code>$team->creator()</code></p>
+        <p>相当于获取了<code>App::$model->person($team->creator)</code>对象</p>
+        <p>但有些时候模型对象不一定都是pk键值关联，Biny也提供了反向关联的方式获取对象</p>
+
+        <pre class="code"><note>// /app/model/team.php</note>
+<note>/**
+* @var array 模型关系
+*/</note>
+<sys>protected</sys> <prm>$_relates</prm> = [
+<note>//    '方法名' => array('模型名', '对应参数名'|array(反向DAO, 反向关联key[, pk]))</note>
+    <str>'admin'</str> => [<str>'person'</str>, [<str>'userDAO'</str>, <str>'adminTeam'</str>]],
+];</pre>
+        <p>这时调用<code>$team->admin()</code>时获取的则是<code>team.id = person.adminTeam</code>关系的person模型</p>
+
+        <pre class="code"><note>// /app/model/team.php</note>
+<note>/**
+* @var array 模型关系
+*/</note>
+<sys>protected</sys> <prm>$_relates</prm> = [
+<note>//    '方法名' => array('模型名', '对应参数名'|array(反向DAO, 反向关联key[, pk]))</note>
+    <str>'admin'</str> => [<str>'person'</str>, [<str>'userDAO'</str>, <str>'adminType'</str>, <str>'type'</str>]],
+];</pre>
+        <p>而这个例子中<code>$team->admin()</code>获取的则是<code>team.type = person.adminType</code>关系的person模型</p>
+
+        <p>另外需要注意的是模型尽量使用<code>init</code>方法来获取单例对象，这样可以大大减少对DB的反复请求。</p>
+        <p>而如果没有<code>init</code>方法则相当于每次都会<code>new</code>一个模型对象。</p>
+
 
     </div>
 
@@ -1784,7 +1828,7 @@ Logger::<func>memory</func>(<str>'end-memory'</str>);</pre>
         <p><code>App::$base->redis</code> 为系统redis，可直接获取和复制，设置过期时间</p>
 
         <h2 id="other-request">Request</h2>
-        <p>在进入<code>Controller</code>层后，<code>Request</code>就可以被调用了，以下是几个常用操作</p>
+        <p>Action中<code>$this->request</code>等同于全局<code>App::$base->request</code>对象，以下是几个常用操作</p>
         <pre class="code"><note>// 以请求 /test/demo/?id=10 为例</note>
 
 <note>// 获取Action名 返回test</note>
@@ -1819,6 +1863,22 @@ App::<prm>$base</prm>-><prm>request</prm>-><func>getUserAgent</func>();
 
 <note>// 获取用户IP</note>
 App::<prm>$base</prm>-><prm>request</prm>-><func>getUserIP</func>();</pre>
+
+        <h2 id="other-response">Response</h2>
+        <p>Action中<code>$this->response</code>等同于全局<code>App::$base->response</code>对象，以下是几个常用操作</p>
+        <pre class="code"><note>// response可以结束请求并返回对象</note>
+
+<note>// 返回tpl页面，最后一个参数默认true，会返回一个response对象，false则直接返回页面</note>
+App::<prm>$base</prm>-><prm>response</prm>-><func>display</func>(<prm>$tpl</prm>, <prm>$param</prm>, <prm>$object</prm>, <sys>false</sys>);
+
+<note>// 返回json对象</note>
+App::<prm>$base</prm>-><prm>response</prm>-><func>json</func>(<prm>$array</prm>);
+
+<note>// 返回错误</note>
+App::<prm>$base</prm>-><prm>response</prm>-><func>error</func>(<prm>$msg</prm>);
+
+<note>// 跳转链接</note>
+App::<prm>$base</prm>-><prm>response</prm>-><func>redirect</func>(<prm>$url</prm>);</pre>
 
         <h2 id="other-cache">Cache</h2>
         <p>框架提供了<code>程序运行生命周期</code>内的全局缓存，使用非常简单</p>
@@ -1960,7 +2020,8 @@ App::<prm>$base</prm>-><prm>session</prm>-><func>clear</func>();</pre>
                 <a href="#model">模型数据</a>
                 <ul class="nav">
                     <li><a href="#model-demo">简单示例</a></li>
-                    <li><a href="#model-get">模型获取</a></li>
+                    <li><a href="#model-relate">模型关系</a></li>
+                    <li><a href="#model-reserve">反向关联</a></li>
                 </ul>
             </li>
             <li>

@@ -13,15 +13,15 @@
 
 namespace biny\lib;
 use App;
-use app\model\person;
 use ReflectionClass;
 use ReflectionException;
 
 /**
  * Class Model
  * @package biny\lib
- * @property person $person
- * @method person person($id)
+ * @property \app\model\person $person
+ * @method \app\model\person person($id)
+ * @method \app\model\team team($id)
  */
 class Model
 {

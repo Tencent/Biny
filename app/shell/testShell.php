@@ -18,6 +18,6 @@ class testShell extends Shell
 
     public function action_index()
     {
-        return $this->correct('success');
+        $this->response->correct('success');
     }
 }
