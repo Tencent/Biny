@@ -50,10 +50,9 @@ class BinyException extends \ErrorException
             } else {
                 if (App::$base->request->isShowTpl() || !App::$base->request->isAjax()){
                     $params['webRoot'] = App::$base->router->rootPath;
-                    echo new Response($this->config["exceptionTpl"], ['msg'=>$this->config['messages'][$html] ?: "系统数据异常：$html"], $params);
+                    App::$base->response->display($this->config["exceptionTpl"], ['msg'=>$this->config['messages'][$html] ?: "系统数据异常：$html"], $params, false);
                 } else {
-                    $data = ["flag" => false, "error" => $this->config['messages'][$html] ?: "系统数据异常：$html"];
-                    echo new JSONResponse($data);
+                    echo App::$base->response->error($this->config['messages'][$html] ?: "系统数据异常：$html");
                 }
             }
             die();
