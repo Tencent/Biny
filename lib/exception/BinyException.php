@@ -14,7 +14,6 @@ use App;
 class BinyException extends \ErrorException
 {
     private $config;
-    private static $errCount = 0;
 
     /**
      * 构造函数
@@ -24,18 +23,13 @@ class BinyException extends \ErrorException
      */
     public function __construct($code, $params=[], $html="500")
     {
-        self::$errCount++;
-        if (self::$errCount > 5) {
-            echo "<b>Fatal error</b>: Endless loop <b>{$this->getFile()}</b>:<b>{$this->getLine()}</b>\nStack trace:\n{$this->getTraceAsString()}";
-            exit;
-        }
-        $this->config = App::$base->config->get('exception');
-        $message = self::fmt_code($code, $params);
-        Event::trigger(onException, [$code, [$message, $this->getTraceAsString()]]);
-        if (class_exists('biny\lib\Database')){
-            Database::rollback();
-        }
         try{
+            $this->config = App::$base->config->get('exception');
+            $message = self::fmt_code($code, $params);
+            Event::trigger(onException, [$code, [$message, $this->getTraceAsString()]]);
+            if (class_exists('biny\lib\Database')){
+                Database::rollback();
+            }
             if (RUN_SHELL){
                 echo "<b>Fatal error</b>:  $message in <b>{$this->getFile()}</b>:<b>{$this->getLine()}</b>\nStack trace:\n{$this->getTraceAsString()}";
                 exit;
@@ -58,8 +52,12 @@ class BinyException extends \ErrorException
             die();
         } catch (\Exception $ex) {
             //防止异常的死循环
-            echo "system Error";
-            exit;
+            if (SYS_DEBUG) {
+                echo "<b>Fatal error</b>: Endless loop <b>{$this->getFile()}</b>:<b>{$this->getLine()}</b>\nStack trace:\n{$this->getTraceAsString()}";
+            } else {
+                echo "SYSTEM ERROR";
+            }
+            die();
         }
     }
 
