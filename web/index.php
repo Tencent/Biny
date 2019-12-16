@@ -1,6 +1,10 @@
 <?php
 date_default_timezone_set('Asia/Shanghai');
 
+if (preg_match("/cli/i", php_sapi_name())) {
+    die("if you want to run in shell model, you can use:\nphp shell.php <router> <param>\n");
+}
+
 defined('SYS_DEBUG') or define('SYS_DEBUG', true);
 defined('SYS_CONSOLE') or define('SYS_CONSOLE', true);
 //dev pre pub
