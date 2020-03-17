@@ -31,14 +31,13 @@ class demoAction extends baseAction
         $lang && Language::setLanguage($lang, Constant::month);
         Logger::info('you can print some information in console like time: '.date('Y-m-d H:i:s'), 'info');
         $view = $this->display('demo/demo', ['lan'=>Language::getLanguage('cn')]);
-        $view->title = "Biny Framework Wiki";
+        $view->title = "Biny框架文档";
         return $view;
     }
 
-    public function action_model()
+    public function action_test()
     {
-        $team = App::$model->team(6);
-        $user = $team->admin();
-        $this->response->correct($user->exist() ? $user->values() : []);
+        $ret = [];
+        $this->response->correct($ret['aaa'] === false);
     }
 }

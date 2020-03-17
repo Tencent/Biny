@@ -5,7 +5,7 @@
 <!-- Docs master nav -->
 <header class="navbar navbar-static-top navbar-inverse" id="top" role="banner">
     <div class="container">
-        <a href="<?=$webRoot?>/demo/" class="navbar-brand">Biny Framework Wiki</a>
+        <a href="<?=$webRoot?>/demo/" class="navbar-brand">Biny框架文档</a>
         <div class="pull-right" style="margin-right: 15%">
             <a class="navbar-brand <?php if ($PRM['lan']==='cn'){?>active<?php } ?>" href="javascript:void(0)" onclick="changeLanguage('cn')">中文</a>
             <a class="navbar-brand <?php if ($PRM['lan']==='en'){?>active<?php } ?>" href="javascript:void(0)" onclick="changeLanguage('en')">English</a>
