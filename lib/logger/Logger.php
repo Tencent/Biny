@@ -257,7 +257,7 @@ class Logger
             $name = RUN_SHELL ? 'shell' : 'log';
             if (self::$config['reorganize']) {
                 $filename = sprintf("%s/%s.log", App::$log_root, $name);
-                self::moveLog('error');
+                self::moveLog('log');
             } else {
                 $filename = sprintf("%s/%s_%s.log", App::$log_root, $name, date('Y-m-d'));
             }
