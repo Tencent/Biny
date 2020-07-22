@@ -104,18 +104,6 @@ class Action
         }
     }
 
-    /**
-     * Display to template
-     * @param $view
-     * @param array $params
-     * @param array $objects
-     * @return Response
-     */
-    public function display($view, $params=[], $objects=[])
-    {
-        return $this->response->display($view, $params, $objects);
-    }
-
 
     /**
      * 获取Form
@@ -227,5 +215,18 @@ class Action
     {
         Logger::warn('please use $this->response->error() instead');
         return $this->response->error($msg, $json, $encode);
+    }
+
+    /**
+     * Display to template
+     * @param $view
+     * @param array $params
+     * @param array $objects
+     * @return Response
+     */
+    public function display($view, $params=[], $objects=[])
+    {
+        Logger::warn('please use $this->response->display() instead');
+        return $this->response->display($view, $params, $objects);
     }
 }

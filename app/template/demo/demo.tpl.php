@@ -1353,10 +1353,10 @@ Event::<func>off</func>(<const>onSql</const>);</pre>
         <h2 id="view-language">多语言</h2>
         <p>Biny中支持多语言的使用，可指定cookie中存储当前语言环境。在<code>/config/config.php</code>中对字段<p>languageCookie</p>进行配置。而多语言的渲染分为两种。</p>
         <p>1. 不同的tpl渲染文件</p>
-        <p><code>Action</code>文件中当调用<code>$this->response->display('xxx')</code>方法时，默认会查找<code>/app/template/main/xxx.tpl.php</code>模板文件</p>
+        <p><code>Action</code>文件中当调用<code>$this->response->display('main/xxx')</code>方法时，默认会查找<code>/app/template/main/xxx.tpl.php</code>模板文件</p>
         <p>而多语言环境下只需要在<code>/app/template/main/</code>目录下创建多个语言文件，如<code>xxx.en.tpl.php</code>，<code>xxx.jp.tpl.php</code>。</p>
         <p>框架会自动根据当前的语言环境，自动匹配对应的<code>xxx.{$lan}.tpl.php</code>文件做模板渲染。</p>
-        <p><img src="http://r.photo.store.qq.com/psb?/V130E8h51JH2da/kBBsyiA42CgAEW9f19Y2lNfVxXZvWD0.xFqVmzfQvkc!/o/dMUAAAAAAAAA&bo=5ACYAOQAmAADEDU!"></p>
+        <p><img src="//shp.qpic.cn/ULink/0/684accc911128005af17e486cb298515/0"></p>
 
         <p>2. 同tpl渲染文件下的文本翻译</p>
         <p>Biny中提供了语言翻译配置文件，在根目录<code>/language</code>。可以在该目录下配置多个语言文件，如<code>en.php</code>，<code>jp.php</code>等。</p>
