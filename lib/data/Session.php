@@ -52,6 +52,9 @@ class Session
         if ($lifetime = $this->config['maxlifetime']){
             ini_set("session.gc_maxlifetime", $lifetime);
         }
+        if ($lifetime = $this->config['cookie_lifetime']){
+            ini_set("session.cookie_lifetime", $lifetime);
+        }
         @session_start();
         $this->_data = $_SESSION;
     }

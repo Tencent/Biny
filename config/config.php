@@ -75,8 +75,9 @@ return array(
     'cache' => array(
         'pkCache' => 'tb:%s',
         'session' => array(
-            'save_handler'=>'files',  //redis memcache
-            'maxlifetime' => 86400    //过期时间s
+            'save_handler'=>'files',  //files redis memcache
+            'maxlifetime' => 86400,    //过期时间s
+            'cookie_lifetime' => 86400 // cookie session_id过期时间s
         ),
         // 开启redis自动序列化存储
         'serialize' => true,
