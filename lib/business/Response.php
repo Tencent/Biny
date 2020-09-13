@@ -236,12 +236,3 @@ class Response {
         exit();
     }
 }
-
-/**
- * 获取多语言
- * @param $content
- * @return mixed
- */
-function _L($content){
-    return Language::getLanguage() ? Language::getContent($content) : $content;
-}
