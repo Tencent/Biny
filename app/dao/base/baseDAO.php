@@ -78,7 +78,16 @@ class baseDAO extends SingleDAO
         $cond = $this->buildPK($pk);
         $flag = $this->filter($cond)->update($sets);
         if ($flag && $this->_pkCache && $cache = $this->getCache($pk)){
-            $cache = array_merge($cache, $sets);
+            foreach ($sets as $k => $v) {
+                if (is_array($v)) {
+                    // ['type'=>['+'=>5]]
+                    foreach ($v as $cal => $num) {
+                        $cache[$k] = eval("return {$cache[$k]} $cal $num;");
+                    }
+                } else {
+                    $cache[$k] = $v;
+                }
+            }
             $this->setCache($pk, $cache);
         }
         return $flag;
