@@ -191,7 +191,7 @@ class Form
                     break;
 
                 default:
-                    $value = 'valid_'.$value[1];
+                    $value = 'valid_'.$value[0];
                     if (!isset($this->checkMethods[$value])){
                         if (!method_exists($this, $value)){
                             throw new BinyException(5002, [$value, get_class($this)]);
