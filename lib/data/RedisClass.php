@@ -77,6 +77,10 @@ class RedisClass
         if (!$fd) {
             throw new BinyException(4005, [$config['host'], $config['port']]);
         }
+        // 优先使用redis连接配置serialize设置
+        if (isset($config['serialize'])) {
+            $this->config['serialize'] = $config['serialize'];
+        }
     }
 
     public function get($key, $serialize=null)
