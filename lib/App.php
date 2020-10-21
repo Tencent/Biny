@@ -16,6 +16,7 @@ include __DIR__.'/exception/BinyException.php';
 include __DIR__.'/models/Model.php';
 
 use biny\lib\Config;
+use biny\lib\Language;
 use biny\lib\Request;
 use biny\lib\Response;
 use biny\lib\Session;
@@ -219,4 +220,13 @@ class App
         }
     }
 
+}
+
+/**
+ * 获取多语言
+ * @param $content
+ * @return mixed
+ */
+function _L($content){
+    return Language::getLanguage() ? Language::getContent($content) : $content;
 }

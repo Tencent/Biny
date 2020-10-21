@@ -36,6 +36,20 @@ class Session
     }
 
     /**
+     * 配置当前设置 save_handler / maxlifetime / cookie_lifetime
+     * @param $config
+     * @return $this
+     */
+    public function config($config)
+    {
+        $this->config = array_merge($this->config, $config);
+        if ($this->isActive()) {
+            $this->close();
+        }
+        return $this;
+    }
+
+    /**
      * session 已连接
      * @return bool
      */
@@ -49,11 +63,11 @@ class Session
             ini_set("session.save_handler", $this->config['save_handler']);
             ini_set("session.save_path", 'tcp://' . $cf['host'] . ':' . $cf['port']);
         }
-        if ($lifetime = $this->config['maxlifetime']){
-            ini_set("session.gc_maxlifetime", $lifetime);
+        if (isset($this->config['maxlifetime'])){
+            ini_set("session.gc_maxlifetime", $this->config['maxlifetime']);
         }
-        if ($lifetime = $this->config['cookie_lifetime']){
-            ini_set("session.cookie_lifetime", $lifetime);
+        if (isset($this->config['cookie_lifetime'])){
+            ini_set("session.cookie_lifetime", $this->config['cookie_lifetime']);
         }
         @session_start();
         $this->_data = $_SESSION;
