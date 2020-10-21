@@ -44,7 +44,7 @@ class Action
         }
         //判断是否维护中
         if (isMaintenance){
-            $this->response->display('Main/maintenance', [], ['webRoot' => App::$base->app_config->get('webRoot')], false);
+            $this->response->display('main/maintenance', [], ['webRoot' => App::$base->app_config->get('webRoot')], false);
         }
         if ($this->csrfValidate && !$this->request->validateCsrfToken()){
             header(App::$base->config->get(401, 'http'));
