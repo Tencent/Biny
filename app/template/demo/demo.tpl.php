@@ -729,6 +729,13 @@ App::<prm>$base</prm>-><prm>config</prm>-><func>get</func>(<str>'path'</str>, <s
         <p>也不具备缓存操作（<code>getByPK、updateByPK、deleteByPK</code>等）的功能</p>
         <p>如果需要使用上述功能，还是需要在<code>dao</code>目录下创建php文件自定义相关参数</p>
 
+        <p>另外在<code>Biny v2.10.6</code>之后可以使用<code>DAO::get('xxx')</code>的方式来获取DAO对象，使用起来更加便利</p>
+        <pre class="code"><note>// 等同于$this->userDAO->query()</note>
+<prm>$data</prm> = DAO::<func>get</func>(<str>'user'</str>)-><func>query</func>([<str>'id'</str>, <str>'name'</str>]);
+<note>// 在连表中效果也相同，映射表也同样支持</note>
+<prm>$data</prm> = DAO::<func>get</func>(<str>'user'</str>)-><func>join</func>(DAO::<func>get</func>(<str>'project'</str>), [<str>'projectId'</str>=><str>'id'</str>, <str>'type'</str>=><str>'type'</str>])-><func>query</func>();
+</pre>
+
         <h2 id="dao-simple">基础查询</h2>
         <p>DAO提供了<code>query</code>，<code>find</code>等基本查询方式，使用也相当简单</p>
         <pre class="code"><note>// testAction.php
