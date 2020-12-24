@@ -27,6 +27,15 @@ class DAO
     protected $dbConfig = 'database';
 
     /**
+     * @param $name
+     * @return SingleDAO|mixed
+     */
+    public static function get($name)
+    {
+        return Factory::create($name."DAO");
+    }
+
+    /**
      * @return string
      */
     public function getDbConfig()
