@@ -341,7 +341,7 @@ class SingleDAO extends DAO
                     }
                     $sets[] = "`{$key}`= ".join($k, $arr);
                 } else {
-                    $val = intval($val);
+                    $val = !is_numeric($val) ? intval($val) : $val;
                     $sets[] = "`{$key}`= `{$key}` {$k} {$val}";
                 }
             } else if ($value === null) {

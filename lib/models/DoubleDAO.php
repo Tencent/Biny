@@ -508,7 +508,7 @@ class DoubleDAO extends DAO
                         }
                         $sets[] = "`{$table}`.`{$key}`= ".join($k, $arr);
                     } else {
-                        $val = intval($val);
+                        $val = !is_numeric($val) ? intval($val) : $val;
                         $sets[] = "`{$table}`.`{$key}`= `{$table}`.`{$key}` {$k} {$val}";
                     }
                 } else if ($value === null) {
