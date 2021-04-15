@@ -1047,9 +1047,9 @@ App::<prm>$base</prm>-><prm>config</prm>-><func>get</func>(<str>'path'</str>, <s
 <prm>$filter</prm> = <prm>$this</prm>-><prm>userDAO</prm>-><func>filter</func>(<sys>array</sys>(
     <str>'not like'</str>=><sys>array</sys>(<str>'name'</str>=><str>'test'</str>, <str>'type'</str>=><str>'^admin'</str>, <str>'type'</str>=><str>'admin$'</str>),
 ));
-<note>// WHERE `user`.`name` REGEXP 'test.*'</note>
+<note>// WHERE `user`.`name` REGEXP 'test*'</note>
 <prm>$filter</prm> = <prm>$this</prm>-><prm>userDAO</prm>-><func>filter</func>(<sys>array</sys>(
-    <str>'regexp'</str>=><sys>array</sys>(<str>'name'</str>=><str>'test.*'</str>),
+    <str>'regexp'</str>=><sys>array</sys>(<str>'name'</str>=><str>'test*'</str>),
 ));</pre>
 
         <p>同时<code>filter/merge</code>也可以被迭代调用，以应对不确定筛选条件的复杂查询</p>
