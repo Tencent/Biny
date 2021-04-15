@@ -173,7 +173,7 @@ class DoubleDAO extends DAO
                             $where[] = "`{$table}`.`{$arrk}`{$key} NULL";
                         } else if (is_string($arrv)){
                             if (strtolower($key) == 'regexp') {
-                                $arrv = str_replace("'", "\'", $arrv);
+                                $arrv = str_replace("'", "\\'", $arrv);
                             } else {
                                 $arrv = $this->real_escape_string($arrv);
                             }
@@ -183,7 +183,7 @@ class DoubleDAO extends DAO
                         } else if (is_array($arrv)){
                             foreach ($arrv as $av){
                                 if (strtolower($key) == 'regexp') {
-                                    $av = str_replace("'", "\'", $av);
+                                    $av = str_replace("'", "\\'", $av);
                                 } else {
                                     $av = $this->real_escape_string($av);
                                 }

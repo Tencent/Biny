@@ -174,7 +174,7 @@ class SingleDAO extends DAO
                             $where[] = "`{$arrk}`{$key} NULL";
                         } elseif (is_string($arrv)){
                             if (strtolower($key) == 'regexp') {
-                                $arrv = str_replace("'", "\'", $arrv);
+                                $arrv = str_replace("'", "\\'", $arrv);
                             } else {
                                 $arrv = $this->real_escape_string($arrv);
                             }
@@ -183,6 +183,11 @@ class SingleDAO extends DAO
                             $where[] = "`{$arrk}`{$key}{$arrv->scalar}";
                         } else if (is_array($arrv)){
                             foreach ($arrv as $av){
+                                if (strtolower($key) == 'regexp') {
+                                    $av = str_replace("'", "\\'", $av);
+                                } else {
+                                    $av = $this->real_escape_string($av);
+                                }
                                 $where[] = "`{$arrk}`{$key}'{$av}'";
                             }
                         } else {
