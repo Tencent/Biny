@@ -172,21 +172,13 @@ class DoubleDAO extends DAO
                         if (is_null($arrv)){
                             $where[] = "`{$table}`.`{$arrk}`{$key} NULL";
                         } else if (is_string($arrv)){
-                            if (strtolower($key) == 'regexp') {
-                                $arrv = str_replace("'", "\\'", $arrv);
-                            } else {
-                                $arrv = $this->real_escape_string($arrv);
-                            }
+                            $arrv = $this->real_escape_string($arrv);
                             $where[] = "`{$table}`.`{$arrk}`{$key}'{$arrv}'";
                         } else if ($arrv instanceof \stdClass){
                             $where[] = "`{$table}`.`{$arrk}`{$key}{$arrv->scalar}";
                         } else if (is_array($arrv)){
                             foreach ($arrv as $av){
-                                if (strtolower($key) == 'regexp') {
-                                    $av = str_replace("'", "\\'", $av);
-                                } else {
-                                    $av = $this->real_escape_string($av);
-                                }
+                                $av = $this->real_escape_string($av);
                                 $where[] = "`{$table}`.`{$arrk}`{$key}'{$av}'";
                             }
                         } else {
