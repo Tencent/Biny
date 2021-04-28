@@ -179,14 +179,15 @@ class SingleDAO extends DAO
                             $where[] = "`{$arrk}`{$key}{$arrv->scalar}";
                         } else if (is_array($arrv)){
                             foreach ($arrv as $av){
-                                $arrv = $this->real_escape_string($av);
-                                $where[] = "`{$arrk}`{$key}'{$arrv}'";
+                                $av = $this->real_escape_string($av);
+                                $where[] = "`{$arrk}`{$key}'{$av}'";
                             }
                         } else {
                             $where[] = "`{$arrk}`{$key}{$arrv}";
                         }
                     }
-                } elseif ($key === '__like__'){
+                } elseif ($key === '__like__' || $key === 'not like'){
+                    $op = strtoupper(str_replace('_', '', $key));
                     foreach ($cond[$key] as $arrk => $arrv){
                         $arrk = $this->real_escape_string($arrk);
                         if (is_array($arrv)){
@@ -199,7 +200,7 @@ class SingleDAO extends DAO
                                     $like .= '%';
                                 }
                                 $like = trim($like, "^$");
-                                $where[] = "`{$arrk}` like '{$like}'";
+                                $where[] = "`{$arrk}` $op '{$like}'";
                             }
                         } else {
                             $arrv = $this->real_like_string($arrv);
@@ -210,7 +211,7 @@ class SingleDAO extends DAO
                                 $arrv .= '%';
                             }
                             $arrv = trim($arrv, "^$");
-                            $where[] = "`{$arrk}` like '{$arrv}'";
+                            $where[] = "`{$arrk}` $op '{$arrv}'";
                         }
                     }
                 } elseif (is_null($value)){
@@ -341,7 +342,7 @@ class SingleDAO extends DAO
                     }
                     $sets[] = "`{$key}`= ".join($k, $arr);
                 } else {
-                    $val = intval($val);
+                    $val = !is_numeric($val) ? intval($val) : $val;
                     $sets[] = "`{$key}`= `{$key}` {$k} {$val}";
                 }
             } else if ($value === null) {

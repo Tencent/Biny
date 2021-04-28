@@ -729,6 +729,15 @@ App::<prm>$base</prm>-><prm>config</prm>-><func>get</func>(<str>'path'</str>, <s
         <p>也不具备缓存操作（<code>getByPK、updateByPK、deleteByPK</code>等）的功能</p>
         <p>如果需要使用上述功能，还是需要在<code>dao</code>目录下创建php文件自定义相关参数</p>
 
+        <p>另外在<code>Biny v2.10.6</code>之后可以使用<code>DAO::get('xxx')</code>的方式来获取DAO对象，使用起来更加便利</p>
+        <pre class="code"><note><sys>use</sys> biny\lib\DAO;
+
+// 等同于$this->userDAO->query()</note>
+<prm>$data</prm> = DAO::<func>get</func>(<str>'user'</str>)-><func>query</func>([<str>'id'</str>, <str>'name'</str>]);
+<note>// 在连表中效果也相同，映射表也同样支持</note>
+<prm>$data</prm> = DAO::<func>get</func>(<str>'user'</str>)-><func>join</func>(DAO::<func>get</func>(<str>'project'</str>), [<str>'projectId'</str>=><str>'id'</str>, <str>'type'</str>=><str>'type'</str>])-><func>query</func>();
+</pre>
+
         <h2 id="dao-simple">基础查询</h2>
         <p>DAO提供了<code>query</code>，<code>find</code>等基本查询方式，使用也相当简单</p>
         <pre class="code"><note>// testAction.php
@@ -1005,7 +1014,7 @@ App::<prm>$base</prm>-><prm>config</prm>-><func>get</func>(<str>'path'</str>, <s
         <pre class="code"><note>// WHERE `user`.`type` IN (1,2,3,'test')</note>
 <prm>$this</prm>-><prm>userDAO</prm>-><func>filter</func>(<sys>array</sys>(<str>'id'</str>=><sys>array</sys>(1,2,3,<str>'test'</str>)));</pre>
 
-        <p>其他还包括 <code>></code>，<code><</code>，<code>>=</code>，<code><=</code>，<code>!=</code>，<code><></code>，<code>is</code>，<code>is not</code>
+        <p>其他还包括 <code>></code>，<code><</code>，<code>>=</code>，<code><=</code>，<code>!=</code>，<code><></code>，<code>is</code>，<code>is not</code>，<code>not like</code>
             ，同样，多表的情况下需要用<code>二维数组</code>去封装</p>
         <pre class="code"><note>// WHERE `user`.`id` >= 10 AND `user`.`time` >= 1461584562 AND `user`.`type` is not null</note>
 <prm>$filter</prm> = <prm>$this</prm>-><prm>userDAO</prm>-><func>filter</func>(<sys>array</sys>(
@@ -1032,6 +1041,16 @@ App::<prm>$base</prm>-><prm>config</prm>-><func>get</func>(<str>'path'</str>, <s
 ));</pre>
 
         <p><code>not in</code>语法暂时并未支持，可以暂时使用多个<code>!=</code>或者<code><></code>替代</p>
+        <p><code>not like</code>，<code>regexp</code>语法在<code>Biny v2.10.7</code>之后支持，同时支持传入数组，相当于通过连接符匹配多个匹配对象</p>
+        <p><code>需要注意</code>这里的<code>not like</code> 和上述的<code>__like__</code>语法一致，<code>^</code>表示前缀匹配，<code>$</code>表示后缀匹配</p>
+        <pre class="code"><note>// WHERE `user`.`name` NOT LIKE '%test%' OR `user`.`type` NOT LIKE 'admin%' OR `user`.`type` NOT LIKE '%admin'</note>
+<prm>$filter</prm> = <prm>$this</prm>-><prm>userDAO</prm>-><func>filter</func>(<sys>array</sys>(
+    <str>'not like'</str>=><sys>array</sys>(<str>'name'</str>=><str>'test'</str>, <str>'type'</str>=><str>'^admin'</str>, <str>'type'</str>=><str>'admin$'</str>),
+));
+<note>// WHERE `user`.`name` REGEXP 'test.*'</note>
+<prm>$filter</prm> = <prm>$this</prm>-><prm>userDAO</prm>-><func>filter</func>(<sys>array</sys>(
+    <str>'regexp'</str>=><sys>array</sys>(<str>'name'</str>=><str>'test.*'</str>),
+));</pre>
 
         <p>同时<code>filter/merge</code>也可以被迭代调用，以应对不确定筛选条件的复杂查询</p>
         <pre class="code"><note>// 某一个返回筛选数据的Action</note>

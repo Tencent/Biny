@@ -19,12 +19,21 @@ use App;
  */
 class DAO
 {
-    protected $extracts = ['=', '>', '>=', '<', '<=', '!=', '<>', 'is', 'is not', '&', '>>', '^'];
+    protected $extracts = ['=', '>', '>=', '<', '<=', '!=', '<>', 'is', 'is not', '&', '>>', '^', 'regexp'];
     protected $calcs = ['max', 'min', 'sum', 'avg', 'count', 'distinct'];
     protected $methods = ['group', 'limit', 'order', 'addition', 'having'];
     protected $setOps = ['+', '-', '*', '/'];
 
     protected $dbConfig = 'database';
+
+    /**
+     * @param $name
+     * @return SingleDAO|mixed
+     */
+    public static function get($name)
+    {
+        return Factory::create($name."DAO");
+    }
 
     /**
      * @return string
