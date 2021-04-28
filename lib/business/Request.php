@@ -91,7 +91,11 @@ class Request {
      */
     public function setRestApi()
     {
-        parse_str(file_get_contents('php://input'), $this->params);
+        if($this->getContentType() == "application/json;charset=UTF-8" || $this->getContentType() == "application/json"){
+            $this->params = array_merge($this->params, json_decode(file_get_contents('php://input'), true));
+        }else {
+            parse_str(file_get_contents('php://input'), $this->params);
+        }
         $this->params = array_merge($this->params, $this->gets);
     }
 
