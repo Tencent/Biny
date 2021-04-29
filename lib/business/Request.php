@@ -91,8 +91,14 @@ class Request {
      */
     public function setRestApi()
     {
-        parse_str(file_get_contents('php://input'), $this->params);
+        if (strstr($this->getContentType(), '/json')) {
+            $this->buildJson();
+            $this->params = $this->jsons;
+        } else {
+            parse_str(file_get_contents('php://input'), $this->params);
+        }
         $this->params = array_merge($this->params, $this->gets);
+//        var_dump($this->params ); exit();
     }
 
     /**
@@ -569,7 +575,7 @@ class Request {
     public function json($key, $default=null)
     {
         if ($this->jsons === NULL){
-            $this->jsons = json_decode($this->getRowPost(), true) ?: [];
+            $this->buildJson();
         }
         return isset($this->jsons[$key]) ? $this->jsons[$key] : $default;
     }
@@ -578,7 +584,7 @@ class Request {
      * 获取post数据
      * @return string
      */
-    public function getRowPost(){
-        return file_get_contents('php://input');
+    public function buildJson(){
+        $this->jsons = json_decode(file_get_contents('php://input'), true) ?: [];
     }
 }
