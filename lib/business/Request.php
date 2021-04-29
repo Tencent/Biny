@@ -513,12 +513,10 @@ class Request {
             } else {
                 return isset($this->params[$key]) ? $this->params[$key] : $default;
             }
+        } elseif (!$this->action->getRestful() && strstr($this->getContentType(), '/json')) {
+            return $this->json($key, $default);
         } else {
-            if (strstr($this->getContentType(), 'application/json') || $this == 'text/json'){
-                return $this->json($key, $default);
-            } else {
-                return isset($this->params[$key]) ? $this->params[$key] : $default;
-            }
+            return isset($this->params[$key]) ? $this->params[$key] : $default;
         }
     }
 

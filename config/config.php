@@ -77,7 +77,7 @@ return array(
         'session' => array(
             'save_handler'=>'files',  //files redis memcache
             'maxlifetime' => 86400,    //过期时间s
-            'cookie_lifetime' => 86400 // cookie session_id过期时间s
+            'cookie_lifetime' => 0 // cookie session_id过期时间s
         ),
         // 开启redis自动序列化存储
         'serialize' => true,
