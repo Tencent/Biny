@@ -98,7 +98,6 @@ class Request {
             parse_str(file_get_contents('php://input'), $this->params);
         }
         $this->params = array_merge($this->params, $this->gets);
-//        var_dump($this->params ); exit();
     }
 
     /**
