@@ -83,6 +83,20 @@ class Request {
             $this->posts = $_POST;
             $this->gets = $_GET;
         }
+        // 跨域兼容处理
+        if ($_SERVER['HTTP_ORIGIN'] && $this->getHostInfo() != $_SERVER['HTTP_ORIGIN']) {
+            if (isset($this->config['allowOrigin']) &&
+                ($this->config['allowOrigin'] == '*' || in_array($_SERVER['HTTP_ORIGIN'], $this->config['allowOrigin']))) {
+                header("Access-Control-Allow-Credentials: true");
+                header("Access-Control-Allow-Origin: {$_SERVER['HTTP_ORIGIN']}");
+                header("Access-Control-Allow-Headers: Origin, X-Requested-With, Content-Type, Accept");
+                if ($this->getHttpMethod() == 'OPTIONS') {
+                    // 跨域preflight
+                    header(App::$base->config->get(204, 'http'));
+                    exit;
+                }
+            }
+        }
     }
 
 
@@ -196,15 +210,25 @@ class Request {
     }
 
     /**
-     * 验证csrfToken
+     * 获取http请求类型 GET POST OPTION
+     * @return string
      */
-    public function validateCsrfToken()
+    private function getHttpMethod()
     {
         if (isset($_SERVER['HTTP_X_HTTP_METHOD_OVERRIDE'])) {
             $method = strtoupper($_SERVER['HTTP_X_HTTP_METHOD_OVERRIDE']);
         } else {
             $method = isset($_SERVER['REQUEST_METHOD']) ? strtoupper($_SERVER['REQUEST_METHOD']) : 'GET';
         }
+        return $method;
+    }
+
+    /**
+     * 验证csrfToken
+     */
+    public function validateCsrfToken()
+    {
+        $method = $this->getHttpMethod();
         if (in_array($method, ['GET', 'HEAD', 'OPTIONS'], true)) {
             return true;
         }
@@ -276,11 +300,7 @@ class Request {
             return $this->method;
         } else {
             if ($this->action && $this->action->getRestful()){
-                if (isset($_SERVER['HTTP_X_HTTP_METHOD_OVERRIDE'])) {
-                    $method = strtoupper($_SERVER['HTTP_X_HTTP_METHOD_OVERRIDE']);
-                } else {
-                    $method = isset($_SERVER['REQUEST_METHOD']) ? strtoupper($_SERVER['REQUEST_METHOD']) : 'GET';
-                }
+                $method = $this->getHttpMethod();
                 return $method."_".$this->method;
             } else {
                 return 'action_' . $this->method;

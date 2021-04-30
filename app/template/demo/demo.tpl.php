@@ -492,7 +492,12 @@
             <str>'127.0.0.1/24'</str>
         ),
         <note>//多语言cookie字段</note>
-        <str>'languageCookie'</str> => <str>'biny_language'</str>
+        <str>'languageCookie'</str> => <str>'biny_language'</str>,
+        <note>// 允许跨域的域名 (* 为允许所有跨域请求)</note>
+        <str>'allowOrigin'</str> => <sys>array</sys>(
+            <str>'http://www.billge.cc'</str>,
+            <str>'https://www.billge.cc'</str>,
+        ),
     ),
 
     <note>//响应配置</note>

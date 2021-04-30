@@ -48,7 +48,7 @@ class Action
         }
         if ($this->csrfValidate && !$this->request->validateCsrfToken()){
             header(App::$base->config->get(401, 'http'));
-            echo $this->error("Unauthorized");
+            echo $this->response->error("Unauthorized");
             exit;
         }
         // 权限验证

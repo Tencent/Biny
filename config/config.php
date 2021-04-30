@@ -36,7 +36,9 @@ return array(
             '127.0.0.1/24'
         ),
         // 多语言cookie字段
-        'languageCookie' => 'biny_language'
+        'languageCookie' => 'biny_language',
+        // 允许跨域的域名 (* 为允许所有跨域请求)
+//        'allowOrigin' => ['http://www.billge.cc'],
     ),
 
     //响应配置
