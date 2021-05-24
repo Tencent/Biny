@@ -109,7 +109,8 @@ class Request {
             $this->buildJson();
             $this->params = $this->jsons;
         } else {
-            parse_str(file_get_contents('php://input'), $this->params);
+            parse_str(file_get_contents('php://input'), $params);
+            $this->params = array_merge($this->params, $params);
         }
         $this->params = array_merge($this->params, $this->gets);
     }
