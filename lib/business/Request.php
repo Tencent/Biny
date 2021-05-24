@@ -83,6 +83,20 @@ class Request {
             $this->posts = $_POST;
             $this->gets = $_GET;
         }
+        // 跨域兼容处理
+        if ($_SERVER['HTTP_ORIGIN'] && $this->getHostInfo() != $_SERVER['HTTP_ORIGIN']) {
+            if (isset($this->config['allowOrigin']) &&
+                ($this->config['allowOrigin'] == '*' || in_array($_SERVER['HTTP_ORIGIN'], $this->config['allowOrigin']))) {
+                header("Access-Control-Allow-Credentials: true");
+                header("Access-Control-Allow-Origin: {$_SERVER['HTTP_ORIGIN']}");
+                header("Access-Control-Allow-Headers: Origin, X-Requested-With, Content-Type, Accept");
+                if ($this->getHttpMethod() == 'OPTIONS') {
+                    // 跨域preflight
+                    header(App::$base->config->get(204, 'http'));
+                    exit;
+                }
+            }
+        }
     }
 
 
@@ -91,7 +105,12 @@ class Request {
      */
     public function setRestApi()
     {
-        parse_str(file_get_contents('php://input'), $this->params);
+        if (strstr($this->getContentType(), '/json')) {
+            $this->buildJson();
+            $this->params = $this->jsons;
+        } else {
+            parse_str(file_get_contents('php://input'), $this->params);
+        }
         $this->params = array_merge($this->params, $this->gets);
     }
 
@@ -191,15 +210,25 @@ class Request {
     }
 
     /**
-     * 验证csrfToken
+     * 获取http请求类型 GET POST OPTION
+     * @return string
      */
-    public function validateCsrfToken()
+    private function getHttpMethod()
     {
         if (isset($_SERVER['HTTP_X_HTTP_METHOD_OVERRIDE'])) {
             $method = strtoupper($_SERVER['HTTP_X_HTTP_METHOD_OVERRIDE']);
         } else {
             $method = isset($_SERVER['REQUEST_METHOD']) ? strtoupper($_SERVER['REQUEST_METHOD']) : 'GET';
         }
+        return $method;
+    }
+
+    /**
+     * 验证csrfToken
+     */
+    public function validateCsrfToken()
+    {
+        $method = $this->getHttpMethod();
         if (in_array($method, ['GET', 'HEAD', 'OPTIONS'], true)) {
             return true;
         }
@@ -271,11 +300,7 @@ class Request {
             return $this->method;
         } else {
             if ($this->action && $this->action->getRestful()){
-                if (isset($_SERVER['HTTP_X_HTTP_METHOD_OVERRIDE'])) {
-                    $method = strtoupper($_SERVER['HTTP_X_HTTP_METHOD_OVERRIDE']);
-                } else {
-                    $method = isset($_SERVER['REQUEST_METHOD']) ? strtoupper($_SERVER['REQUEST_METHOD']) : 'GET';
-                }
+                $method = $this->getHttpMethod();
                 return $method."_".$this->method;
             } else {
                 return 'action_' . $this->method;
@@ -513,12 +538,10 @@ class Request {
             } else {
                 return isset($this->params[$key]) ? $this->params[$key] : $default;
             }
+        } elseif ($this->action && !$this->action->getRestful() && strstr($this->getContentType(), '/json')) {
+            return $this->json($key, $default);
         } else {
-            if (strstr($this->getContentType(), 'application/json') || $this == 'text/json'){
-                return $this->json($key, $default);
-            } else {
-                return isset($this->params[$key]) ? $this->params[$key] : $default;
-            }
+            return isset($this->params[$key]) ? $this->params[$key] : $default;
         }
     }
 
@@ -571,7 +594,7 @@ class Request {
     public function json($key, $default=null)
     {
         if ($this->jsons === NULL){
-            $this->jsons = json_decode($this->getRowPost(), true) ?: [];
+            $this->buildJson();
         }
         return isset($this->jsons[$key]) ? $this->jsons[$key] : $default;
     }
@@ -580,7 +603,7 @@ class Request {
      * 获取post数据
      * @return string
      */
-    public function getRowPost(){
-        return file_get_contents('php://input');
+    public function buildJson(){
+        $this->jsons = json_decode(file_get_contents('php://input'), true) ?: [];
     }
 }
