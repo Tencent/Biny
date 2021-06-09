@@ -84,7 +84,7 @@ class Request {
             $this->gets = $_GET;
         }
         // 跨域兼容处理
-        if ($_SERVER['HTTP_ORIGIN'] && $this->getHostInfo() != $_SERVER['HTTP_ORIGIN']) {
+        if (isset($_SERVER['HTTP_ORIGIN']) && $_SERVER['HTTP_ORIGIN'] && $this->getHostInfo() != $_SERVER['HTTP_ORIGIN']) {
             if (isset($this->config['allowOrigin']) &&
                 ($this->config['allowOrigin'] == '*' || in_array($_SERVER['HTTP_ORIGIN'], $this->config['allowOrigin']))) {
                 header("Access-Control-Allow-Credentials: true");
@@ -214,7 +214,7 @@ class Request {
      * 获取http请求类型 GET POST OPTION
      * @return string
      */
-    private function getHttpMethod()
+    public function getHttpMethod()
     {
         if (isset($_SERVER['HTTP_X_HTTP_METHOD_OVERRIDE'])) {
             $method = strtoupper($_SERVER['HTTP_X_HTTP_METHOD_OVERRIDE']);

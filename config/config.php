@@ -8,7 +8,8 @@ return array(
         //静态化配置
         'routeRule' => array(
 //            '<method:\w+>/<id:\d+>.html' => 'demo/<method>',
-//            'rest/<rid:[\d]+>/<method:\w+>/<mid:\d+>' => 'rest/<method>',
+//            '[GET]rest/<rid:[\d]+>/<mid:\d+>' => 'test/rest',
+//            '[POST]rest/<rid:[\d]+>/<mid:\d+>' => 'test/restP',
         ),
     ),
 

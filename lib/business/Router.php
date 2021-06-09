@@ -85,6 +85,14 @@ class Router {
         $path = NULL;
         $rules = $this->routerInfo['routeRule'];
         foreach ($rules as $key => $value){
+            $ret = preg_match('/^\[(\w+)\]/', $key, $match);
+            if ($ret && count($match) >= 2) {
+                $method = strtoupper($match[1]);
+                $key = substr($key, strlen($match[0]));
+                if (App::$base->request->getHttpMethod() !== $method) {
+                    continue;
+                }
+            }
             $key = trim($key, '/');
             preg_match_all("/<([\w_]+):([^>]+)>/", $key, $matchs);
             foreach ($matchs[2] as &$val){
