@@ -62,7 +62,7 @@ class Router {
             $pathRoot = substr($pathRoot, $len);
         }
 
-        $path = $this->reRouter(rtrim($pathRoot, '/'));
+        $path = $this->reRouter(trim($pathRoot, '/'));
         if ($path !== NULL){
             $pathRoot = $path;
         }
@@ -104,7 +104,7 @@ class Router {
             $matchs[2][] = '\/';
             $matchs[2][] = '\.';
             $key = str_replace($matchs[0], $matchs[2], $key);
-            if (preg_match('/'.$key.'$/', $url, $args)){
+            if (preg_match('/^'.$key.'$/', $url, $args)){
                 foreach ($matchs[1] as $key => $val){
                     self::$ARGS[$val] = $args[$key+1];
                 }
