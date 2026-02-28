@@ -1,7 +1,7 @@
 <?php
 
 namespace app\form;
-use biny\lib\TXForm;
+use biny\lib\Form;
 
 /**
  * Created by PhpStorm.
@@ -9,7 +9,7 @@ use biny\lib\TXForm;
  * Date: 15-11-4
  * Time: 下午4:37
  */
-class testForm extends TXForm
+class testForm extends Form
 {
     protected $_rules = [
         'id'=>[self::typeInt],

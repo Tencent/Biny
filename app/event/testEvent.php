@@ -1,7 +1,7 @@
 <?php
 
 namespace app\event;
-use biny\lib\TXLogger;
+use biny\lib\Logger;
 
 /**
  * Created by PhpStorm.
@@ -12,14 +12,8 @@ use biny\lib\TXLogger;
 
 class testEvent
 {
-    public function before($event)
+    public function test($event)
     {
-        TXLogger::info("tigger in event".$event);
-    }
-
-    public function another($event, $params=array())
-    {
-        TXLogger::info("tigger in anther".$event);
-        TXLogger::info($params);
+        Logger::info("tigger in event".$event);
     }
 }

@@ -1,7 +1,7 @@
 <?php
 namespace app\service;
-use biny\lib\TXService;
-use TXApp;
+use biny\lib\Service;
+use App;
 
 /**
  * Created by PhpStorm.
@@ -9,7 +9,7 @@ use TXApp;
  * Date: 16-8-18
  * Time: 下午7:32
  */
-class privilegeService extends TXService
+class privilegeService extends Service
 {
     private $_errors;
 
@@ -22,12 +22,12 @@ class privilegeService extends TXService
     {
         if (!$this->checkUser()){
 //            return $this->error();
-            TXApp::$base->session->lastUrl = $_SERVER['REQUEST_URI'];
-            TXApp::$base->request->redirect('/login/');
+            App::$base->session->lastUrl = $_SERVER['REQUEST_URI'];
+            App::$base->response->redirect('/login/');
 //            echo $action->display('main/login');
 //            exit;
         }
-        return true;
+        return true; // return $this->correct();
     }
 
     public function my_required($action, $key)
@@ -41,12 +41,21 @@ class privilegeService extends TXService
      */
     private function checkUser()
     {
-        $user = TXApp::$base->person;
+        $user = App::$model->person;
         if ($user->exist()){
             return true;
         } else {
             return false;
         }
+    }
+
+    /**
+     * 返回正确，兼容老写法
+     * @return bool
+     */
+    private function correct()
+    {
+        return true;
     }
 
     /**

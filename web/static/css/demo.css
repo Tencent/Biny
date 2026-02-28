@@ -1401,3 +1401,8 @@ pre.code {
     outline: 0 none;
 }
 
+.navbar-brand.active {
+    color: #fff;
+    background-color: transparent;
+}
+

@@ -22,6 +22,8 @@ return array(
     ),
     'redis' => array(
         'host' => 'localhost',
-        'port' => 6379
+        'port' => 6379,
+//        'client' => 'predis', // predis
+//        'persistent' => true, // predis
     ),
 );

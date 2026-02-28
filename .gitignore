@@ -6,3 +6,6 @@
 /logs/*
 /config/autoload.php
 
+/composer.lock
+/composer.json
+/vendor

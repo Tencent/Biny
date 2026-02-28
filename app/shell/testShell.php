@@ -1,31 +1,23 @@
 <?php
 namespace app\shell;
-use biny\lib\TXShell;
-use biny\lib\TXLogger;
+use biny\lib\Shell;
+use biny\lib\Logger;
 /**
  * Created by PhpStorm.
  * User: billge
  * Date: 16-10-1
  * Time: 上午11:00
- * @property \app\dao\userDAO $userDAO
  */
-class testShell extends TXShell
+class testShell extends Shell
 {
     public function init()
     {
-        TXLogger::addLog('init');
+        Logger::addLog('init');
         return 0;
     }
 
     public function action_index()
     {
-        return $this->correct('sdfdfd');
-    }
-
-    public function action_prm($id)
-    {
-        var_dump($this->getParam('test', 'aaa'));
-        $user = $this->userDAO->filter(['id'=>$id])->find();
-        return $this->correct($user);
+        $this->response->correct('success');
     }
 }

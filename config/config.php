@@ -7,8 +7,10 @@ return array(
 
         //静态化配置
         'routeRule' => array(
-            '<method:\w+>/test/<id:\d+>.html' => 'test/<method>',
-//            'test/<id:[\w_%]+>' => 'test/view',
+//            '<method:\w+>/<id:\d+>.html' => 'demo/<method>',
+//            'rest/<rid:[\d]+>/<mid:\d+>' => 'test/restRow',
+            '[GET]rest/<rid:[\d]+>/<mid:\d+>' => 'test/rest',
+            '[POST]rest/<rid:[\d]+>/<mid:\d+>' => 'test/restP',
         ),
     ),
 
@@ -17,7 +19,7 @@ return array(
         'autoPath' => 'config/autoload.php',
         //重新构建间隔时间s
         'autoSkipLoad' => 5,
-        'autoThrow' => true, //使用外部autoload机制(如composer) 需设置为false
+        'autoThrow' => false, //使用外部autoload机制(如composer) 需设置为false
     ),
 
     //请求配置
@@ -35,6 +37,10 @@ return array(
         'csrfWhiteIps' => array(
             '127.0.0.1/24'
         ),
+        // 多语言cookie字段
+        'languageCookie' => 'biny_language',
+        // 允许跨域的域名 (* 为允许所有跨域请求)
+//        'allowOrigin' => ['http://www.billge.cc'],
     ),
 
     //响应配置
@@ -52,21 +58,30 @@ return array(
         // 是否记录日志文件
         'files' => true,
         // 自定义日志记录方法
-//        'sendLog' => array('TXCommon', 'sendLog'),
+//        'sendLog' => array('Common', 'sendLog'),
         // 自定义日志错误方法
-//        'sendError' => array('TXCommon', 'sendError'),
+//        'sendError' => array('Common', 'sendError'),
         //错误级别
         'errorLevel' => NOTICE,
         //慢查询阀值
         'slowQuery' => 1000,
+        // 日志归档
+        'reorganize' => true
+    ),
+
+    // 数据库相关配置
+    'database' => array(
+        'returnIntOrFloat' => true, // 是否返回int或者float类型
+        'returnAffectedRows' => false, // 是否返回受影响行数
     ),
 
     //缓存相关配置
     'cache' => array(
         'pkCache' => 'tb:%s',
         'session' => array(
-            'save_handler'=>'files',  //redis memcache
-            'maxlifetime' => 86400    //过期时间s
+            'save_handler'=>'files',  //files redis memcache
+            'maxlifetime' => 86400,    //过期时间s
+            'cookie_lifetime' => 0 // cookie session_id过期时间s
         ),
         // 开启redis自动序列化存储
         'serialize' => true,

@@ -29,3 +29,8 @@
         });
     })
 }(jQuery);
+
+function changeLanguage(lan){
+    setCookie('biny_language', lan, 24*60*30);
+    window.location.reload();
+}

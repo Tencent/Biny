@@ -1,11 +1,17 @@
 <?php
 namespace app\controller;
-use biny\lib\TXEvent;
-use biny\lib\TXLogger;
+use App;
+use app\dao\baseDAO;
+use app\dao\userDAO;
+use biny\lib\Event;
+use biny\lib\Logger;
+use biny\lib\Language;
+use Constant;
 
 /**
  * 演示Action
- * @property \app\dao\userDAO $userDAO
+ * @property userDAO $userDAO
+ * @property baseDAO $testDAO
  */
 class demoAction extends baseAction
 {
@@ -21,11 +27,17 @@ class demoAction extends baseAction
 
     public function action_index()
     {
-        TXEvent::one('ttt', function(){TXLogger::info('ttt');});
-        TXLogger::info($this->testService->test());
-        \TXCommon::test(\TXConst::day);
-        $view = $this->display('demo/demo');
-        $view->title = "Biny演示页面";
+        $lang = $this->get('lang');
+        $lang && Language::setLanguage($lang, Constant::month);
+        Logger::info('you can print some information in console like time: '.date('Y-m-d H:i:s'), 'info');
+        $view = $this->display('demo/demo', ['lan'=>Language::getLanguage('cn')]);
+        $view->title = "Biny框架文档";
         return $view;
+    }
+
+    public function action_test()
+    {
+        $ret = [];
+        $this->response->correct($ret['aaa'] === false);
     }
 }

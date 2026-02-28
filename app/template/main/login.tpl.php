@@ -1,10 +1,10 @@
 <?php
-/* @var $this TXResponse */
-/* @var $PRM TXArray */
+/* @var $this Response */
+/* @var $PRM BinyArray */
 ?>
 
-<? include TXApp::$view_root . "/base/common.tpl.php" ?>
-<? include TXApp::$view_root . "/base/header.tpl.php" ?>
+<?php include App::$view_root . "/base/common.tpl.php" ?>
+<?php include App::$view_root . "/base/header.tpl.php" ?>
 <style type="text/css">
     body {
         font-family: sans-serif;
@@ -131,4 +131,4 @@
 
 
 
-<? include TXApp::$view_root . "/base/footer.tpl.php" ?>
+<?php include App::$view_root . "/base/footer.tpl.php" ?>

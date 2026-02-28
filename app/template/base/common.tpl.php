@@ -1,5 +1,5 @@
 <?php
-/* @var $this TXResponse */
+/* @var $this Response */
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -8,10 +8,10 @@
     <meta name="renderer" content="webkit">
     <META http-equiv="X-UA-Compatible" content="IE=edge"/>
     <meta name="viewport" content="width=device-width,user-scalable=yes">
-    <meta name="keywords" content="<?=$this->encode($this->keywords) ?: "PHP框架"?>">
-    <meta name="description" content="<?=$this->encode($this->descript) ?: "一款轻量级的PHP框架，兼容各种模式的web架构。"?>">
+    <meta name="keywords" content="<?=$this->encode($this->keywords) ?: "Biny, PHP, framework"?>">
+    <meta name="description" content="<?=$this->encode($this->descript) ?: "Biny is a tiny, high-performance PHP framework for web applications "?>">
 
-    <title><?=$this->encode($this->title) ?: "Biny"?></title>
+    <title><?=$this->encode($this->title) ?: "Biny框架"?></title>
     <link rel="icon" href="<?=$webRoot?>/static/images/icon/favicon.ico" type="image/x-icon" />
 
     <link href="<?=$webRoot?>/static/css/bootstrap.css" rel="stylesheet">

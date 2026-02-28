@@ -115,6 +115,18 @@ if (!Date.prototype.getString){
     }
 }
 
+//写入COOKIES
+function setCookie(name, value, expires, path, domain, secure) {
+
+    var exp = new Date();
+    expires = arguments[2] || null;
+    path = arguments[3] || "/";
+    domain = arguments[4] || null;
+    secure = arguments[5] || false;
+    expires ? exp.setMinutes(exp.getMinutes() + parseInt(expires)) : "";
+    document.cookie = name + '=' + escape(value) + ( expires ? ';expires=' + exp.toGMTString() : '') + ';path=' + path + ( domain ? ';domain=' + domain : '') + ( secure ? ';secure' : '');
+}
+
 function in_array(id, array){
     return $.inArray(id, array) >= 0 ? true : false;
 }
