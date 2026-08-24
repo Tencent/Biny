@@ -1,8 +1,9 @@
 ## Biny
 
-[![license](http://img.shields.io/badge/license-BSD3-blue.svg?style=flat)](https://github.com/tencent/biny/blob/master/LICENSE.TXT)
-[![Release Version](https://img.shields.io/badge/release-2.11.0-red.svg)](https://github.com/tencent/biny/releases)
-[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](https://github.com/tencent/biny/pulls)
+[![license](https://img.shields.io/badge/license-BSD3-blue.svg?style=flat)](https://github.com/Tencent/Biny/blob/master/LICENSE.TXT)
+[![Release Version](https://img.shields.io/github/v/release/Tencent/Biny?color=red&label=release)](https://github.com/Tencent/Biny/releases)
+[![PHP Version](https://img.shields.io/badge/PHP-%3E%3D8.1-777bb3.svg)](https://www.php.net/)
+[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](https://github.com/Tencent/Biny/pulls)
 
 Biny是一款高性能的轻量级PHP框架
 
