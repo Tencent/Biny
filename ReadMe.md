@@ -54,6 +54,25 @@ English Wiki URL：[http://www.billge.cc?lang=en](http://www.billge.cc?lang=en)
 
 GitHub URL：[https://github.com/Tencent/Biny](https://github.com/Tencent/Biny)
 
+## 第三方组件接入 Extensions
+
+从 v2.11.0 起，Biny 支持通过 `App::bind()` 注册表挂载任意第三方组件，无需修改框架核心。以下是几份实战指南：
+
+- 📖 [**MongoDB 集成**](docs/mongodb.md) — 直接挂 `MongoDB\Client`，或封装 MongoDAO 风格类
+- 📖 [**JWT / JWE 集成**](docs/jwt.md) — 用 `firebase/php-jwt` + `beforeAction` 事件做无状态鉴权（前后端分离常用）
+
+同样的方式可用于 Kafka / Elasticsearch / RabbitMQ / S3 等任意第三方服务。示例：
+
+```php
+App::bind('kafka', fn() => new RdKafka\Producer(...));
+App::$base->kafka->produce(...);
+```
+
+Since v2.11.0, Biny supports mounting any third-party component via the `App::bind()` registry — no core changes needed.
+
+- 📖 [MongoDB integration](docs/mongodb.md)
+- 📖 [JWT / JWE integration](docs/jwt.md)
+
 ## FAQ
 
 Q: 框架跟传统PHP框架区别在哪儿，有什么优势？
@@ -71,7 +90,7 @@ A: 文档都在[http://www.billge.cc](http://www.billge.cc)中
 
 Q: Biny框架适配PHP7吗？
 
-A: 可以完美运行，性能提高2倍以上。
+A: 从 v2.11.0 起，Biny 已完全适配 PHP 8.x（推荐 PHP 8.1+），修复了原有的 PHP 8 兼容问题与若干安全漏洞（详见 [CHANGELOG.md](CHANGELOG.md)）。同时保持向下兼容 PHP 7.x，切换到最新版仅需替换 lib 库。
 
 Q: Biny现在是最终版了吗，还会继续更新吗？
 
@@ -88,7 +107,7 @@ A common query data page (50% hit cache), QPS can easily reach more than 3000. T
 
 Q: Does the Biny framework work with PHP7?
 
-A: Yes. Performance increases have been seen of over 2x when compared with PHP5.
+A: Since v2.11.0, Biny is fully compatible with PHP 8.x (PHP 8.1+ recommended). Previous PHP 8 compatibility issues and several security bugs have been fixed — see [CHANGELOG.md](CHANGELOG.md) for details. Backward compatibility with PHP 7.x is preserved; upgrading only requires replacing the lib directory.
 
 Q: Is Biny the final version now? Will it continue to be updated?
 
