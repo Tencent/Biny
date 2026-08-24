@@ -242,6 +242,8 @@ class Response {
  * @param $content
  * @return mixed
  */
-function _L($content){
-    return Language::getLanguage() ? Language::getContent($content) : $content;
+if (!function_exists('_L')) {
+    function _L($content){
+        return Language::getLanguage() ? Language::getContent($content) : $content;
+    }
 }

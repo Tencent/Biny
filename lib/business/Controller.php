@@ -103,13 +103,8 @@ class Controller {
     {
         $this->router();    //router
         $result = $this->execute(); //execute
-        if ($result instanceof Response) {    //view
-            echo $result;
-        } elseif ($result instanceof JSONResponse) {  //json数据
-            echo $result;
-        } else {
-            echo $result;
-        }
+        // Response / JSONResponse 都实现了 __toString，直接输出即可
+        echo $result;
     }
 
     /**

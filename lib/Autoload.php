@@ -55,7 +55,7 @@ class Autoload
         // 5秒缓存不更新
         if (!self::$loaders || !$lastTime || time()-$lastTime > self::$config['autoSkipLoad']){
             $oldLoaders = (array)self::$loaders;
-            self::$loaders = [];
+            self::$loaders = ['namespace' => [], 'file' => []];
             self::getLoads(__DIR__, 'biny\\lib\\');
             self::getLoads(App::$extends_root);
             self::getLoads(App::$app_root. DS . "controller", 'app\\controller\\');
@@ -66,9 +66,12 @@ class Autoload
             self::getLoads(App::$app_root. DS . "event", 'app\\event\\');
             self::getLoads(App::$app_root. DS . "model", 'app\\model\\');
 
-            $needWrite = array_diff_assoc(self::$loaders, $oldLoaders) || array_diff_assoc($oldLoaders, self::$loaders)
-                    || array_diff_assoc(self::$loaders['namespace'], $oldLoaders['namespace']) || array_diff_assoc($oldLoaders['namespace'], self::$loaders['namespace'])
-                    || array_diff_assoc(self::$loaders['file'], $oldLoaders['file']) || array_diff_assoc($oldLoaders['file'], self::$loaders['file']);
+            $oldNs   = isset($oldLoaders['namespace']) ? $oldLoaders['namespace'] : [];
+            $oldFile = isset($oldLoaders['file']) ? $oldLoaders['file'] : [];
+            $needWrite = array_diff_assoc(self::$loaders['namespace'], $oldNs)
+                    || array_diff_assoc($oldNs, self::$loaders['namespace'])
+                    || array_diff_assoc(self::$loaders['file'], $oldFile)
+                    || array_diff_assoc($oldFile, self::$loaders['file']);
 
             if ($needWrite) { //与之前的不同，写入文件
                 if (!file_exists(self::$autoPath) || is_writeable(self::$autoPath)) {
@@ -116,7 +119,7 @@ class Autoload
         if (isset(self::$loaders['file'][$class])) {
             $path = self::$loaders['file'][$class];
             if (is_readable($path)) {
-                include $path;
+                include_once $path;
             } else {
                 throw new BinyException(1003, [$class]);
             }

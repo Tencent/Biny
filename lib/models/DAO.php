@@ -241,22 +241,31 @@ class DAO
 
     /**
      * real_escape_string
+     * 字符集感知的转义（通过 Database->escape 走 mysqli_real_escape_string）
      * @param $string
      * @param bool $ignore
      * @return mixed|string
      */
     protected function real_escape_string($string, $ignore=true){
-        $string = addslashes($string);
+        try {
+            $dns = is_array($this->dbConfig) ? $this->dbConfig[1] : $this->dbConfig;
+            $string = Database::instance($dns)->escape((string)$string);
+        } catch (\Throwable $e) {
+            // 在没有 DB 连接（例如单元测试、CLI 早期）时降级到 addslashes
+            $string = addslashes((string)$string);
+        }
         return $ignore ? str_replace('`', '\`', $string) : $string;
     }
 
     /**
-     * real_like_string\
+     * real_like_string — 字符集感知转义 + LIKE 通配符转义
      * @param $str
      * @return mixed
      */
     protected function real_like_string($str){
-        return str_replace(["_", "%"], ["\\_", "\\%"], addslashes($str));
+        // 先走真实转义（防多字节注入），再对 LIKE 通配符做额外转义
+        $escaped = $this->real_escape_string($str, false);
+        return str_replace(["_", "%"], ["\\_", "\\%"], $escaped);
     }
 
     /**

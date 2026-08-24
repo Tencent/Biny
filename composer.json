@@ -1,0 +1,46 @@
+{
+    "name": "tencent/biny",
+    "description": "Biny — a high-performance lightweight PHP framework. Modernized fork.",
+    "type": "library",
+    "license": "BSD-3-Clause",
+    "keywords": ["framework", "mvc", "lightweight", "biny"],
+    "require": {
+        "php": ">=8.1",
+        "ext-mysqli": "*",
+        "ext-mbstring": "*",
+        "ext-json": "*"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^10.5",
+        "phpstan/phpstan": "^1.11"
+    },
+    "autoload": {
+        "psr-4": {
+            "app\\controller\\": "app/controller/",
+            "app\\service\\":    "app/service/",
+            "app\\dao\\":        "app/dao/",
+            "app\\form\\":       "app/form/",
+            "app\\event\\":      "app/event/",
+            "app\\model\\":      "app/model/",
+            "app\\shell\\":      "app/shell/"
+        },
+        "classmap": [
+            "lib/App.php"
+        ],
+        "files": [
+            "lib/functions.php"
+        ]
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Biny\\Tests\\": "tests/"
+        }
+    },
+    "scripts": {
+        "test": "phpunit --colors=always",
+        "stan": "phpstan analyse lib --level=5"
+    },
+    "config": {
+        "sort-packages": true
+    }
+}

@@ -185,18 +185,14 @@ class Request {
     }
 
     /**
-     * 获取随机字符串
+     * 获取随机字符串（密码学安全）
      * @param int $len
      * @return string
      */
     private function generateCsrf($len = 32)
     {
-        $chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
-        $code = '';
-        for ($i = 0; $i < $len; $i++) {
-            $code .= substr($chars, mt_rand(0, strlen($chars)-1), 1);
-        }
-        return $code;
+        // random_bytes 是密码学安全的；再 bin2hex 转成可见字符
+        return substr(bin2hex(random_bytes(max(16, (int)($len / 2) + 1))), 0, $len);
     }
 
     /**
@@ -243,13 +239,22 @@ class Request {
         $csrfPost = $this->config['csrfPost'];
         $csrfHeader = 'HTTP_'.str_replace('-', '_', $this->config['csrfHeader']);
 
-        $trueToken = $_COOKIE[$trueToken];
+        $trueToken = isset($_COOKIE[$trueToken]) ? $_COOKIE[$trueToken] : '';
+        if ($trueToken === '') {
+            return false;
+        }
         $test = @hash_hmac('sha256', '', '', false);
         $hashLength = mb_strlen($test, '8bit');
-        $trueToken = unserialize(mb_substr($trueToken, $hashLength, mb_strlen($trueToken, '8bit'), '8bit'))[1];
+        // P0-3：禁止反序列化任意类，防止对象注入
+        $payload = mb_substr($trueToken, $hashLength, mb_strlen($trueToken, '8bit'), '8bit');
+        $decoded = @unserialize($payload, ['allowed_classes' => false]);
+        if (!is_array($decoded) || !isset($decoded[1])) {
+            return false;
+        }
+        $trueToken = $decoded[1];
         $token = isset($_POST[$csrfPost]) ? $_POST[$csrfPost] : (isset($_SERVER[$csrfHeader]) ? $_SERVER[$csrfHeader] : null);
 
-        $token = base64_decode(str_replace('.', '+', $token));
+        $token = base64_decode(str_replace('.', '+', (string)$token));
         $n = mb_strlen($token, '8bit');
         if ($n <= 8) {
             return false;
@@ -265,7 +270,8 @@ class Request {
             $mask = str_pad($mask, $n2, $n1 === 0 ? ' ' : $mask);
         }
         $token = $mask ^ $token;
-        return $token === $trueToken;
+        // P0-2：常量时间对比，防时序攻击
+        return hash_equals((string)$trueToken, (string)$token);
 
     }
 
@@ -347,7 +353,7 @@ class Request {
     {
         if (RUN_SHELL) {
             global $argv;
-            return $argv[1];
+            return isset($argv[1]) ? $argv[1] : '';
         } elseif (isset($_SERVER['HTTP_X_REWRITE_URL'])) { // IIS
             $requestUri = $_SERVER['HTTP_X_REWRITE_URL'];
         } elseif (isset($_SERVER['REQUEST_URI'])) {
@@ -378,7 +384,7 @@ class Request {
     {
         if (RUN_SHELL){
             global $argv;
-            return $argv[1];
+            return isset($argv[1]) ? $argv[1] : '';
         } else {
             return $host ? $this->getHostInfo().App::$base->router->rootPath : App::$base->router->rootPath;
         }
@@ -516,12 +522,13 @@ class Request {
     }
 
     /**
+    /**
      * 获取ContentType
-     * @return mixed
+     * @return string
      */
     public function getContentType()
     {
-        return $_SERVER['CONTENT_TYPE'];
+        return isset($_SERVER['CONTENT_TYPE']) ? $_SERVER['CONTENT_TYPE'] : '';
     }
 
     /*****************************获取参数迁移****************************/

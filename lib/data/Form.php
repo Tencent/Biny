@@ -168,7 +168,8 @@ class Form
                     }
                     $match = false;
                     foreach ($this->_datetimeFormats as $format){
-                        if (date($format, $time) !== $str){
+                        // Bug fix: 原逻辑是 !==，与 typeDate 的 == 语义相反，导致任何格式都能通过
+                        if (date($format, $time) === $str){
                             $match = true;
                         }
                     }

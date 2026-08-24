@@ -65,7 +65,83 @@ class Database {
             $this->handler->options(MYSQLI_OPT_INT_AND_FLOAT_NATIVE, 0);
         }
 
-        mysqli_query($this->handler, "set NAMES {$config['encode']}");
+        // 使用 set_charset 而不是 SET NAMES，可正确影响 mysqli_real_escape_string 的字符集感知
+        $encode = isset($config['encode']) ? $config['encode'] : 'utf8mb4';
+        if (!@$this->handler->set_charset($encode)) {
+            // 兼容极旧版本，仍然回退到 SET NAMES
+            mysqli_query($this->handler, "set NAMES {$encode}");
+        }
+    }
+
+    /**
+     * 字符集感知的转义（替代 addslashes）
+     * @param string $string
+     * @return string
+     */
+    public function escape($string)
+    {
+        if (!$this->handler) {
+            // handler 未初始化时降级；正常路径不会走到这里
+            return addslashes((string)$string);
+        }
+        return mysqli_real_escape_string($this->handler, (string)$string);
+    }
+
+    /**
+     * 参数化查询：使用 ? 占位符，避免任何字符串拼接
+     * @param string $sql   SQL with ? placeholders
+     * @param array  $binds ['i'|'d'|'s'|'b' 混合类型自动推断] or 直接给值数组
+     * @param int    $mode
+     * @return array|bool|int
+     */
+    public function prepared($sql, array $binds = [], $mode = self::FETCH_TYPE_ALL)
+    {
+        $start = microtime(true);
+        $stmt = $this->handler->prepare($sql);
+        if (!$stmt) {
+            Logger::addError(sprintf("prepare Error: %s [%s]", mysqli_error($this->handler), $sql), 'sql Error');
+            return $mode === self::FETCH_TYPE_ALL ? [] : false;
+        }
+        if ($binds) {
+            $types = '';
+            $values = [];
+            foreach ($binds as $v) {
+                if (is_int($v))         { $types .= 'i'; }
+                elseif (is_float($v))   { $types .= 'd'; }
+                elseif (is_null($v))    { $types .= 's'; $v = null; }
+                else                    { $types .= 's'; $v = (string)$v; }
+                $values[] = $v;
+            }
+            $stmt->bind_param($types, ...$values);
+        }
+        $ok = $stmt->execute();
+        $time = (microtime(true) - $start) * 1000;
+        $config = App::$base->config->get('logger');
+        if ($time > ($config['slowQuery'] ?: 1000)) {
+            Logger::addError(sprintf('Slow Query: %s [%sms]', $sql, $time), 'SQL', WARNING);
+        }
+        if (!$ok) {
+            Logger::addError(sprintf("execute Error: %s [%s]", $stmt->error, $sql), 'sql Error');
+            $stmt->close();
+            return $mode === self::FETCH_TYPE_ALL ? [] : false;
+        }
+        if ($mode === self::FETCH_TYPE_ALL) {
+            $result = $stmt->get_result();
+            $rows = $result ? $result->fetch_all(MYSQLI_ASSOC) : [];
+            $stmt->close();
+            return $rows;
+        } elseif ($mode === self::FETCH_TYPE_ONE) {
+            $result = $stmt->get_result();
+            $row = $result ? ($result->fetch_assoc() ?: []) : [];
+            $stmt->close();
+            return $row;
+        } else {
+            // 写操作
+            $affected = $stmt->affected_rows;
+            $insertId = $stmt->insert_id;
+            $stmt->close();
+            return $insertId ?: $affected;
+        }
     }
 
     /**

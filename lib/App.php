@@ -7,13 +7,13 @@
  * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.
  */
 
-# 基本加载
-include __DIR__.'/Autoload.php';
-include __DIR__.'/config/Config.php';
-include __DIR__.'/business/Event.php';
-include __DIR__.'/logger/Logger.php';
-include __DIR__.'/exception/BinyException.php';
-include __DIR__.'/models/Model.php';
+# 基本加载（include_once 防止 Composer classmap / 用户重复 include 导致的类重定义 fatal）
+include_once __DIR__.'/Autoload.php';
+include_once __DIR__.'/config/Config.php';
+include_once __DIR__.'/business/Event.php';
+include_once __DIR__.'/logger/Logger.php';
+include_once __DIR__.'/exception/BinyException.php';
+include_once __DIR__.'/models/Model.php';
 
 use biny\lib\Config;
 use biny\lib\Language;
@@ -67,6 +67,77 @@ class App
      * @var Controller
      */
     private static $controller;
+
+    /**
+     * 组件工厂表：name => callable factory
+     * @var array
+     */
+    private static $bindings = [];
+
+    /**
+     * 已实例化的单例
+     * @var array
+     */
+    private static $instances = [];
+
+    /**
+     * 注册一个可通过 App::$base->{$name} 访问的组件
+     * @param string   $name
+     * @param callable $factory  返回组件实例
+     * @param bool     $singleton 是否单例，默认 true
+     */
+    public static function bind($name, callable $factory, $singleton = true)
+    {
+        self::$bindings[$name] = ['factory' => $factory, 'singleton' => (bool)$singleton];
+        // 允许覆盖时清掉旧单例
+        unset(self::$instances[$name]);
+    }
+
+    /**
+     * 手动检查是否已注册（PSR-11 风格）
+     * @param string $name
+     * @return bool
+     */
+    public static function has($name)
+    {
+        return isset(self::$bindings[$name]);
+    }
+
+    /**
+     * 内建组件的降级兜底工厂（用于 registerDefaults 未跑或被误清空时保持内核可用）
+     * @param string $name
+     * @return callable|null
+     */
+    private static function builtinFactory($name)
+    {
+        static $map = null;
+        if ($map === null) {
+            $map = [
+                'config'     => function () { return Config::instance('config'); },
+                'app_config' => function () { return Config::instance('app_config'); },
+                'request'    => function () { return Request::getInstance(); },
+                'response'   => function () { return Response::getInstance(); },
+                'session'    => function () { return Session::instance(); },
+                'redis'      => function () { return RedisClass::instance(); },
+                'memcache'   => function () { return MemcacheClass::instance(); },
+                'socket'     => function () { return Socket::instance(); },
+                'router'     => function () { return Factory::create('Router'); },
+                'cache'      => function () { return Factory::create('Cache'); },
+            ];
+        }
+        return isset($map[$name]) ? $map[$name] : null;
+    }
+
+    /**
+     * 内建组件默认注册
+     */
+    private static function registerDefaults()
+    {
+        foreach (['config', 'app_config', 'request', 'response', 'session',
+                  'redis', 'memcache', 'socket', 'router', 'cache'] as $name) {
+            self::bind($name, self::builtinFactory($name));
+        }
+    }
 
     /**
      * App注册运行
@@ -165,6 +236,8 @@ class App
         Autoload::init();
         set_error_handler(['App', 'handleError']);
         register_shutdown_function(['App', 'handleFatalError']);
+        // registerDefaults 必须早于 Event::init 与 Logger 首次访问 config
+        self::registerDefaults();
         Event::init();
         self::$controller = Factory::create('Controller');
     }
@@ -186,38 +259,33 @@ class App
     }
 
     /**
-     * 获取单例全局量
+     * 获取单例全局量（通过 bind() 注册表；默认组件在 registerDefaults() 中注册）
+     * 若 registerDefaults 尚未跑到，会自动降级到 builtinFactory，保证内核可用
      * @param $name
      * @return mixed
      * @throws BinyException
      */
     public function __get($name)
     {
-        // todo namescpce
-        switch ($name){
-            case 'config':
-            case 'app_config':
-                return Config::instance($name);
-            case 'request':
-                return Request::getInstance();
-            case 'response':
-                return Response::getInstance();
-            case 'redis':
-                return RedisClass::instance();
-            case 'memcache':
-                return MemcacheClass::instance();
-            case 'socket':
-                return Socket::instance();
-            case 'session':
-                return Session::instance();
-            case 'router':
-            case 'cache':
-                $module = ucfirst($name);
-                return Factory::create($module);
-
-            default:
-                throw new BinyException(1006, $name);
+        if (isset(self::$instances[$name])) {
+            return self::$instances[$name];
         }
+        if (isset(self::$bindings[$name])) {
+            $binding = self::$bindings[$name];
+            $instance = ($binding['factory'])();
+            if ($binding['singleton']) {
+                self::$instances[$name] = $instance;
+            }
+            return $instance;
+        }
+        // 降级：内建组件即便未 registerDefaults 也可用（例如早期启动阶段）
+        $factory = self::builtinFactory($name);
+        if ($factory !== null) {
+            $instance = $factory();
+            self::$instances[$name] = $instance;
+            return $instance;
+        }
+        throw new BinyException(1006, $name);
     }
 
 }
@@ -227,6 +295,8 @@ class App
  * @param $content
  * @return mixed
  */
-function _L($content){
-    return Language::getLanguage() ? Language::getContent($content) : $content;
+if (!function_exists('_L')) {
+    function _L($content){
+        return Language::getLanguage() ? Language::getContent($content) : $content;
+    }
 }

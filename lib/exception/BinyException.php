@@ -18,11 +18,15 @@ class BinyException extends \ErrorException
     /**
      * 构造函数
      * @param string $code
-     * @param array $params
+     * @param array|string|mixed $params  兼容旧调用方传入字符串
      * @param string $html
      */
     public function __construct($code, $params=[], $html="500")
     {
+        // PHP 8+ 严格类型：vsprintf 要求 array；旧代码常有 `throw new BinyException(1006, $name)` 这种字符串写法
+        if (!is_array($params)) {
+            $params = [$params];
+        }
         try{
             $this->config = App::$base->config->get('exception');
             $message = self::fmt_code($code, $params);
@@ -64,16 +68,24 @@ class BinyException extends \ErrorException
     /**
      * 格式化代码为字符串
      * @param int $code
-     * @param array $params
+     * @param array|mixed $params
      * @return string
      */
     public static function fmt_code($code, $params=[])
     {
+        if (!is_array($params)) {
+            $params = [$params];
+        }
         try {
             $msgtpl = App::$base->config->get($code, 'exception');
         } catch (\Exception $ex) { //防止异常的死循环
             $msgtpl = $ex->getMessage();
         }
-        return vsprintf($msgtpl, $params);
+        if ($msgtpl === null) {
+            $msgtpl = "unknown error [$code]";
+        }
+        // vsprintf 在占位符数量不匹配时会 warning + 返回 false，兜底一层
+        $formatted = @vsprintf((string)$msgtpl, $params);
+        return $formatted !== false ? $formatted : ((string)$msgtpl . ' ' . json_encode($params));
     }
 }
