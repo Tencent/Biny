@@ -13,13 +13,13 @@ Biny代码简洁优雅，对应用层，数据层，模板渲染层的封装简�
 
 高性能，框架响应时间在1ms以内
 
-Biny is a high performance lightweight PHP framework.
+Biny is a high-performance lightweight PHP framework.
 
-It follows the MVC pattern for rapid development of modern Web applications
+It follows the MVC pattern for rapid development of modern Web applications.
 
-Biny code is simple and elegant. The application layer, data layer, and template rendering layer of the package is simple and easy to understand. This makes it quick to pick up.
+Biny's code is simple and elegant. Its application, data, and template-rendering layers are wrapped in a straightforward, easy-to-understand way — making it quick to pick up.
 
-Biny is high performance. Framework comes default with response time of less than 1ms. Stand-alone QPS easily up to 3000.
+Biny is high performance: the framework's own response time is under 1ms by default, and single-machine QPS easily reaches 3000+.
 
 
 ## 功能介绍 Function introduction
@@ -35,15 +35,15 @@ Biny is high performance. Framework comes default with response time of less tha
 具有sql防注入，html自动防xss等特性
 
 
-Support cross library join table, conditional compound filter, query PK cache, etc.
+Support cross-database JOINs, compound conditional filtering, primary-key query caching, etc.
 
-Supports RESTful, automatic loading management of classes
+Supports RESTful routing and automatic class loading.
 
-Supports Form validation and supports event triggering mechanisms
+Supports Form validation and an event-trigger mechanism.
 
-Supports browser side debugging, rapid positioning problems and performance bottlenecks
+Supports in-browser debugging for quickly identifying issues and performance bottlenecks.
 
-With SQL anti injection, HTML automatic anti XSS and other characteristics
+Built-in SQL injection prevention and automatic XSS escaping.
 
 
 ## 使用文档 documents
@@ -98,12 +98,12 @@ A: 目前版本在多个项目中已经正常使用，相对成熟。后续会�
 
 Q: What is the difference between a framework and a traditional PHP framework? What are the advantages?
 
-A: Biny is a framework with high degree of freedom, unlike other frameworks that need to configure various routes, relying on external components. These are unnecessary in Biny and can be quickly used with simple rules. At the same time, the framework has been integrated with the autoload mechanism. From the developer's point of view, the functionality is very simple to use. It defaults to strong security. From the framework level, the applications is completely shielded from SQL injection and XSS injection.
+A: Biny is a highly flexible framework. Unlike other frameworks that require extensive route configuration or external components, Biny needs none of that — a simple convention gets you going. Class autoloading is built in, making the framework very easy to use from a developer's perspective. Security is strong by default: SQL injection and XSS are blocked at the framework layer, making Biny especially friendly to newcomers.
 
 Q: What is the performance of the Biny framework?
 
-A: Testing machine: Intel Xeon Processor E5506 (4M Cache, 2.13 GHz, 4.80 GT/s Intel QPI)
-A common query data page (50% hit cache), QPS can easily reach more than 3000. This is twice as fast as Yii.
+A: Testing machine: Intel Xeon Processor E5506 (4M Cache, 2.13 GHz, 4.80 GT/s Intel QPI).
+A typical data-query page (50% cache hit rate) easily reaches 3000+ QPS — more than 2x the throughput of Yii under the same conditions.
 
 Q: Does the Biny framework work with PHP7?
 
@@ -111,7 +111,7 @@ A: Since v2.11.0, Biny is fully compatible with PHP 8.x (PHP 8.1+ recommended). 
 
 Q: Is Biny the final version now? Will it continue to be updated?
 
-A: The current version has been used in several projects and is relatively mature. The follow-up will be updated for both performance and functionality, and you'll need to update and replace the Lib library to use the latest framework.
+A: The current version has been running in multiple production projects and is considered stable. It will continue to receive performance and feature updates — upgrading is as simple as replacing the `lib/` directory.
 
 
 
@@ -125,11 +125,11 @@ A：请在php.ini中打开short_open_tag。Biny的示例中使用了PHP中原生
 <?php echo $string;?> => <?=$string?>
 ```
 
-Q：Why is the template rendering deranged?
+Q: Why does the template render as garbled output?
 
 
-A：Please open short_open_tag in php.ini. In the example of Biny, you use the native abbreviated rendering method in PHP, and you need to open the short configuration in the system configuration for normal use.
-  Of course, if you are developing your own template page, you don't need to abbreviate it, even if you don't open the short_open_tag. Abbreviated example:
+A: Please enable `short_open_tag` in `php.ini`. Biny's built-in examples use PHP's short-tag rendering syntax, which requires this setting to be enabled.
+  If your own template files don't use the short-tag form, `short_open_tag` doesn't need to be enabled. Short-tag example:
 ```
 <?php echo $string;?> => <?=$string?>
 ```
